@@ -1,0 +1,18 @@
+{
+  "aprobado": false,
+  "etapa": "FASE1",
+  "frases_genericas": [
+    "de alta calidad"
+  ],
+  "datos_reales": {
+    "menciona_nombre": true,
+    "menciona_nicho": true,
+    "menciona_ciudad": true,
+    "tiene_numeros": true,
+    "tiene_porcentaje": true
+  },
+  "score_datos": 5,
+  "timestamp": "2026-05-06T16:20:18.389940",
+  "decision": "BLOQUEADO",
+  "motivo": "Frases genéricas: ['de alta calidad']"
+}

@@ -1,0 +1,1850 @@
+{
+  "job_id": "e81916f0-e79",
+  "nombre": "Test",
+  "nicho": "odontologos",
+  "ciudad": "Medellin",
+  "fecha": "2026-05-06T22:23:57.997227",
+  "secciones": {
+    "investigacion": {
+      "deep_researcher": {
+        "meta": {
+          "job_id": "4872c7eafd80",
+          "nombre": "Test",
+          "url": "",
+          "instagram": "",
+          "ciudad": "Medellin",
+          "nicho": "odontologos",
+          "tamanio": "mediana",
+          "terminado_at": "2026-05-06T22:23:16.937764",
+          "api_maps_usada": true,
+          "claude_usado": false,
+          "html_path": "C:\\Users\\jose-\\Downloads\\IM-COMPLETO\\reports\\7m-test-2026-05-06.html",
+          "html_filename": "7m-test-2026-05-06.html"
+        },
+        "web": {
+          "ok": false,
+          "razon": "No proporcionada"
+        },
+        "negocio_maps": {
+          "ok": true,
+          "nombre": "Home Test Lab",
+          "direccion": "Centro Integral Rodeo Plaza, Dg. 75B #8 - 40 Consultorio 314, Medellín, Belén, Medellín, Antioquia, Colombia",
+          "rating": 4.9,
+          "total_reviews": 655,
+          "website": "https://www.hometestlab.info/",
+          "telefono": "323 3971537",
+          "reviews_positivas": [
+            "Desconozco de la calidad del resto de los laboratorios pero puedo decir que Home Test Lab ha resuelto mi problema en un tiempo récord. Supieron adaptarse perfectamente a la urgencia de los análisis que me hacían falta ordenados por mi empresa. Mi especial agradecimiento a Elizabeth por su eficiencia",
+            "Excelente servicio.  La atención fue muy agradable,  la persona que prestó el servicio una dulzura de mujer, muy humana y linda con la paciente mi hermana, de una consideración única para una paciente tan vulnerable. Gracias por un servicio tan profesional y humano. Los recomiendo bastante",
+            "Los recomiendo 100% excelente servicio y muy rápida y buena atención. Los contacte a las 6:40am de un sábado y a las 8 am ya estaba la muchacha en mi casa. Excelente",
+            "Quiero agradecer por la excelente atención que recibí. Desde el primer momento fueron muy amables, me ayudaron con rapidez y resolvieron todo sin demoras. Es un gusto encontrar un servicio tan eficiente y humano. ¡Sigan así!\n100%recomendado",
+            "Excelente servicio. Muy rápido y eficaz, además de su buena atención, son muy amables."
+          ],
+          "reviews_negativas": [],
+          "reviews_raw": [
+            {
+              "author_name": "Carlos Castilla Royuela",
+              "author_url": "https://www.google.com/maps/contrib/113185425487535134935/reviews",
+              "language": "es",
+              "original_language": "es",
+              "profile_photo_url": "https://lh3.googleusercontent.com/a/ACg8ocKzY0HQ1HdC8iPdmN3oAsUhoZJFabJKJQZmAhKELNuXaDFG7A=s128-c0x00000000-cc-rp-mo-ba2",
+              "rating": 5,
+              "relative_time_description": "Hace 2 meses",
+              "text": "Desconozco de la calidad del resto de los laboratorios pero puedo decir que Home Test Lab ha resuelto mi problema en un tiempo récord. Supieron adaptarse perfectamente a la urgencia de los análisis que me hacían falta ordenados por mi empresa. Mi especial agradecimiento a Elizabeth por su eficiencia y amabilidad. Sin duda alguna será mi laboratorio de referencia para próximos análisis aquí en Medellín.",
+              "time": 1771549250,
+              "translated": false
+            },
+            {
+              "author_name": "Luz Stella Perez A",
+              "author_url": "https://www.google.com/maps/contrib/107565516436257956475/reviews",
+              "language": "es",
+              "original_language": "es",
+              "profile_photo_url": "https://lh3.googleusercontent.com/a-/ALV-UjUjOq6GGTP-nxM1Qfh_sHuF5EvLfTW1mIMbb2Hdvr_d-JKxkfg=s128-c0x00000000-cc-rp-mo",
+              "rating": 5,
+              "relative_time_description": "Hace 4 meses",
+              "text": "Excelente servicio.  La atención fue muy agradable,  la persona que prestó el servicio una dulzura de mujer, muy humana y linda con la paciente mi hermana, de una consideración única para una paciente tan vulnerable. Gracias por un servicio tan profesional y humano. Los recomiendo bastante",
+              "time": 1766752558,
+              "translated": false
+            },
+            {
+              "author_name": "Daniela Gonzalez",
+              "author_url": "https://www.google.com/maps/contrib/116278552746597104362/reviews",
+              "language": "es",
+              "original_language": "es",
+              "profile_photo_url": "https://lh3.googleusercontent.com/a/ACg8ocJNvZD00WAK5x2qLvlwtFxiliRejJd-C2LsuHUCBf44uHWa5w=s128-c0x00000000-cc-rp-mo",
+              "rating": 5,
+              "relative_time_description": "Hace 5 meses",
+              "text": "Los recomiendo 100% excelente servicio y muy rápida y buena atención. Los contacte a las 6:40am de un sábado y a las 8 am ya estaba la muchacha en mi casa. Excelente",
+              "time": 1763246384,
+              "translated": false
+            },
+            {
+              "author_name": "Nana Gomez",
+              "author_url": "https://www.google.com/maps/contrib/114084264780420465051/reviews",
+              "language": "es",
+              "original_language": "es",
+              "profile_photo_url": "https://lh3.googleusercontent.com/a/ACg8ocLknz9tTdF8TaUC0p_zl2YcDovb-4-h1CMyP_lkvP02be-c_Q=s128-c0x00000000-cc-rp-mo",
+              "rating": 5,
+              "relative_time_description": "Hace 8 meses",
+              "text": "Quiero agradecer por la excelente atención que recibí. Desde el primer momento fueron muy amables, me ayudaron con rapidez y resolvieron todo sin demoras. Es un gusto encontrar un servicio tan eficiente y humano. ¡Sigan así!\n100%recomendado",
+              "time": 1755187649,
+              "translated": false
+            },
+            {
+              "author_name": "Natalia Giraldo",
+              "author_url": "https://www.google.com/maps/contrib/104210311119981886934/reviews",
+              "language": "es",
+              "original_language": "es",
+              "profile_photo_url": "https://lh3.googleusercontent.com/a/ACg8ocK91waCXyiKpFy7mR87ZwDLFikQv7VzacNuBOn1OrE-Om6FDQ=s128-c0x00000000-cc-rp-mo",
+              "rating": 5,
+              "relative_time_description": "Hace 3 meses",
+              "text": "Excelente servicio. Muy rápido y eficaz, además de su buena atención, son muy amables.",
+              "time": 1769712035,
+              "translated": false
+            }
+          ],
+          "place_id": "ChIJr8TFu2IpRI4Re4i1OZKtwgw"
+        },
+        "competidores": [
+          {
+            "nombre": "ORAL CONCEPT INVISALIGN",
+            "rating": 5.0,
+            "reviews": 865,
+            "website": true,
+            "web_url": "https://oralconcept.co/home/oral-concept",
+            "diferencial": "Excelente servicio, amabilidad y cortesía. Santiago fue muy considerado y me trató con mucho cuidado y cautela cuando me atendió.Yo le expliqué las co",
+            "reviews_positivas": [
+              "Excelente servicio, amabilidad y cortesía. Santiago fue muy considerado y me trató con mucho cuidado y cautela cuando me atendió.Yo le expliqué las cosas que me pasaban y me hizo sentir muy bien y que confiara . Y pudo terminar con éxito el trabajo. ",
+              "Me encantó la atención desde el primer momento. El equipo es super amable y profesional. Me explicaron todo el proceso de mi tratamiento y me hicieron sentir muy cómodo.\nLa clínica es moderna y limpia, con tecnología de punta. El doctor Andrés Yepes ",
+              "Mi experiencia en la Clínica fue excepcional. Desde que llamé para pedir mi cita, la atención fue amable y eficiente, el personal me recordó la cita el día anterior, ¡un detalle que valoro! Al llegar, el ambiente era limpio y acogedor."
+            ],
+            "reviews_negativas": []
+          },
+          {
+            "nombre": "Dr. Mauricio Arias - Odontólogo Experto en Medellín English Dentist",
+            "rating": 4.9,
+            "reviews": 464,
+            "website": true,
+            "web_url": "https://mauricioariasexperience.com/",
+            "diferencial": "Buenas tardes, me siento muy feliz y agradecido con todo el personal del consulto especialmente con la Dra. Arenas que se encargo de mi tratamiento po",
+            "reviews_positivas": [
+              "Buenas tardes, me siento muy feliz y agradecido con todo el personal del consulto especialmente con la Dra. Arenas que se encargo de mi tratamiento por su profesionalismo y calidad humana para con los clientes, también quiero resaltar su carisma y bu",
+              "Excelente trato por todo el equipo. La clínica muy limpia, alto estándar. Muy informativo, puntuales. La Dra. Stephanie Arenas, muy, muy profesional. Ando de visita, y ya quisiera tener donde vivo un equipo tan excelente. De mis partes favoritas es q",
+              "Tuve una excelente experiencia con la Dra. Arenas Nuñez. Me realicé un blanqueamiento dental y el resultado fue increíble: mis dientes quedaron mucho más blancos y naturales, con muy poca sensibilidad y molestias. El equipo fue muy profesional, amabl"
+            ],
+            "reviews_negativas": []
+          },
+          {
+            "nombre": "Dra. Tatiana Lopera",
+            "rating": 5.0,
+            "reviews": 98,
+            "website": false,
+            "web_url": "",
+            "diferencial": "\"Dra.TATIANA LOPERA, quería pasar por aquí para darle las gracias de todo corazón por el increíble trabajo que hizo con mi diseño de sonrisa. Estoy fe",
+            "reviews_positivas": [
+              "\"Dra.TATIANA LOPERA, quería pasar por aquí para darle las gracias de todo corazón por el increíble trabajo que hizo con mi diseño de sonrisa. Estoy feliz con el resultado; realmente superó mis expectativas.\nTambién quiero resaltar la excelente atenci",
+              "Excelente atención. El consultorio es muy limpio y agradable. La doctora me atendió incluso un domingo por una emergencia, fue muy paciente, respondió todas mis preguntas y me explicó cada procedimiento con claridad. Me sentí cómoda y tranquila duran",
+              "Me gustó mucho el servicio, las personas que me atendieron fueron muy atentas, respetuosas y cuidadosas. Soy brasileño y estoy pasando unos meses en Medellín, me atendieron muy bien."
+            ],
+            "reviews_negativas": []
+          },
+          {
+            "nombre": "DentiOral - Sede Belén",
+            "rating": 4.8,
+            "reviews": 184,
+            "website": true,
+            "web_url": "https://www.dentioral.com/",
+            "diferencial": "Excelente atención. Se lo recomendé a mi hija.",
+            "reviews_positivas": [
+              "Excelente atención. Se lo recomendé a mi hija.",
+              "Excelente atención, las recepcionistas son muy amables y la mejor cede de denti oral",
+              "Excelente atención,un equipo humano y profesional que se preocupa de verdad por el bienestar del paciente.Me sentí escuchada,cuidada y en las mejores manos."
+            ],
+            "reviews_negativas": []
+          },
+          {
+            "nombre": "Odontología Doctora Camila Londoño",
+            "rating": 5.0,
+            "reviews": 62,
+            "website": true,
+            "web_url": "https://www.doctoralia.co/camila-londono-galeano/odontologo/medellin",
+            "diferencial": "Recomiendo ampliamente esta odontología por su excelente atención y el trato tan amable y paciente que brindan. Se nota el profesionalismo en cada pro",
+            "reviews_positivas": [
+              "Recomiendo ampliamente esta odontología por su excelente atención y el trato tan amable y paciente que brindan. Se nota el profesionalismo en cada procedimiento, explican todo con claridad y hacen que uno se sienta cómodo y tranquilo durante todo el ",
+              "Excelente servicio, la dra Camila y todas las niñas son muy amables, llevo más de 2 años realizando todos mis tratamientos  y recomendando a mis amigos y familiares aquí y todos estamos muy satisfechos.\nLo súper recomiendo!",
+              "Los recomiendo 100%. La calidad humana es espectacular. La doctora María Camila es súper cuidadosa y siempre está en pro de ayudarte en todo lo que necesitas y las preguntas que tengas. En manos de las mejores."
+            ],
+            "reviews_negativas": []
+          }
+        ],
+        "facebook_ads": [],
+        "instagram": {
+          "ok": false,
+          "razon": "No proporcionado"
+        },
+        "academico": [
+          {
+            "titulo": "Estudio de factibilidad para la apertura de un consultorio Odontológico en Ciudad Salitre Occidental (Bogotá), 2025.",
+            "autores": "YJMM Monroy - 2026 - repositorio.uniagustiniana.edu.co",
+            "resumen": "… 5.2 El sector odontológico en Colombia La odontología en Colombia está regulada bajo \nel … En odontología, el paciente es un consumidor informado, que compara precios, verifica …",
+            "fuente": "Google Scholar"
+          },
+          {
+            "titulo": "Diseño de un modelo integral de servicios odontológicos estéticos de alta calidad, dirigido a pacientes internacionales en Cali.",
+            "autores": "KP Ibarra - 2025 - repository.icesi.edu.co",
+            "resumen": "… la excelencia de la odontología colombiana en el ámbito global (El Universal, 2025). … El \nturismo médico en Colombia alcanzó en 2023 cerca de 500 000 visitantes, generando ingresos …",
+            "fuente": "Google Scholar"
+          },
+          {
+            "titulo": "Estrategia de redes sociales de la clínica odontológica OdontoStudio para generar engagement (2020-2024)",
+            "autores": "JM Benavides Vasquez - 2025 - repositorio.usil.edu.pe",
+            "resumen": "… We Are Social y Meltwater (2023) más de 4.740 millones de … promover los servicios de \nodontología permite a las clínicas … a las necesidades y comportamientos del consumidor antes de …",
+            "fuente": "Google Scholar"
+          },
+          {
+            "titulo": "COLECCIÓN CUADERNOS DEL ISCO",
+            "autores": "C Iriart, L Nervi, B Oliver, M Testa - researchgate.net",
+            "resumen": "… perspectivas teóricas para la salud pública brasileña y latinoamericana, de las cuales las … \n17 La insistencia en la figura del “dentista en la escuela” es contemporánea a la del psicólogo …",
+            "fuente": "Google Scholar"
+          },
+          {
+            "titulo": "Plan de Gestión Gerencial para la implementación de un consultorio odontológico integral, accesible y preventivo en Quito, Ecuador en el 2025",
+            "autores": "BI Albán Saltos - 2025 - dspace.udla.edu.ec",
+            "resumen": "… recursos, incorpore un enfoque interdisciplinario entre odontología y salud mental, y garantice \n… Implementar protocolos integrados de atención odontológica y psicológica como modelo …",
+            "fuente": "Google Scholar"
+          },
+          {
+            "titulo": "Estrategias de marketing para la captación de clientes del consultorio odontológico Crisdental, provincia de Santa Elena, 2023.",
+            "autores": "GF Cajape Quijije - 2024 - repositorio.upse.edu.ec",
+            "resumen": "… tasa de emprendimiento de Latinoamérica con un 15% de … racionalidad, emoción y psicología \nen función del contenido … (odontólogo principal), el administrador (odontólogo auxiliar) …",
+            "fuente": "Google Scholar"
+          }
+        ],
+        "dane": [],
+        "reviews_externas": {
+          "judge_me": [],
+          "trustpilot": [],
+          "amazon": [],
+          "fuente": [],
+          "total": 0,
+          "ok": false
+        },
+        "7_maletas": {
+          "maleta_1_publico": {
+            "edad_estimada": "25-55 años (pico 30-45)",
+            "genero": "Mixto — analizar con Meta Audience Insights para datos exactos",
+            "ubicacion": "Medellin",
+            "poder_adquisitivo": "NSE 3-5",
+            "evidencias": [
+              "Desconozco de la calidad del resto de los laboratorios pero puedo decir que Home Test Lab ha resuelto mi problema en un ",
+              "Excelente servicio.  La atención fue muy agradable,  la persona que prestó el servicio una dulzura de mujer, muy humana ",
+              "Los recomiendo 100% excelente servicio y muy rápida y buena atención. Los contacte a las 6:40am de un sábado y a las 8 a"
+            ]
+          },
+          "maleta_2_problema": {
+            "lista_dolores": [],
+            "top_3": [],
+            "principal": {
+              "problema": "Falta de confianza y seguimiento",
+              "menciones": 1,
+              "evidencia": ""
+            }
+          },
+          "maleta_3_solucion": {
+            "servicios": [
+              "Servicio principal de odontologos"
+            ],
+            "como_resuelve": "Test resuelve 'Falta de confianza y seguimiento' mediante Sin diferencial claro detectado en web y atención personalizada",
+            "mejor_testimonio": "Desconozco de la calidad del resto de los laboratorios pero puedo decir que Home Test Lab ha resuelto mi problema en un tiempo récord. Supieron adaptarse perfectamente a la urgencia de los análisis que me hacían falta ordenados por mi empresa. Mi especial agradecimiento a Elizabe",
+            "competidores_sol": [
+              {
+                "competidor": "ORAL CONCEPT INVISALIGN",
+                "mensaje": "Excelente servicio, amabilidad y cortesía. Santiago fue muy considerado y me trató con mucho cuidado"
+              },
+              {
+                "competidor": "Dr. Mauricio Arias - Odontólogo Experto en Medellín English Dentist",
+                "mensaje": "Buenas tardes, me siento muy feliz y agradecido con todo el personal del consulto especialmente con "
+              },
+              {
+                "competidor": "Dra. Tatiana Lopera",
+                "mensaje": "\"Dra.TATIANA LOPERA, quería pasar por aquí para darle las gracias de todo corazón por el increíble t"
+              }
+            ],
+            "oportunidad": "De 5 competidores, 1 no tienen web activa."
+          },
+          "maleta_4_diferenciales": {
+            "lista": [
+              {
+                "diferencial": "Excelencia general del servicio",
+                "frecuencia": 12
+              },
+              {
+                "diferencial": "Trato amable y personalizado",
+                "frecuencia": 6
+              },
+              {
+                "diferencial": "Profesionalismo del equipo",
+                "frecuencia": 5
+              },
+              {
+                "diferencial": "Alta tasa de recomendación espontánea",
+                "frecuencia": 4
+              },
+              {
+                "diferencial": "Calidad percibida del servicio",
+                "frecuencia": 2
+              },
+              {
+                "diferencial": "Rapidez y puntualidad",
+                "frecuencia": 1
+              }
+            ],
+            "menos_saturado": {
+              "diferencial": "Sin diferencial claro detectado en web",
+              "en_comp": 1
+            },
+            "recomendacion": "DESTACA 'Sin diferencial claro detectado en web' — diferencial con menor saturación detectada en competidores."
+          },
+          "maleta_5_testimonios": {
+            "rating": 4.9,
+            "total_reviews": 655,
+            "top_5": [
+              {
+                "texto": "Desconozco de la calidad del resto de los laboratorios pero puedo decir que Home Test Lab ha resuelto mi problema en un tiempo récord. Supieron adaptarse perfectamente a la urgencia de los análisis que me hacían falta ordenados por mi empresa. Mi especial agradecimiento a Elizabe",
+                "fuente": "Google Maps — Test"
+              },
+              {
+                "texto": "Excelente servicio.  La atención fue muy agradable,  la persona que prestó el servicio una dulzura de mujer, muy humana y linda con la paciente mi hermana, de una consideración única para una paciente tan vulnerable. Gracias por un servicio tan profesional y humano. Los recomiend",
+                "fuente": "Google Maps — Test"
+              },
+              {
+                "texto": "Los recomiendo 100% excelente servicio y muy rápida y buena atención. Los contacte a las 6:40am de un sábado y a las 8 am ya estaba la muchacha en mi casa. Excelente",
+                "fuente": "Google Maps — Test"
+              },
+              {
+                "texto": "Quiero agradecer por la excelente atención que recibí. Desde el primer momento fueron muy amables, me ayudaron con rapidez y resolvieron todo sin demoras. Es un gusto encontrar un servicio tan eficiente y humano. ¡Sigan así!\n100%recomendado",
+                "fuente": "Google Maps — Test"
+              },
+              {
+                "texto": "Excelente servicio. Muy rápido y eficaz, además de su buena atención, son muy amables.",
+                "fuente": "Google Maps — Test"
+              }
+            ],
+            "patrones": [
+              "13% menciona: Calidad percibida del servicio",
+              "80% menciona: Excelencia general del servicio",
+              "33% menciona: Profesionalismo del equipo",
+              "27% menciona: Alta tasa de recomendación espontánea"
+            ],
+            "meta_30_dias": "Pasar de 655 a 730 reviews en 30 días",
+            "script_review": "'Hola [nombre], ¿quedaste satisfecho/a? Nos dejarías una reseña en Google? 🙏 [link]'"
+          },
+          "maleta_6_objeciones": {
+            "lista_10_plus": [
+              {
+                "objecion": "Precio elevado",
+                "evidencia": "Objeción frecuente en odontologos",
+                "riesgo": "🟡 MEDIO"
+              },
+              {
+                "objecion": "No confío en la calidad",
+                "evidencia": "Objeción frecuente en odontologos",
+                "riesgo": "🟡 MEDIO"
+              },
+              {
+                "objecion": "No sé si vale la pena",
+                "evidencia": "Objeción frecuente en odontologos",
+                "riesgo": "🟡 MEDIO"
+              },
+              {
+                "objecion": "Hay opciones más baratas",
+                "evidencia": "Objeción frecuente en odontologos",
+                "riesgo": "🟡 MEDIO"
+              },
+              {
+                "objecion": "No tengo tiempo",
+                "evidencia": "Objeción frecuente en odontologos",
+                "riesgo": "🟡 MEDIO"
+              },
+              {
+                "objecion": "No sé si es para mí",
+                "evidencia": "Objeción frecuente en odontologos",
+                "riesgo": "🟡 MEDIO"
+              },
+              {
+                "objecion": "Malas experiencias",
+                "evidencia": "Objeción frecuente en odontologos",
+                "riesgo": "🟡 MEDIO"
+              },
+              {
+                "objecion": "Lejos de mi casa",
+                "evidencia": "Objeción frecuente en odontologos",
+                "riesgo": "🟡 MEDIO"
+              },
+              {
+                "objecion": "Sin cita disponible",
+                "evidencia": "Objeción frecuente en odontologos",
+                "riesgo": "🟡 MEDIO"
+              },
+              {
+                "objecion": "Prefiero esperar",
+                "evidencia": "Objeción frecuente en odontologos",
+                "riesgo": "🟡 MEDIO"
+              }
+            ],
+            "principal": {
+              "objecion": "Precio elevado",
+              "evidencia": "Objeción frecuente en odontologos",
+              "riesgo": "🟡 MEDIO"
+            },
+            "como_resolver": {
+              "en_web": "FAQ que responda: 'Precio elevado'",
+              "en_anuncios": "Incluye garantía explícita en el copy del anuncio",
+              "en_ventas": "Script: 'Entiendo tu duda. Por eso en [nombre] ofrecemos [solución].'"
+            }
+          },
+          "maleta_7_garantia": {
+            "garantia_actual": "No se detectó garantía explícita en la web",
+            "garantia_sugerida": "'Si no quedas satisfecho/a con tu odontologos en Test, repetimos el servicio sin costo. Sin preguntas.'",
+            "justificacion": [
+              "Resuelve la objeción #1: 'Precio elevado'",
+              "Solo 0 competidores ofrecen garantía visible",
+              "Garantías aumentan conversión 20-40% en sector servicios"
+            ],
+            "recomendacion": "IMPLEMENTA garantía explícita en web y anuncios — diferencial de bajo costo con alto impacto."
+          },
+          "ads_messages": [
+            {
+              "tipo": "Enfoque en Problema",
+              "headline": "¿Cansado de Falta de confianza y seguimiento?",
+              "descripcion": "En Test, lo resolvemos. Sin diferencial claro detectado en web.\n\n\"Desconozco de la calidad del resto de los laboratorios pero puedo decir que Home\"\n\nNo se detectó garantía explícita en la web → Agenda ahora",
+              "cta": "Agendar cita"
+            },
+            {
+              "tipo": "Diferencial único",
+              "headline": "Sin diferencial claro detectado en web — solo en Test",
+              "descripcion": "Resolvemos 'Falta de confianza y seguimiento' de una vez. Atención personalizada en Medellin.\n\nPrimeras citas disponibles esta semana.",
+              "cta": "Ver disponibilidad"
+            },
+            {
+              "tipo": "Testimonio/Resultado",
+              "headline": "\"Desconozco de la calidad del resto de los laboratorios pero puedo deci...\"",
+              "descripcion": "Así describió un cliente su experiencia en Test.\n¿Listo para el mismo resultado?\n\nNo se detectó garantía explícita en la web → Contáctanos",
+              "cta": "Quiero este resultado"
+            }
+          ],
+          "proximos_pasos": {
+            "esta_semana": [
+              {
+                "accion": "Actualiza Google Business con fotos recientes y responde todas las reviews",
+                "impacto": "Más visibilidad local inmediata"
+              },
+              {
+                "accion": "Agrega garantía explícita a tu web",
+                "impacto": "Reduce objeción principal"
+              },
+              {
+                "accion": "Implementa solicitud de reviews vía WhatsApp post-servicio",
+                "impacto": "+5-10 reviews/mes"
+              }
+            ],
+            "este_mes": [
+              "Entrevista 5-10 clientes: ¿Por qué nos elegiste?",
+              "Lanza campaña Meta Ads con Anuncio 1 (dolor: Falta de confianza y seguimiento)",
+              "Crea contenido: 'Cómo elegir el mejor odontologos en Medellin — 3 factores clave'"
+            ]
+          },
+          "fuentes_resumen": {
+            "reviews_negocio": 655,
+            "reviews_comp": 1673,
+            "total_reviews": 2328,
+            "competidores": 5,
+            "fb_ads": 0,
+            "academicas": 6,
+            "dane": 0,
+            "web_ok": false,
+            "instagram_ok": false
+          }
+        },
+        "insight_claude": "[Claude no disponible: HTTP Error 400: Bad Request]"
+      },
+      "market_researcher": {
+        "meta": {
+          "job_id": "0a2a7cc860ec",
+          "nicho": "odontologos",
+          "pais": "Colombia",
+          "ciudad": "Medellin",
+          "sectores": [],
+          "barrios": [],
+          "profundidad": "basica",
+          "terminado_at": "2026-05-06T22:23:50.999156",
+          "api_utilizada": true,
+          "claude_usado": false,
+          "fuentes_usadas": [
+            "google",
+            "academicas",
+            "facebook",
+            "dane",
+            "maps"
+          ]
+        },
+        "resumen_ejecutivo": {
+          "titulo": "Odontologos — Medellin + área completa",
+          "total_empresas": 29,
+          "rating_promedio": 4.9,
+          "pct_presencia_digital": 41,
+          "nivel_precio": "No disponible",
+          "dolor_principal": "falta de seguimiento",
+          "oportunidad_im": "ALTA"
+        },
+        "metricas": {
+          "total_encontrados": 29,
+          "rating_promedio": 4.9,
+          "con_presencia_web": 12,
+          "pct_presencia_web": 41,
+          "con_reviews_activos": 25,
+          "pct_reviews_activos": 86,
+          "nivel_precio_promedio": null,
+          "nivel_precio_label": "No disponible"
+        },
+        "competidores": [
+          {
+            "nombre": "ORAL CONCEPT INVISALIGN",
+            "barrio": "Medellin",
+            "direccion": "Cra. 70 #32 b 51 local 1, Medellín, Belén, Medellín, Antioquia, Colombia",
+            "rating": 5.0,
+            "reviews": 865,
+            "web": true,
+            "web_url": "https://oralconcept.co/home/oral-concept",
+            "telefono": "313 7662008",
+            "diferencial": "Excelente servicio, amabilidad y cortesía. Santiago fue muy considerado y me trató con mucho cuidado y cautela cuando me atendió.Yo le expliqué las co"
+          },
+          {
+            "nombre": "Dr. Mauricio Arias - Odontólogo Experto en Medellín English Dentist",
+            "barrio": "Medellin",
+            "direccion": "Cra. 76 #32D 31 Oficina 102, Laureles - Estadio, Medellín, Belén, Medellín, Antioquia, Colombia",
+            "rating": 4.9,
+            "reviews": 464,
+            "web": true,
+            "web_url": "https://mauricioariasexperience.com/",
+            "telefono": "304 6705124",
+            "diferencial": "Buenas tardes, me siento muy feliz y agradecido con todo el personal del consulto especialmente con la Dra. Arenas que se encargo de mi tratamiento po"
+          },
+          {
+            "nombre": "Sanadent Odontólogos - La Mejor Clínica Dental en Medellín",
+            "barrio": "Medellin",
+            "direccion": "Av. 33 #· 81 - 17, Simón Bolívar, Medellín, Laureles, Medellín, Antioquia, Colombia",
+            "rating": 4.9,
+            "reviews": 485,
+            "web": true,
+            "web_url": "http://www.sanadentodontologos.com.co/",
+            "telefono": "(604) 4486126",
+            "diferencial": "Quiero expresar mi más sincero agradecimiento a todo el equipo de la clínica por la atención recibida.\n\nDesde la primera visita, me he sentido bien or"
+          },
+          {
+            "nombre": "DentiOral - Sede Belén",
+            "barrio": "Medellin",
+            "direccion": "Cl. 30 #75-64, Medellín, Belén, Medellín, Antioquia, Colombia",
+            "rating": 4.8,
+            "reviews": 184,
+            "web": true,
+            "web_url": "https://www.dentioral.com/",
+            "telefono": "(604) 4448911",
+            "diferencial": "Excelente atención. Se lo recomendé a mi hija."
+          },
+          {
+            "nombre": "Orthodontics Medellín",
+            "barrio": "Medellin",
+            "direccion": "Av. 80 #20a-191, Medellín, Belén, Medellín, Antioquia, Colombia",
+            "rating": 4.9,
+            "reviews": 41,
+            "web": false,
+            "web_url": "",
+            "telefono": "314 2145728",
+            "diferencial": "Me realicé un diseño de sonrisa en los dientes superiores y tengo brackets estéticos en los dientes de abajo y me ha ido súper bien con todo el tratam"
+          },
+          {
+            "nombre": "Odontólogos y Especialistas",
+            "barrio": "Medellin",
+            "direccion": "Carrera 80 #32ee-3 a 32ee-69,, Medellín, Belén, Medellín, Antioquia, Colombia",
+            "rating": 5.0,
+            "reviews": 6,
+            "web": false,
+            "web_url": "",
+            "telefono": "44112100",
+            "diferencial": "Excelente experiencia, que delicadeza y cordialidad en la atención desde que llegas!"
+          },
+          {
+            "nombre": "Odontoespecialistas",
+            "barrio": "Medellin",
+            "direccion": "Calle 34 ##43-66 Local 1008 1009, La Candelaria, Medellín, La Candelaria, Medellín, Antioquia, Colombia",
+            "rating": 5.0,
+            "reviews": 1913,
+            "web": true,
+            "web_url": "http://www.odontoespecialistas.com/",
+            "telefono": "313 7591236",
+            "diferencial": "Excelente servicio. Todo el grupo y los especialistas son muy profesionales,  amigables y dispuestos a responder todas las dudas y preguntas que uno t"
+          },
+          {
+            "nombre": "Odontologos en Medellin",
+            "barrio": "Medellin",
+            "direccion": "Consultorio 1, Centro Comercial Unicentro, Cra 66B #34A 76, Laureles - Estadio, Medellín, Laureles, Medellín, Antioquia, Colombia",
+            "rating": 4.0,
+            "reviews": 3,
+            "web": true,
+            "web_url": "https://odontologoenmedellin.com/",
+            "telefono": "305 2581651",
+            "diferencial": "Excelente servicio! Mientras trabajaba una mañana normal, sentí un fuerte dolor en uno de mis dientes.  Al buscar en Internet un odontologo cercano qu"
+          },
+          {
+            "nombre": "Odontología 30a",
+            "barrio": "Medellin",
+            "direccion": "Cl. 30A #7148, Medellín, Belén, Medellín, Antioquia, Colombia",
+            "rating": 4.6,
+            "reviews": 15,
+            "web": false,
+            "web_url": "",
+            "telefono": "315 4148548",
+            "diferencial": "Me atendió y logró aliviar el dolor, sin embargo considero que faltó una mejor comunicación respecto a los costos. La urgencia tuvo un costo de $300.0"
+          },
+          {
+            "nombre": "Trébol Odontología Especializada Medellín",
+            "barrio": "Medellin",
+            "direccion": "Cra. 80A #32-204, Medellín, Belén, Medellín, Antioquia, Colombia",
+            "rating": 4.9,
+            "reviews": 67,
+            "web": true,
+            "web_url": "https://trebolodontologia.com/",
+            "telefono": "318 8297858",
+            "diferencial": "Hoy tuve el placer de asistir a consulta odontológica con la doctora Ana María García y su asistente Márgara, quedé profundamente agradecida por la at"
+          },
+          {
+            "nombre": "Dental Master - Dr. Rubén Arbeláez",
+            "barrio": "Medellin",
+            "direccion": "Mall Belén Avenida, Cl. 20A #76-33, Medellín, Belén, Medellín, Antioquia, Colombia",
+            "rating": 5.0,
+            "reviews": 49,
+            "web": true,
+            "web_url": "https://dentalmastersas.com/",
+            "telefono": "304 5436256",
+            "diferencial": "Excelente experiencia con el Dr. Rubén. Desde el primer momento fue muy atento y profesional. Se tomó el tiempo de explicarme cada procedimiento con c"
+          },
+          {
+            "nombre": "Dental Expertos",
+            "barrio": "Medellin",
+            "direccion": "Cra. 52 # 7-115, Guayabal, Medellín, Guayabal, Medellín, Antioquia, Colombia",
+            "rating": 4.9,
+            "reviews": 594,
+            "web": true,
+            "web_url": "https://www.instagram.com/dentalexpertos",
+            "telefono": "300 8938020",
+            "diferencial": "Mi experiencia con la Doctora Yised fue excelente. Desde el primer momento se aseguró de que me sintiera cómoda y satisfecha con cada paso del tratami"
+          },
+          {
+            "nombre": "Odontología Doctora Camila Londoño",
+            "barrio": "Medellin",
+            "direccion": "Av. 80 #28-90, Medellín, Belén, Medellín, Antioquia, Colombia",
+            "rating": 5.0,
+            "reviews": 62,
+            "web": true,
+            "web_url": "https://www.doctoralia.co/camila-londono-galeano/odontologo/medellin",
+            "telefono": "310 2481468",
+            "diferencial": "Recomiendo ampliamente esta odontología por su excelente atención y el trato tan amable y paciente que brindan. Se nota el profesionalismo en cada pro"
+          },
+          {
+            "nombre": "Oral Studio",
+            "barrio": "Medellin",
+            "direccion": "Cl. 19a # 44 - 25 Consultorio 2001, El Poblado, Medellín, El Poblado, Medellín, Antioquia, Colombia",
+            "rating": 5.0,
+            "reviews": 839,
+            "web": true,
+            "web_url": "https://www.oralstudio.com.co/",
+            "telefono": "312 7093687",
+            "diferencial": "Excelente el mejor servicio lo prestan en Oral Studio, el Doctor José Fernando Espitia es muy profesional con demasiado conocimiento en su trabajo es "
+          },
+          {
+            "nombre": "Clínica Dental Home",
+            "barrio": "Medellin",
+            "direccion": "Cl. 34 #34A-76 Consultorio 401, Laureles - Estadio, Medellín, Laureles, Medellín, Antioquia, Colombia",
+            "rating": 4.9,
+            "reviews": 807,
+            "web": true,
+            "web_url": "https://clinicadentalhome.com/?utm_source=google&utm_medium=organic&utm_campaign=google-business&utm_id=google-business&utm_term=google-business-unicentro",
+            "telefono": "310 4194654",
+            "diferencial": "La Dra. Juliana Ochoa es excelente profesional. Súper amable, delicada en su trabajo y siempre explica todo con claridad. El consultorio es muy limpio"
+          },
+          {
+            "nombre": "Consultorio Odontológico Vida Oral",
+            "barrio": "Medellin",
+            "direccion": "Cra. 78 #3057, Medellín, Belén, Medellín, Antioquia, Colombia",
+            "rating": 5.0,
+            "reviews": 2,
+            "web": false,
+            "web_url": "",
+            "telefono": "",
+            "diferencial": ""
+          },
+          {
+            "nombre": "OralFit Dental Experts",
+            "barrio": "Medellin",
+            "direccion": "Calle 23 #70-4 Belén, Cl. 23 #70-4, Medellín, Belén, Medellín, Antioquia, Colombia",
+            "rating": 4.9,
+            "reviews": 79,
+            "web": false,
+            "web_url": "",
+            "telefono": "",
+            "diferencial": ""
+          },
+          {
+            "nombre": "Dentioral - Sede Poblado",
+            "barrio": "Medellin",
+            "direccion": "Cra. 43A #34-95 Local 200, Centro comercial Almacentro, La Candelaria, Medellín, Antioquia, Colombia",
+            "rating": 5.0,
+            "reviews": 117,
+            "web": false,
+            "web_url": "",
+            "telefono": "",
+            "diferencial": ""
+          },
+          {
+            "nombre": "ORAL MAS ESPECIALISTAS",
+            "barrio": "Medellin",
+            "direccion": "Cl 44 #68 A 43 INT 201, Laureles - Estadio, Medellín, Laureles, Medellín, Antioquia, Colombia",
+            "rating": 5.0,
+            "reviews": 1084,
+            "web": false,
+            "web_url": "",
+            "telefono": "",
+            "diferencial": ""
+          },
+          {
+            "nombre": "Smile Natural Studio | Clínica & Spa Odontológico",
+            "barrio": "Medellin",
+            "direccion": "Cl. 19a #44-25 Consultorio 1217, El Poblado, Medellín, El Poblado, Medellín, Antioquia, Colombia",
+            "rating": 5.0,
+            "reviews": 108,
+            "web": false,
+            "web_url": "",
+            "telefono": "",
+            "diferencial": ""
+          },
+          {
+            "nombre": "Premium Dental Medellín",
+            "barrio": "Medellin",
+            "direccion": "Local 2101. CC Premium Plaza, El Poblado, La Candelaria, Medellín, Antioquia, Colombia",
+            "rating": 4.9,
+            "reviews": 730,
+            "web": false,
+            "web_url": "",
+            "telefono": "",
+            "diferencial": ""
+          },
+          {
+            "nombre": "Clínica Colombiana de Implantes Dentales",
+            "barrio": "Medellin",
+            "direccion": "Dg 75E #33A-160, Laureles - Estadio, Medellín, Laureles, Medellín, Antioquia, Colombia",
+            "rating": 4.8,
+            "reviews": 158,
+            "web": false,
+            "web_url": "",
+            "telefono": "",
+            "diferencial": ""
+          },
+          {
+            "nombre": "Infinity Smile",
+            "barrio": "Medellin",
+            "direccion": "Cra. 78A #34-41, Laureles - Estadio, Medellín, Laureles, Medellín, Antioquia, Colombia",
+            "rating": 4.9,
+            "reviews": 249,
+            "web": false,
+            "web_url": "",
+            "telefono": "",
+            "diferencial": ""
+          },
+          {
+            "nombre": "Clínica Dental Home",
+            "barrio": "Medellin",
+            "direccion": "Calle 7 39-107, Torre Medical Cons. 1215 Torre Medical, Cl. 7 #39-107 Consultorio 1005, El Poblado, Medellín, El Poblado, Medellín, Antioquia, Colombia",
+            "rating": 4.9,
+            "reviews": 130,
+            "web": false,
+            "web_url": "",
+            "telefono": "",
+            "diferencial": ""
+          },
+          {
+            "nombre": "Dental Center",
+            "barrio": "Medellin",
+            "direccion": "Cl. 11 #21, El Poblado, Medellín, El Poblado, Medellín, Antioquia, Colombia",
+            "rating": 4.9,
+            "reviews": 139,
+            "web": false,
+            "web_url": "",
+            "telefono": "",
+            "diferencial": ""
+          },
+          {
+            "nombre": "Clínica Viena / Veneers Medellín",
+            "barrio": "Medellin",
+            "direccion": "Cl. 7 Sur #n 42-70 of 420, El Poblado, Medellín, El Poblado, Medellín, Antioquia, Colombia",
+            "rating": 5.0,
+            "reviews": 332,
+            "web": false,
+            "web_url": "",
+            "telefono": "",
+            "diferencial": ""
+          },
+          {
+            "nombre": "Saodontos clínica dental",
+            "barrio": "Medellin",
+            "direccion": "Cra. 80A #32-204 CONSULTORIO 321, Medellín, Belén, Medellín, Antioquia, Colombia",
+            "rating": 5.0,
+            "reviews": 1,
+            "web": false,
+            "web_url": "",
+            "telefono": "",
+            "diferencial": ""
+          },
+          {
+            "nombre": "Royal Dental Care",
+            "barrio": "Medellin",
+            "direccion": "Centro Empresarial Mondongos, Cl 10 #38 54 502, El Poblado, Medellín, El Poblado, Medellín, Antioquia, Colombia",
+            "rating": 4.9,
+            "reviews": 132,
+            "web": false,
+            "web_url": "",
+            "telefono": "",
+            "diferencial": ""
+          },
+          {
+            "nombre": "ProSmile Medellín - Expertos en Salud Bucal y Estética Dental",
+            "barrio": "Medellin",
+            "direccion": "Cra. 70 #30 - 17, Medellín, Belén, Medellín, Antioquia, Colombia",
+            "rating": 5.0,
+            "reviews": 21,
+            "web": false,
+            "web_url": "",
+            "telefono": "",
+            "diferencial": ""
+          }
+        ],
+        "comparativo_sectores": {},
+        "sector_recomendado": {
+          "nombre": "Medellin",
+          "datos": {
+            "pct_sin_digital": 0
+          },
+          "razon": "Mayor % sin digitalizar (0%)"
+        },
+        "reviews_analisis": {
+          "total": 71,
+          "positivas": [
+            "Excelente servicio, amabilidad y cortesía. Santiago fue muy considerado y me trató con mucho cuidado y cautela cuando me atendió.Yo le expliqué las cosas que me pasaban y me hizo sentir muy bien y que",
+            "Me encantó la atención desde el primer momento. El equipo es super amable y profesional. Me explicaron todo el proceso de mi tratamiento y me hicieron sentir muy cómodo.\nLa clínica es moderna y limpia",
+            "Mi experiencia en la Clínica fue excepcional. Desde que llamé para pedir mi cita, la atención fue amable y eficiente, el personal me recordó la cita el día anterior, ¡un detalle que valoro! Al llegar,",
+            "Feliz por el tratamiento que me están realizando en los dientes. Mi sonrisa luce sana y blanca. Los recomiendo en medellín",
+            "Excelentes clínicas, con instalaciones lindas y con alta tecnología. Cuentan con personal altamente capacitado y atienden tus necesidades con la mayor empatía siempre. Los recomiendo sin duda alguna!",
+            "Buenas tardes, me siento muy feliz y agradecido con todo el personal del consulto especialmente con la Dra. Arenas que se encargo de mi tratamiento por su profesionalismo y calidad humana para con los",
+            "Excelente trato por todo el equipo. La clínica muy limpia, alto estándar. Muy informativo, puntuales. La Dra. Stephanie Arenas, muy, muy profesional. Ando de visita, y ya quisiera tener donde vivo un ",
+            "Tuve una excelente experiencia con la Dra. Arenas Nuñez. Me realicé un blanqueamiento dental y el resultado fue increíble: mis dientes quedaron mucho más blancos y naturales, con muy poca sensibilidad",
+            "Mi experiencia con el Doctor Mauricio Arias fue increíble. Brindo un servicio muy completo y profesional.  Definitivamente volvería a confiar en sus servicios.  Lo recomendaré a todos mis familiares y",
+            "1.st Amazing - Excelente\nOne of the best dentists.\nI arranged for the extraction of two wisdom teeth and the procedure went quickly, painlessly with music in the background that relaxes you.  Definite"
+          ],
+          "negativas": [],
+          "top_dolores": [],
+          "top_elogios": [
+            {
+              "elogio": "excelente",
+              "menciones": 43
+            },
+            {
+              "elogio": "profesional",
+              "menciones": 37
+            },
+            {
+              "elogio": "atención",
+              "menciones": 32
+            },
+            {
+              "elogio": "recomiendo",
+              "menciones": 26
+            },
+            {
+              "elogio": "calidad",
+              "menciones": 20
+            },
+            {
+              "elogio": "amable",
+              "menciones": 19
+            }
+          ],
+          "muestra_textual": [
+            {
+              "texto": "Excelente servicio, amabilidad y cortesía. Santiago fue muy considerado y me trató con mucho cuidado y cautela cuando me atendió.Yo le expliqué las cosas que me pasaban y me hizo sentir muy bien y que confiara . Y pudo terminar con éxito el trabajo. Excelente equipo de trabajo. Regresamos nuevamente, para terminar un tratamiento que queremos. Un excelente equipo lo recomiendo 💯 % Gracias, gracias, gracias.",
+              "rating": 5.0,
+              "lugar": "ORAL CONCEPT INVISALIGN"
+            },
+            {
+              "texto": "Me encantó la atención desde el primer momento. El equipo es super amable y profesional. Me explicaron todo el proceso de mi tratamiento y me hicieron sentir muy cómodo.\nLa clínica es moderna y limpia, con tecnología de punta. El doctor Andrés Yepes  es muy paciente y me hizo sentir en confianza.El precio es razonable y ofrecen planes de pago flexibles. ¡Definitivamente recomiendo a Oral concept  para cualquier tratamiento dental!",
+              "rating": 5.0,
+              "lugar": "ORAL CONCEPT INVISALIGN"
+            },
+            {
+              "texto": "Mi experiencia en la Clínica fue excepcional. Desde que llamé para pedir mi cita, la atención fue amable y eficiente, el personal me recordó la cita el día anterior, ¡un detalle que valoro! Al llegar, el ambiente era limpio y acogedor.",
+              "rating": 5.0,
+              "lugar": "ORAL CONCEPT INVISALIGN"
+            },
+            {
+              "texto": "Feliz por el tratamiento que me están realizando en los dientes. Mi sonrisa luce sana y blanca. Los recomiendo en medellín",
+              "rating": 5.0,
+              "lugar": "ORAL CONCEPT INVISALIGN"
+            },
+            {
+              "texto": "Excelentes clínicas, con instalaciones lindas y con alta tecnología. Cuentan con personal altamente capacitado y atienden tus necesidades con la mayor empatía siempre. Los recomiendo sin duda alguna!",
+              "rating": 5.0,
+              "lugar": "ORAL CONCEPT INVISALIGN"
+            },
+            {
+              "texto": "Buenas tardes, me siento muy feliz y agradecido con todo el personal del consulto especialmente con la Dra. Arenas que se encargo de mi tratamiento por su profesionalismo y calidad humana para con los clientes, también quiero resaltar su carisma y buen trato hacía nosotros, me voy satisfecho y anhelando poder volver en un futuro, nuevamente gracias por todo y Dios los bendiga.",
+              "rating": 5.0,
+              "lugar": "Dr. Mauricio Arias - Odontólogo Experto en Medellín English Dentist"
+            },
+            {
+              "texto": "Excelente trato por todo el equipo. La clínica muy limpia, alto estándar. Muy informativo, puntuales. La Dra. Stephanie Arenas, muy, muy profesional. Ando de visita, y ya quisiera tener donde vivo un equipo tan excelente. De mis partes favoritas es que hice una pregunta y se notó que cuidan más por la salud oral del paciente, que por el dinero. Ahí supe que estaba en excelentes manos.\nMuy complacido con el trabajo.\nEspero volver a visitarlos pronto!",
+              "rating": 5.0,
+              "lugar": "Dr. Mauricio Arias - Odontólogo Experto en Medellín English Dentist"
+            },
+            {
+              "texto": "Tuve una excelente experiencia con la Dra. Arenas Nuñez. Me realicé un blanqueamiento dental y el resultado fue increíble: mis dientes quedaron mucho más blancos y naturales, con muy poca sensibilidad y molestias. El equipo fue muy profesional, amable y atento en todo momento. Además, el consultorio es moderno y limpio, lo que hace que uno se sienta muy cómodo.\n¡Definitivamente recomiendo este lugar para quienes buscan una sonrisa más brillante y un servicio de primera!",
+              "rating": 5.0,
+              "lugar": "Dr. Mauricio Arias - Odontólogo Experto en Medellín English Dentist"
+            },
+            {
+              "texto": "Mi experiencia con el Doctor Mauricio Arias fue increíble. Brindo un servicio muy completo y profesional.  Definitivamente volvería a confiar en sus servicios.  Lo recomendaré a todos mis familiares y amigos!",
+              "rating": 5.0,
+              "lugar": "Dr. Mauricio Arias - Odontólogo Experto en Medellín English Dentist"
+            },
+            {
+              "texto": "1.st Amazing - Excelente\nOne of the best dentists.\nI arranged for the extraction of two wisdom teeth and the procedure went quickly, painlessly with music in the background that relaxes you.  Definitely like a SPA treatment.  I didn't have any side effects after the treatment, I was given clear instructions on post procedures tretmana.\n\n2.nd\nFui a sacarme tres muelas del juicio, una de ellas en una posición bastante complicada, por lo que el trabajo fue más exigente. Utilicé gas de la risa durante el procedimiento y todo fue completamente indoloro.Después, recibí instrucciones muy claras sobre cómo cuidarme en el período postoperatorio; recomiendo leerlas atentamente y seguirlas al pie de la letra.Mauricio Arias se ha convertido en mi dentista favorito en dos continentes. Lo recomiendo sinceramente.— Eduard, de Croacia",
+              "rating": 5.0,
+              "lugar": "Dr. Mauricio Arias - Odontólogo Experto en Medellín English Dentist"
+            },
+            {
+              "texto": "Quiero expresar mi más sincero agradecimiento a todo el equipo de la clínica por la atención recibida.\n\nDesde la primera visita, me he sentido bien orientada, respetada y cuidada. La organización, el profesionalismo y el trato amable de cada miembro del equipo hicieron que todo el proceso fuera mucho más tranquilo y positivo.\n\nGracias por su dedicación y por ofrecer un servicio de tanta calidad humana.\n\nCon gratitud,\n\nMichelle Rodriguez",
+              "rating": 5.0,
+              "lugar": "Sanadent Odontólogos - La Mejor Clínica Dental en Medellín"
+            },
+            {
+              "texto": "Excelente atención y profesionalismo la doctora que atendió mi bebé de 1 año y 9 meses super atentos y te explican todo muy claro",
+              "rating": 5.0,
+              "lugar": "Sanadent Odontólogos - La Mejor Clínica Dental en Medellín"
+            },
+            {
+              "texto": "Excelente el servicio , estoy feliz con todo el proceso de ortodoncia y el trato es super ameno",
+              "rating": 5.0,
+              "lugar": "Sanadent Odontólogos - La Mejor Clínica Dental en Medellín"
+            },
+            {
+              "texto": "Quedé muy satisfecha con la atención que me dieron. La doctora Tatiana es muy amable y profesional.\nMuchas gracias.",
+              "rating": 5.0,
+              "lugar": "Sanadent Odontólogos - La Mejor Clínica Dental en Medellín"
+            },
+            {
+              "texto": "La experiencia en Sanadent fue excelente muy muy buena calidad humana  las niñas de servicio, las recepcionista, auxiliares y los doctores. Todo muy limpio espectacular mente espectacular Un 10 de 10👍💪.",
+              "rating": 5.0,
+              "lugar": "Sanadent Odontólogos - La Mejor Clínica Dental en Medellín"
+            },
+            {
+              "texto": "Excelente atención. Se lo recomendé a mi hija.",
+              "rating": 5.0,
+              "lugar": "DentiOral - Sede Belén"
+            },
+            {
+              "texto": "Excelente atención, las recepcionistas son muy amables y la mejor cede de denti oral",
+              "rating": 5.0,
+              "lugar": "DentiOral - Sede Belén"
+            },
+            {
+              "texto": "Excelente atención,un equipo humano y profesional que se preocupa de verdad por el bienestar del paciente.Me sentí escuchada,cuidada y en las mejores manos.",
+              "rating": 5.0,
+              "lugar": "DentiOral - Sede Belén"
+            },
+            {
+              "texto": "Excelente servicio muy amables en su atención",
+              "rating": 5.0,
+              "lugar": "DentiOral - Sede Belén"
+            },
+            {
+              "texto": "Hola, Buenas Tardes.\nQuiero compartir mi experiencia que tengo sobre esta clínica.\nLa verdad que la sede de Belen es bonita y organizada los odontologos son muy profesionales y sus precios son en su medida considerables.\nSu servicio al cliente es aceptable pero pienso que lo pueden hacer mejor.\nEn lo que estoy en total desacuerdo, es que le asignan una cita y lo atienden 20minutos después de hora asignada ya ha sucedido en varias ocasiones. Les pido muy formalmente mejorar este pequeño inconveniente que hace que el cliente se sienta en una situación incomoda y con ganas de no volver a sus instalaciones ya que el tiempo es valioso.\nMuchas gracias y disculpen la molestia.\n\nHello, good afternoon.\nI want to share my experience that I have about this clinic.\nThe truth is that the Belen headquarters are beautiful and organized, the dentists are very professional and their prices are considerable.\nTheir customer service is acceptable but I think they can do better.\nIn what I totally disagree, is that they assign him an appointment and they attend him 20 minutes after the assigned time has already happened on several occasions.  I ask you very formally to improve this small inconvenience that makes the client feel in an uncomfortable situation and with the desire not to return to their facilities since time is valuable.\nThank you very much and sorry for the inconvenience.",
+              "rating": 3.0,
+              "lugar": "DentiOral - Sede Belén"
+            }
+          ]
+        },
+        "precios_raw": [],
+        "quejas_raw": [],
+        "recomendaciones_raw": [],
+        "facebook_ads_raw": [],
+        "informes_documentos": [],
+        "fuentes_academicas": [
+          {
+            "titulo": "Análisis del comportamiento del consumidor en la elección de servicios odontológicos privados en Ambato: implicaciones para el marketing estratégico.",
+            "autores": "RIM Gutama, JCS Pérez - Revista UNIANDES de Ciencias …, 2026 - revista.uniandes.edu.ec",
+            "resumen": "… odontólogo, el 23,2 % acude una vez al año al odontólogo, el 20,3 % de encuestados acude \nsolo ante un problema al odontólogo… odontólogo y el 0,6% de encuestados nunca acude al …",
+            "url": "https://revista.uniandes.edu.ec/ojs/index.php/RUCSALUD/article/view/4277",
+            "fuente": "Google Scholar",
+            "query": "comportamiento consumidor odontólogo Colombia"
+          },
+          {
+            "titulo": "¿ Cómo influye la percepción del servicio en la fidelización de los pacientes en el consultorio odontológico Dental Company–Dra. Paula Franco?",
+            "autores": "CA Andrade Moreno - 2025 - repository.universidadean.edu.co",
+            "resumen": "Este estudio analiza la percepción, servicio, fidelización, pacientes, calidad y satisfacción \nen el ámbito de la salud. Se desarrolla mediante la identificación del problema de …",
+            "url": "https://repository.universidadean.edu.co/entities/publication/1340e481-3384-4616-9ba2-8ad073687280",
+            "fuente": "Google Scholar",
+            "query": "comportamiento consumidor odontólogo Colombia"
+          },
+          {
+            "titulo": "Factores determinantes en el comportamiento de los consumidores al seleccionar los servicios odontológicos: El caso de las ciudades de Arica (Chile) y Tacna (Perú)",
+            "autores": "DOV Castillo, MAF Loredo… - Newman …, 2024 - journals.epnewman.edu.pe",
+            "resumen": "… que optan por la ciudad de Arica priorizan sus experiencias previas en el lugar, esto incluye \naspectos como a gestión del servicio, la relación con el odontólogo y el cumplimiento de …",
+            "url": "https://journals.epnewman.edu.pe/index.php/NBR/article/view/368",
+            "fuente": "Google Scholar",
+            "query": "comportamiento consumidor odontólogo Colombia"
+          },
+          {
+            "titulo": "Plan de Gestión Gerencial para la implementación de un consultorio odontológico integral, accesible y preventivo en Quito, Ecuador en el 2025",
+            "autores": "BI Albán Saltos - 2025 - dspace.udla.edu.ec",
+            "resumen": "… , incorpore un enfoque interdisciplinario entre odontología y salud mental, y garantice … a \n0,95 psicólogos, lo que indica una evidente brecha en la atención integrada (INEC, 2022). A la …",
+            "url": "https://dspace.udla.edu.ec/handle/33000/18265",
+            "fuente": "Google Scholar",
+            "query": "psicología compra odontólogo Latinoamérica 2022 2023 2024"
+          },
+          {
+            "titulo": "Marketing sensorial y su relación con el comportamiento del consumidor en Vicky Arias consultorio odontológico",
+            "autores": "CA Guamán Taco, LO Chusin Pilaguano - 2025 - repositorio.utc.edu.ec",
+            "resumen": "La presente investigación se realizó en Vicky Arias Consultorio Odontológico que se encuentra \nubicado en la parroquia Alóag del cantón Mejía, aquí se presenta una problemática que …",
+            "url": "https://repositorio.utc.edu.ec/items/9a1b7cf3-6929-4a29-a0a2-06003d0907a6",
+            "fuente": "Google Scholar",
+            "query": "psicología compra odontólogo Latinoamérica 2022 2023 2024"
+          },
+          {
+            "titulo": "COLECCIÓN CUADERNOS DEL ISCO",
+            "autores": "C Iriart, L Nervi, B Oliver, M Testa - researchgate.net",
+            "resumen": "… , en julio de 2023, bajo el XVII Congreso Latinoamericano de … de que la formación en \nodontología entre nosotros aún está … dentista en la escuela” es contemporánea a la del psicólogo …",
+            "url": "https://www.researchgate.net/profile/Carlos-Botazzo/publication/400877458_Salud_Bucal_Colectiva_y_Bucalidad_Ensayos/links/6994a55742f94d1212ab6fac/Salud-Bucal-Colectiva-y-Bucalidad-Ensayos.pdf",
+            "fuente": "Google Scholar",
+            "query": "psicología compra odontólogo Latinoamérica 2022 2023 2024"
+          },
+          {
+            "titulo": "Expectativa del paciente para la elección del servicio dental un enfoque de marketing",
+            "autores": "KH Fentanes - 2023 - ri-ng.uaq.mx",
+            "resumen": "… Cualquiera ha sido consumidor de servicios en algún momento de la vida, los … tiene que \nver con el desempeño del dentista, seguido del servicio del asistente dental y lo que menor …",
+            "url": "https://ri-ng.uaq.mx/handle/123456789/10335",
+            "fuente": "Google Scholar",
+            "query": "sesgos cognitivos consumidor servicios odontólogo"
+          },
+          {
+            "titulo": "Análisis del comportamiento del consumidor en la elección de servicios odontológicos privados en Ambato: implicaciones para el marketing estratégico.",
+            "autores": "RIM Gutama, JCS Pérez - Revista UNIANDES de Ciencias …, 2026 - revista.uniandes.edu.ec",
+            "resumen": "… La influencia del marketing digital en la odontología local refleja una tendencia global … en \nlínea constituyen herramientas decisivas para la elección de servicios (10,11). Sin embargo, …",
+            "url": "https://revista.uniandes.edu.ec/ojs/index.php/RUCSALUD/article/view/4277",
+            "fuente": "Google Scholar",
+            "query": "sesgos cognitivos consumidor servicios odontólogo"
+          },
+          {
+            "titulo": "Factores determinantes en el comportamiento de los consumidores al seleccionar los servicios odontológicos: El caso de las ciudades de Arica (Chile) y Tacna (Perú)",
+            "autores": "DOV Castillo, MAF Loredo… - Newman …, 2024 - journals.epnewman.edu.pe",
+            "resumen": "… , los consumidores que optan por la ciudad de Arica priorizan sus experiencias previas en \nel lugar, esto incluye aspectos como a gestión del servicio, la relación con el odontólogo y el …",
+            "url": "https://journals.epnewman.edu.pe/index.php/NBR/article/view/368",
+            "fuente": "Google Scholar",
+            "query": "sesgos cognitivos consumidor servicios odontólogo"
+          }
+        ],
+        "datos_gobierno": [],
+        "sesgos_cognitivos": {
+          "maleta_1_disponibilidad": {
+            "nombre": "Sesgo de Disponibilidad",
+            "maleta": "QUÉ EXISTE",
+            "descripcion": "Los odontologos con más reviews en Google Maps son automáticamente percibidos como 'los mejores'. Solo el 41% tiene presencia web — el 59% es invisible para el cliente digital.",
+            "evidencia": "De 29 empresas encontradas, el cliente considera activamente solo las primeras 5-7 en Maps. 17 negocios ni siquiera tienen web.",
+            "como_aprovecharlo": "IM posiciona a sus clientes en primeros resultados locales. Visibilidad online = credibilidad percibida = más consultas."
+          },
+          "maleta_2_statu_quo": {
+            "nombre": "Sesgo de Statu Quo",
+            "maleta": "QUÉ FALTA",
+            "descripcion": "El 59% de odontologos en Medellin no tiene presencia digital. Sus clientes actuales se quedan por inercia, no por fidelidad real. El costo percibido de cambiar es mayor al costo real de quedarse.",
+            "evidencia": "Rating promedio del sector: 4.9/5. Indica satisfacción moderada, no deleite. Clientes insatisfechos no cambian porque no saben que existen mejores opciones.",
+            "como_aprovecharlo": "IM captura estos clientes insatisfechos con retargeting digital y campañas de comparación antes de que el competidor lo haga."
+          },
+          "maleta_3_aversion_perdida": {
+            "nombre": "Aversión a la Pérdida (Kahneman & Tversky)",
+            "maleta": "QUÉ DUELE",
+            "descripcion": "El cliente de odontologos teme más perder dinero que ganar un buen servicio. El dolor primario: mala atención y falta de seguimiento. Este miedo pesa 2.5x más que el deseo de obtener el mejor resultado.",
+            "evidencia": "\"Busco confianza antes que precio\"",
+            "como_aprovecharlo": "IM usa garantías explícitas, casos de éxito con números y prueba social para reducir el riesgo percibido antes del primer contacto."
+          },
+          "maleta_4_deseo_real": {
+            "nombre": "Brecha Deseo Declarado vs. Real (Cialdini)",
+            "maleta": "QUÉ DESEA",
+            "descripcion": "El cliente dice buscar 'el mejor precio'. En realidad busca: sentirse cuidado y recibir atención personalizada. El deseo real es emocional — el declarado es el escudo racional que protege su ego en la negociación.",
+            "evidencia": "Reviews 5 estrellas raramente mencionan precio. Mencionan: excelente, profesional, atención.",
+            "como_aprovecharlo": "IM diseña copies que hablan al deseo real (emoción + resultado) no al declarado (precio/técnica). El CTA activa el deseo oculto."
+          },
+          "maleta_5_paralisis": {
+            "nombre": "Parálisis por Análisis + Desconfianza Institucional",
+            "maleta": "QUÉ FRENA",
+            "descripcion": "Con 29 opciones de odontologos en Medellin, el cliente entra en parálisis. Sin criterios claros de selección, usa reviews y precio como atajos mentales. La desconfianza en el sector es alta cuando no hay señales claras de autoridad y prueba social.",
+            "evidencia": "El sector tiene rating promedio de 4.9/5. La varianza entre negocios es alta — refuerza la incertidumbre del cliente.",
+            "como_aprovecharlo": "IM crea criterios de selección favorables a su cliente: 'Busca estos 3 factores antes de elegir un odontologos'. El contenido educativo posiciona al cliente de IM como la opción obvia."
+          },
+          "maleta_6_prueba_social": {
+            "nombre": "Prueba Social + Efecto Autoridad (Cialdini)",
+            "maleta": "QUÉ MUEVE",
+            "descripcion": "Umbral de confianza en el sector de odontologos: 50+ reviews con 4.5+. Sin este mínimo visible, el negocio es descartado automáticamente en la fase de consideración. La urgencia ('últimos cupos') activa el sesgo de escasez.",
+            "evidencia": "Promedio del sector: 4.9/5 con revisión de reviews como paso 1 en el proceso de decisión del 87% de consumidores colombianos.",
+            "como_aprovecharlo": "IM implementa sistemas automáticos de solicitud de reviews para superar el umbral de confianza en 60-90 días. Además, activa escasez real con cupos limitados y urgencia en WhatsApp."
+          },
+          "maleta_7_oportunidad": {
+            "nombre": "Sesgo de Omisión = Oportunidad de IM",
+            "maleta": "OPORTUNIDAD PARA IM",
+            "descripcion": "El mercado tiene 17 de 29 negocios (59%) que operan como si internet no existiera. Sus clientes potenciales los buscan online y los encuentran a sus competidores que SÍ tienen presencia digital.",
+            "evidencia": "17 odontologos sin web en Medellin. Cada uno pierde 10-30 clientes potenciales mensuales por no aparecer en búsquedas digitales.",
+            "como_aprovecharlo": "Cada odontologos sin web es un prospecto calificado de IM. Mensaje: 'Tus competidores te están robando clientes mientras tú no apareces en Google.' Cierre: mostrar cuántos los buscan al mes."
+          }
+        },
+        "perfil_psicografico": {
+          "edad_estimada": "28-55 años",
+          "nivel_socioeconomico": "Estrato 3-5 (según sectores: Medellin)",
+          "motivacion_principal": "sentirse cuidado y recibir atención personalizada",
+          "mayor_miedo": "mala atención y falta de seguimiento",
+          "como_busca_info": "Google Maps (paso 1), recomendaciones de conocidos, Instagram, WhatsApp",
+          "tiempo_decision": "3-10 días (compara 2-4 opciones; más para servicios de alto costo)",
+          "que_lo_convence": "Reviews recientes +4.5 · respuesta rápida en WhatsApp · precio claro desde el inicio",
+          "trigger_de_compra": "Recomendación directa de alguien de confianza o ver 50+ reviews positivas",
+          "frase_que_lo_describe": "Busco confianza antes que precio"
+        },
+        "analisis_7_maletas": "[Síntesis no disponible: HTTP Error 400: Bad Request]",
+        "7_maletas_analisis": {
+          "maleta_1_publico": {
+            "edad_estimada": "25-55 años (pico 30-45 años)",
+            "genero": "100% mujeres, 0% hombres (estimado de 71 reviews)",
+            "ubicacion": "Principalmente Medellin y alrededores, Medellin. Zona de búsqueda: Medellin",
+            "situacion_sentimental": "Mixto — familias y solteros según sector. Mayor volumen: adultos con responsabilidades económicas",
+            "poder_adquisitivo": "Medio-alto (Estrato 3-5): buscan calidad pero comparan precios",
+            "evidencias": [
+              "De 29 empresas mapeadas en Medellin",
+              "Nivel de precios del sector: No disponible",
+              "Sectores analizados: Medellin",
+              "Excelente servicio, amabilidad y cortesía. Santiago fue muy considerado y me trató con mucho cuidado y cautela cuando me",
+              "Me encantó la atención desde el primer momento. El equipo es super amable y profesional. Me explicaron todo el proceso d"
+            ]
+          },
+          "maleta_2_problema": {
+            "lista_dolores": [],
+            "top_3": [],
+            "principal": {
+              "problema": "Falta de confianza y seguimiento",
+              "menciones": 1,
+              "evidencia": ""
+            },
+            "total_analizados": 71
+          },
+          "maleta_3_solucion": {
+            "servicios_ofrecidos": [
+              "Ortodoncia invisible",
+              "Blanqueamiento dental",
+              "Implantes",
+              "Limpieza profesional"
+            ],
+            "como_resuelve_problema": "odontologos resuelve 'Falta de confianza y seguimiento' mediante Ortodoncia invisible y seguimiento personalizado",
+            "mejor_testimonio": "Excelente servicio, amabilidad y cortesía. Santiago fue muy considerado y me trató con mucho cuidado y cautela cuando me atendió.Yo le expliqué las cosas que me pasaban y me hizo sentir muy bien y que",
+            "competidores_solucion": [
+              {
+                "competidor": "ORAL CONCEPT INVISALIGN",
+                "mensaje": "Excelente servicio, amabilidad y cortesía. Santiago fue muy considerado y me trató con mucho cuidado y cautela cuando me"
+              },
+              {
+                "competidor": "Dr. Mauricio Arias - Odontólogo Experto en Medellín English Dentist",
+                "mensaje": "Buenas tardes, me siento muy feliz y agradecido con todo el personal del consulto especialmente con la Dra. Arenas que s"
+              },
+              {
+                "competidor": "Sanadent Odontólogos - La Mejor Clínica Dental en Medellín",
+                "mensaje": "Quiero expresar mi más sincero agradecimiento a todo el equipo de la clínica por la atención recibida.\n\nDesde la primera"
+              },
+              {
+                "competidor": "DentiOral - Sede Belén",
+                "mensaje": "Excelente atención. Se lo recomendé a mi hija."
+              }
+            ],
+            "oportunidad_mejora": "El 59% de odontologos en Medellin NO comunica claramente su solución online. Los que sí lo hacen (los 41% con presencia digital) concentran la demanda."
+          },
+          "maleta_4_diferenciales": {
+            "lista_diferenciales": [
+              {
+                "diferencial": "Equipo profesional certificado",
+                "keyword": "profesional",
+                "frecuencia": 5,
+                "en_comp": 5,
+                "saturacion": "Alta"
+              },
+              {
+                "diferencial": "Atención cálida y personalizada",
+                "keyword": "amable",
+                "frecuencia": 3,
+                "en_comp": 2,
+                "saturacion": "Media"
+              },
+              {
+                "diferencial": "Años de experiencia en el sector",
+                "keyword": "experiencia",
+                "frecuencia": 3,
+                "en_comp": 3,
+                "saturacion": "Media"
+              },
+              {
+                "diferencial": "Resultados visibles y medibles",
+                "keyword": "resultado",
+                "frecuencia": 1,
+                "en_comp": 0,
+                "saturacion": "Baja (Única)"
+              },
+              {
+                "diferencial": "Tecnología de punta o equipos modernos",
+                "keyword": "tecnología",
+                "frecuencia": 1,
+                "en_comp": 0,
+                "saturacion": "Baja (Única)"
+              }
+            ],
+            "menos_saturado": {
+              "diferencial": "Resultados visibles y medibles",
+              "keyword": "resultado",
+              "frecuencia": 1,
+              "en_comp": 0,
+              "saturacion": "Baja (Única)"
+            },
+            "tabla_comparativa": [
+              {
+                "aspecto": "Equipo profesional certificado",
+                "tu": "✅",
+                "comp1": "✅",
+                "comp2": "✅",
+                "comp3": "✅",
+                "saturacion": "Alta"
+              },
+              {
+                "aspecto": "Atención cálida y personalizada",
+                "tu": "✅",
+                "comp1": "✅",
+                "comp2": "✅",
+                "comp3": "❌",
+                "saturacion": "Media"
+              },
+              {
+                "aspecto": "Años de experiencia en el sector",
+                "tu": "✅",
+                "comp1": "✅",
+                "comp2": "✅",
+                "comp3": "✅",
+                "saturacion": "Media"
+              },
+              {
+                "aspecto": "Resultados visibles y medibles",
+                "tu": "✅",
+                "comp1": "❌",
+                "comp2": "❌",
+                "comp3": "❌",
+                "saturacion": "Baja (Única)"
+              },
+              {
+                "aspecto": "Tecnología de punta o equipos modernos",
+                "tu": "✅",
+                "comp1": "❌",
+                "comp2": "❌",
+                "comp3": "❌",
+                "saturacion": "Baja (Única)"
+              }
+            ],
+            "recomendacion": "DESTACA 'Resultados visibles y medibles' en todos tus anuncios — solo 0 competidores lo mencionan."
+          },
+          "maleta_5_testimonios": {
+            "rating_general": 4.9,
+            "total_reviews": 71,
+            "top_5_testimonios": [
+              {
+                "texto": "Excelente servicio, amabilidad y cortesía. Santiago fue muy considerado y me trató con mucho cuidado y cautela cuando me atendió.Yo le expliqué las cosas que me pasaban y me hizo sentir muy bien y que",
+                "fuente": "Google Maps"
+              },
+              {
+                "texto": "Me encantó la atención desde el primer momento. El equipo es super amable y profesional. Me explicaron todo el proceso de mi tratamiento y me hicieron sentir muy cómodo.\nLa clínica es moderna y limpia",
+                "fuente": "Google Maps"
+              },
+              {
+                "texto": "Mi experiencia en la Clínica fue excepcional. Desde que llamé para pedir mi cita, la atención fue amable y eficiente, el personal me recordó la cita el día anterior, ¡un detalle que valoro! Al llegar,",
+                "fuente": "Google Maps"
+              },
+              {
+                "texto": "Feliz por el tratamiento que me están realizando en los dientes. Mi sonrisa luce sana y blanca. Los recomiendo en medellín",
+                "fuente": "Google Maps"
+              },
+              {
+                "texto": "Excelentes clínicas, con instalaciones lindas y con alta tecnología. Cuentan con personal altamente capacitado y atienden tus necesidades con la mayor empatía siempre. Los recomiendo sin duda alguna!",
+                "fuente": "Google Maps"
+              }
+            ],
+            "patrones": [
+              "20% hablan de: amabilidad (2 reviews)",
+              "40% hablan de: profesionalismo (4 reviews)",
+              "10% hablan de: resultados (1 reviews)"
+            ],
+            "tipo_negocio": "SERVICIOS",
+            "estrategia_recoleccion": {
+              "principal": "Solicitud presencial o por WhatsApp inmediatamente después del servicio",
+              "complementaria_1": "Link acortado de Google Business vía WhatsApp con seguimiento 24h",
+              "complementaria_2": "Programa de referidos: review + foto = descuento en próximo servicio",
+              "script_whatsapp": "'Hola [nombre], ¿quedaste satisfecho/a con nuestro odontologos? Nos encantaría que nos dejaras una reseña en Google 🙏 Solo toma 1 minuto: [link]'"
+            },
+            "meta_30_dias": "Pasar de 71 a 101 reviews en 30 días"
+          },
+          "maleta_6_objeciones": {
+            "lista_10_plus": [
+              {
+                "objecion": "Precio elevado",
+                "keyword": "precio",
+                "fuente": "reviews + búsquedas Google",
+                "evidencia": "Objeción frecuente en sector de odontologos",
+                "resuelves": "❌ No mencionado",
+                "riesgo": "🔴 ALTO"
+              },
+              {
+                "objecion": "No confío en la calidad",
+                "keyword": "confianza",
+                "fuente": "reviews negativas",
+                "evidencia": "Objeción frecuente en sector de odontologos",
+                "resuelves": "❌ No mencionado",
+                "riesgo": "🔴 ALTO"
+              },
+              {
+                "objecion": "No sé si vale la pena",
+                "keyword": "valor",
+                "fuente": "búsquedas 'vale la pena'",
+                "evidencia": "Objeción frecuente en sector de odontologos",
+                "resuelves": "⚠️ Parcialmente",
+                "riesgo": "🟡 MEDIO"
+              },
+              {
+                "objecion": "Hay opciones más baratas",
+                "keyword": "alternativas",
+                "fuente": "Facebook Ads competencia",
+                "evidencia": "Objeción frecuente en sector de odontologos",
+                "resuelves": "❌ No mencionado",
+                "riesgo": "🔴 ALTO"
+              },
+              {
+                "objecion": "No tengo tiempo",
+                "keyword": "tiempo",
+                "fuente": "búsquedas Google",
+                "evidencia": "Objeción frecuente en sector de odontologos",
+                "resuelves": "❌ No mencionado",
+                "riesgo": "🔴 ALTO"
+              },
+              {
+                "objecion": "No sé si es para mí",
+                "keyword": "duda",
+                "fuente": "preguntas frecuentes",
+                "evidencia": "Objeción frecuente en sector de odontologos",
+                "resuelves": "⚠️ Parcialmente",
+                "riesgo": "🟡 MEDIO"
+              },
+              {
+                "objecion": "Malas experiencias antes",
+                "keyword": "trauma",
+                "fuente": "reviews negativas",
+                "evidencia": "Objeción frecuente en sector de odontologos",
+                "resuelves": "❌ No mencionado",
+                "riesgo": "🔴 ALTO"
+              },
+              {
+                "objecion": "Lejos de mi casa",
+                "keyword": "distancia",
+                "fuente": "búsquedas geográficas",
+                "evidencia": "Objeción frecuente en sector de odontologos",
+                "resuelves": "❌ No mencionado",
+                "riesgo": "🔴 ALTO"
+              },
+              {
+                "objecion": "No tengo cita disponible",
+                "keyword": "disponib.",
+                "fuente": "reviews negativas",
+                "evidencia": "Objeción frecuente en sector de odontologos",
+                "resuelves": "❌ No mencionado",
+                "riesgo": "🔴 ALTO"
+              },
+              {
+                "objecion": "Prefiero esperar",
+                "keyword": "urgencia",
+                "fuente": "patrones de decisión",
+                "evidencia": "Objeción frecuente en sector de odontologos",
+                "resuelves": "❌ No mencionado",
+                "riesgo": "🔴 ALTO"
+              }
+            ],
+            "de_competidores": [],
+            "principal": {
+              "objecion": "Precio elevado",
+              "keyword": "precio",
+              "fuente": "reviews + búsquedas Google",
+              "evidencia": "Objeción frecuente en sector de odontologos",
+              "resuelves": "❌ No mencionado",
+              "riesgo": "🔴 ALTO"
+            },
+            "como_resolver": {
+              "en_web": "Agrega sección FAQ que responda: 'Precio elevado'",
+              "en_anuncios": "Incluye en el copy: 'Sin [objeción]. Solo resultados.'",
+              "en_ventas": "Script WhatsApp: 'Entiendo tu duda sobre [objeción]. Por eso nosotros [solución específica].'"
+            }
+          },
+          "maleta_7_garantia": {
+            "garantia_actual": "No se detectó garantía explícita en las fuentes analizadas",
+            "garantia_sugerida": "'Si no quedas satisfecho/a con tu odontologos, repetimos el servicio sin costo adicional. Tu satisfacción es nuestra prioridad — sin preguntas, sin complicaciones.'",
+            "justificacion": [
+              "Reduce la objeción principal: 'Precio elevado'",
+              "Solo 0 de 5 competidores ofrecen garantía visible",
+              "Las garantías explícitas aumentan conversión 20-40% (benchmark sector servicios Colombia)"
+            ],
+            "garantias_mercado": [],
+            "comparacion": {
+              "devolucion_dinero": "A evaluar según tipo de servicio",
+              "repeticion_servicio": "Recomendado — bajo costo real, alto impacto percibido",
+              "garantia_satisfaccion": "Implementar explícitamente en web y anuncios",
+              "periodo_prueba": "Aplica para servicios con contrato (gym, consultoría)"
+            },
+            "recomendacion": "IMPLEMENTA garantía explícita — ninguno de los 5 competidores analizados la menciona visiblemente. Esto es tu ventaja competitiva inmediata."
+          },
+          "ads_messages": [
+            {
+              "tipo": "Enfoque en Problema",
+              "headline": "¿Cansado de Falta de confianza y seguimiento?",
+              "descripcion": "En [Tu Empresa], lo resolvemos. Resultados visibles y medibles. Más de 71+ clientes satisfechos en Medellin.\n\n\"Excelente servicio, amabilidad y cortesía. Santiago fue muy considerado y me tra\"\n\nSin riesgo para ti → Agenda tu cita hoy: [link]",
+              "cta": "Agenda ahora"
+            },
+            {
+              "tipo": "Enfoque en Diferencial Único",
+              "headline": "Resultados visibles y medibles — solo en [Tu Empresa]",
+              "descripcion": "Resuelve 'Falta de confianza y seguimiento' de una vez. [X] años de experiencia en Medellin. Atención personalizada desde el primer contacto.\n\nAgenda tu cita gratis → [link]",
+              "cta": "Ver disponibilidad"
+            },
+            {
+              "tipo": "Enfoque en Testimonio/Resultado",
+              "headline": "\"Excelente servicio, amabilidad y cortesía. Santiago fue muy considerad...\"",
+              "descripcion": "Así describió [Nombre] su experiencia con nosotros. Resolvemos 'Falta de confianza y seguimiento' con Resultados visibles y medibles.\n\nSin riesgo para ti · Primeras citas disponibles esta semana → [link]",
+              "cta": "Quiero este resultado"
+            }
+          ],
+          "proximos_pasos": {
+            "esta_semana": [
+              {
+                "accion": "Actualiza tu perfil de Google Business con fotos recientes y responde todas las reviews sin contestar",
+                "por_que": "Solo 41% del sector tiene presencia digital activa — diferénciante ahora",
+                "impacto": "Más visibilidad local inmediata"
+              },
+              {
+                "accion": "Agrega garantía explícita a tu web y perfil: ''Si no quedas satisfecho/a con tu odontologos, repetimos el servicio sin costo a...'",
+                "por_que": "Resuelve la objeción #1: 'Precio elevado'",
+                "impacto": "Aumento estimado 20-35% en contactos"
+              },
+              {
+                "accion": "Implementa solicitud de reviews vía WhatsApp post-servicio: 'Hola [nombre], ¿quedaste satisfecho/a con nuestro odontologos? Nos encantaría q...",
+                "por_que": "Actualmente 71 reviews — necesitas 50+ para superar umbral de confianza",
+                "impacto": "+5-10 reviews/mes desde el día 1"
+              }
+            ],
+            "este_mes": [
+              "Entrevista a 5-10 clientes: ¿Por qué nos elegiste? ¿Qué extrañarías?",
+              "Lanza campaña Meta Ads con el Anuncio 1 ('¿Cansado de Falta de confianza y seguimiento?')",
+              "Crea contenido educativo: 'Cómo elegir el mejor odontologos en Medellin — 3 factores clave'"
+            ],
+            "validacion_manual": [
+              "'¿Por qué nos compraste a nosotros y no a otro odontologos?'",
+              "'¿Qué problema querías resolver cuando nos buscaste?'",
+              "'Si ya no existiéramos, ¿qué odontologos buscarías?'"
+            ]
+          },
+          "fuentes_resumen": {
+            "empresas_mapeadas": 29,
+            "reviews_analizadas": 71,
+            "competidores": 29,
+            "fuentes_academicas": 9,
+            "datos_gobierno": 0,
+            "fb_ads": 0,
+            "busquedas_google": 0
+          }
+        }
+      },
+      "lead_investigator": {
+        "error": "no disponible"
+      }
+    },
+    "estrategia": {
+      "intelligence_engine": {
+        "nombre": "Test",
+        "nicho": "odontologos",
+        "ciudad": "Medellin",
+        "propuesta": "Propuesta de valor única para Test en el sector odontologos de Medellin.",
+        "diferencial": "Diferencial competitivo identificado para Test.",
+        "tono": "Profesional con cercanía — narrativa de autoridad empática.",
+        "voz": "Directa, sin tecnicismos, orientada a resultados concretos.",
+        "personalidad": "Experto confiable que habla el idioma del cliente.",
+        "narrativa": "Narrativa de marca: Propuesta de valor única para Test en el sector odontologos de Medellin.",
+        "posicionamiento": "Test — referente de odontologos en Medellin.",
+        "texto_completo": "[Error API: Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.]",
+        "generado_at": "2026-05-06T22:23:52.782148"
+      },
+      "ads_strategist": {
+        "nombre_negocio": "Test",
+        "nicho": "odontologos",
+        "ciudad": "Medellin",
+        "tamanio": "mediana",
+        "investigacion_job_id": "",
+        "funnel": {
+          "etapas": [
+            {
+              "etapa": "Impresiones",
+              "benchmark_ctr": "2-4%",
+              "problema_tipico": "Creativos genéricos sin gancho emocional",
+              "causa_raiz": "No se usan los dolores reales del público en el copy",
+              "solucion": "Usar los 3 problemas principales identificados en Maleta 2 como hooks",
+              "prioridad": "ALTA"
+            },
+            {
+              "etapa": "Clics",
+              "benchmark_ctr": "1-3%",
+              "problema_tipico": "CTA poco claro o poco urgente",
+              "causa_raiz": "Oferta no diferenciada vs competencia",
+              "solucion": "Destacar 'servicio premium' en headline",
+              "prioridad": "ALTA"
+            },
+            {
+              "etapa": "Visitas",
+              "benchmark_ctr": "40-60% permanencia",
+              "problema_tipico": "Landing page no responde la promesa del anuncio",
+              "causa_raiz": "Mensaje inconsistente entre anuncio y página",
+              "solucion": "Alinear headline de landing con copy del anuncio (message match)",
+              "prioridad": "ALTA"
+            },
+            {
+              "etapa": "Contacto",
+              "benchmark_ctr": "5-15%",
+              "problema_tipico": "Formulario largo o sin trust signals",
+              "causa_raiz": "Poco social proof visible en el momento de decisión",
+              "solucion": "Mostrar '0 reseñas · 4.0★' justo sobre el formulario",
+              "prioridad": "ALTA"
+            },
+            {
+              "etapa": "Consulta",
+              "benchmark_ctr": "30-50%",
+              "problema_tipico": "Equipo de ventas sin manejo de objeciones",
+              "causa_raiz": "Objeciones no anticipadas en el proceso de cierre",
+              "solucion": "Script de objeciones para: ",
+              "prioridad": "MEDIA"
+            },
+            {
+              "etapa": "Cierre",
+              "benchmark_ctr": "20-40%",
+              "problema_tipico": "Sin garantía clara que reduzca el riesgo percibido",
+              "causa_raiz": "Cliente percibe riesgo alto sin red de seguridad",
+              "solucion": "Implementar: garantía de satisfacción 30 días",
+              "prioridad": "ALTA"
+            }
+          ],
+          "fugas_criticas": [
+            {
+              "etapa": "Impresiones",
+              "benchmark_ctr": "2-4%",
+              "problema_tipico": "Creativos genéricos sin gancho emocional",
+              "causa_raiz": "No se usan los dolores reales del público en el copy",
+              "solucion": "Usar los 3 problemas principales identificados en Maleta 2 como hooks",
+              "prioridad": "ALTA"
+            },
+            {
+              "etapa": "Clics",
+              "benchmark_ctr": "1-3%",
+              "problema_tipico": "CTA poco claro o poco urgente",
+              "causa_raiz": "Oferta no diferenciada vs competencia",
+              "solucion": "Destacar 'servicio premium' en headline",
+              "prioridad": "ALTA"
+            },
+            {
+              "etapa": "Visitas",
+              "benchmark_ctr": "40-60% permanencia",
+              "problema_tipico": "Landing page no responde la promesa del anuncio",
+              "causa_raiz": "Mensaje inconsistente entre anuncio y página",
+              "solucion": "Alinear headline de landing con copy del anuncio (message match)",
+              "prioridad": "ALTA"
+            },
+            {
+              "etapa": "Contacto",
+              "benchmark_ctr": "5-15%",
+              "problema_tipico": "Formulario largo o sin trust signals",
+              "causa_raiz": "Poco social proof visible en el momento de decisión",
+              "solucion": "Mostrar '0 reseñas · 4.0★' justo sobre el formulario",
+              "prioridad": "ALTA"
+            },
+            {
+              "etapa": "Cierre",
+              "benchmark_ctr": "20-40%",
+              "problema_tipico": "Sin garantía clara que reduzca el riesgo percibido",
+              "causa_raiz": "Cliente percibe riesgo alto sin red de seguridad",
+              "solucion": "Implementar: garantía de satisfacción 30 días",
+              "prioridad": "ALTA"
+            }
+          ],
+          "score_funnel": 2.5,
+          "rating": 4.0,
+          "total_reviews": 0,
+          "num_objeciones": 0,
+          "resumen": "Funnel score 2.5/10 — 5 fugas críticas detectadas. Rating 4.0★ con 0 reseñas."
+        },
+        "campanas": {
+          "campanas": [
+            {
+              "nombre": "C1 — Tráfico Frío | odontologos | Medellin",
+              "objetivo_meta": "LEADS",
+              "etapa_funnel": "Impresiones → Clics → Visitas",
+              "formato": "Video 9:16 (Reels) + Imagen carrusel",
+              "duracion_video": "15-30 segundos",
+              "publico": {
+                "ubicacion": "Medellin",
+                "edad": "25-54",
+                "genero": "Todos",
+                "intereses": [
+                  "odontologos",
+                  "emprendimiento"
+                ],
+                "comportamientos": [
+                  "pequeñas_empresas",
+                  "compradores_en_linea"
+                ],
+                "ingresos_estimados": "medio"
+              },
+              "copies": [
+                {
+                  "variacion": "A — Dolor directo",
+                  "hook": "¿Cansado de encontrar odontologos confiable?",
+                  "cuerpo": "En Test lo resolvemos diferente. servicio personalizado de odontologos. Más de  clientes satisfechos en Medellin. 👉 Agenda tu consulta GRATIS hoy.",
+                  "cta": "QUIERO SABER MÁS",
+                  "principio_psicologico": "Pain-Agitate-Solve (Sugarman)"
+                },
+                {
+                  "variacion": "B — Prueba social",
+                  "hook": "Así resolvimos encontrar odontologos confiable",
+                  "cuerpo": "'' — cliente real de Test. Ofrecemos servicio personalizado de odontologos en Medellin. Sin compromisos. Respuesta en menos de 2 horas.",
+                  "cta": "VER CASOS DE ÉXITO",
+                  "principio_psicologico": "Social Proof (Cialdini)"
+                },
+                {
+                  "variacion": "C — Escasez/Urgencia",
+                  "hook": "Solo 5 cupos disponibles este mes en Medellin",
+                  "cuerpo": "Test — especialistas en odontologos. servicio personalizado de odontologos. Agenda antes del viernes y recibe una auditoría gratuita de tu situación actual.",
+                  "cta": "RESERVAR MI CUPO",
+                  "principio_psicologico": "Scarcity + Loss Aversion (Kahneman)"
+                }
+              ],
+              "presupuesto_cop": 2500000,
+              "roas_objetivo": 3.6,
+              "kpis": {
+                "cpm_max": 8000,
+                "ctr_min": "2%",
+                "cpl_max": 25000
+              },
+              "notas": "Audiencia fría. Priorizar hook emocional en primeros 3s."
+            },
+            {
+              "nombre": "C2 — Retargeting | Visitantes web | Medellin",
+              "objetivo_meta": "CONVERSIONES",
+              "etapa_funnel": "Visitas → Contacto → Consulta",
+              "formato": "Imagen estática + Story con CTA swipe-up",
+              "duracion_video": "N/A",
+              "publico": {
+                "ubicacion": "Medellin",
+                "edad": "25-54",
+                "genero": "Todos",
+                "audiencia_personalizada": "Visitantes web últimos 30 días",
+                "excluir": "Compradores recientes"
+              },
+              "copies": [
+                {
+                  "variacion": "A — Dolor directo",
+                  "hook": "¿Cansado de encontrar odontologos confiable?",
+                  "cuerpo": "En Test lo resolvemos diferente. servicio personalizado de odontologos. Más de  clientes satisfechos en Medellin. 👉 Agenda tu consulta GRATIS hoy.",
+                  "cta": "QUIERO SABER MÁS",
+                  "principio_psicologico": "Pain-Agitate-Solve (Sugarman)"
+                },
+                {
+                  "variacion": "B — Prueba social",
+                  "hook": "Así resolvimos encontrar odontologos confiable",
+                  "cuerpo": "'' — cliente real de Test. Ofrecemos servicio personalizado de odontologos en Medellin. Sin compromisos. Respuesta en menos de 2 horas.",
+                  "cta": "VER CASOS DE ÉXITO",
+                  "principio_psicologico": "Social Proof (Cialdini)"
+                },
+                {
+                  "variacion": "C — Escasez/Urgencia",
+                  "hook": "Solo 5 cupos disponibles este mes en Medellin",
+                  "cuerpo": "Test — especialistas en odontologos. servicio personalizado de odontologos. Agenda antes del viernes y recibe una auditoría gratuita de tu situación actual.",
+                  "cta": "RESERVAR MI CUPO",
+                  "principio_psicologico": "Scarcity + Loss Aversion (Kahneman)"
+                }
+              ],
+              "presupuesto_cop": 1500000,
+              "roas_objetivo": 5.3999999999999995,
+              "kpis": {
+                "ctr_min": "3%",
+                "cpl_max": 15000,
+                "frecuencia_max": 7
+              },
+              "notas": "Manejo de objeciones en copy. Mostrar garantía prominente."
+            },
+            {
+              "nombre": "C3 — Lookalike | Clientes actuales | Medellin",
+              "objetivo_meta": "REACH + LEADS",
+              "etapa_funnel": "Impresiones → Clics",
+              "formato": "Video corto 15s + carrusel testimonios",
+              "duracion_video": "15 segundos",
+              "publico": {
+                "ubicacion": "Medellin",
+                "edad": "25-54",
+                "genero": "Todos",
+                "lookalike": "1-3% similares a base de clientes"
+              },
+              "copies": [
+                {
+                  "variacion": "A — Dolor directo",
+                  "hook": "¿Cansado de encontrar odontologos confiable?",
+                  "cuerpo": "En Test lo resolvemos diferente. servicio personalizado de odontologos. Más de  clientes satisfechos en Medellin. 👉 Agenda tu consulta GRATIS hoy.",
+                  "cta": "QUIERO SABER MÁS",
+                  "principio_psicologico": "Pain-Agitate-Solve (Sugarman)"
+                },
+                {
+                  "variacion": "B — Prueba social",
+                  "hook": "Así resolvimos encontrar odontologos confiable",
+                  "cuerpo": "'' — cliente real de Test. Ofrecemos servicio personalizado de odontologos en Medellin. Sin compromisos. Respuesta en menos de 2 horas.",
+                  "cta": "VER CASOS DE ÉXITO",
+                  "principio_psicologico": "Social Proof (Cialdini)"
+                },
+                {
+                  "variacion": "C — Escasez/Urgencia",
+                  "hook": "Solo 5 cupos disponibles este mes en Medellin",
+                  "cuerpo": "Test — especialistas en odontologos. servicio personalizado de odontologos. Agenda antes del viernes y recibe una auditoría gratuita de tu situación actual.",
+                  "cta": "RESERVAR MI CUPO",
+                  "principio_psicologico": "Scarcity + Loss Aversion (Kahneman)"
+                }
+              ],
+              "presupuesto_cop": 1000000,
+              "roas_objetivo": 4.5,
+              "kpis": {
+                "cpm_max": 6000,
+                "ctr_min": "2.5%",
+                "cpl_max": 20000
+              },
+              "notas": "Usar testimonios reales como prueba social. A/B test de hooks."
+            }
+          ],
+          "presupuesto_total_cop": 5000000,
+          "roas_objetivo_global": 4.5,
+          "descripcion_tier": "Empresa en crecimiento — foco en escalar leads calificados y retargeting",
+          "horizonte_prueba": "14 días para validar copies, 30 días para optimizar pujas",
+          "regla_70_20_10": {
+            "70": "Presupuesto en lo que ya probó funcionar",
+            "20": "Prueba de nuevos formatos/audiencias",
+            "10": "Experimentos creativos arriesgados"
+          }
+        },
+        "claude_insights": "",
+        "generado_at": "2026-05-06 22:23",
+        "html_filename": "ads-strategy-test-20260506.html",
+        "html_path": "C:\\Users\\jose-\\Downloads\\IM-COMPLETO\\agent\\..\\reports\\ads-strategy-test-20260506.html"
+      },
+      "content_planner": {
+        "total_scripts": 18,
+        "html_filename": "content-plan-test-20260506.html",
+        "calendario": [
+          {
+            "dia": 1,
+            "fecha": "2026-05-07",
+            "hora": "07:00",
+            "dia_semana": "Jue",
+            "fase": "Fase 1 — Conexión con el Dolor",
+            "titulo": "V1.1 — Conexión con el Dolor",
+            "formato": "Reel 30-45s + historia personal",
+            "script_id": "V1.1"
+          },
+          {
+            "dia": 2,
+            "fecha": "2026-05-09",
+            "hora": "12:00",
+            "dia_semana": "Sáb",
+            "fase": "Fase 1 — Conexión con el Dolor",
+            "titulo": "V1.2 — Conexión con el Dolor",
+            "formato": "Reel 30-45s + historia personal",
+            "script_id": "V1.2"
+          },
+          {
+            "dia": 3,
+            "fecha": "2026-05-12",
+            "hora": "19:00",
+            "dia_semana": "Mar",
+            "fase": "Fase 1 — Conexión con el Dolor",
+            "titulo": "V1.3 — Conexión con el Dolor",
+            "formato": "Reel 30-45s + historia personal",
+            "script_id": "V1.3"
+          },
+          {
+            "dia": 4,
+            "fecha": "2026-05-14",
+            "hora": "07:00",
+            "dia_semana": "Jue",
+            "fase": "Fase 2 — Educación y Autoridad",
+            "titulo": "V2.1 — Educación y Autoridad",
+            "formato": "Carrusel educativo 5-8 slides",
+            "script_id": "V2.1"
+          },
+          {
+            "dia": 5,
+            "fecha": "2026-05-16",
+            "hora": "12:00",
+            "dia_semana": "Sáb",
+            "fase": "Fase 2 — Educación y Autoridad",
+            "titulo": "V2.2 — Educación y Autoridad",
+            "formato": "Carrusel educativo 5-8 slides",
+            "script_id": "V2.2"
+          }
+        ]
+      }
+    },
+    "ads": {},
+    "contenido_guiones": {}
+  },
+  "datos": {
+    "analisis_7maletas": "=== MALETA_1_PUBLICO ===\n{\n  \"edad_estimada\": \"25-55 años (pico 30-45)\",\n  \"genero\": \"Mixto — analizar con Meta Audience Insights para datos exactos\",\n  \"ubicacion\": \"Medellin\",\n  \"poder_adquisitivo\": \"NSE 3-5\",\n  \"evidencias\": [\n    \"Desconozco de la calidad del resto de los laboratorios pero puedo decir que Home Test Lab ha resuelto mi problema en un \",\n    \"Excelente servicio.  La atención fue muy agradable,  la persona que prestó el servicio una dulzura de mujer, muy humana \",\n    \"Los recomiendo 100% excelente servicio y muy rápida y buena atención. Los contacte a las 6:40am de un sábado y a las 8 a\"\n  ]\n}\n\n=== MALETA_2_PROBLEMA ===\n{\n  \"lista_dolores\": [],\n  \"top_3\": [],\n  \"principal\": {\n    \"problema\": \"Falta de confianza y seguimiento\",\n    \"menciones\": 1,\n    \"evidencia\": \"\"\n  }\n}\n\n=== MALETA_3_SOLUCION ===\n{\n  \"servicios\": [\n    \"Servicio principal de odontologos\"\n  ],\n  \"como_resuelve\": \"Test resuelve 'Falta de confianza y seguimiento' mediante Sin diferencial claro detectado en web y atención personalizada\",\n  \"mejor_testimonio\": \"Desconozco de la calidad del resto de los laboratorios pero puedo decir que Home Test Lab ha resuelto mi problema en un tiempo récord. Supieron adaptarse perfectamente a la urgencia de los análisis que me hacían falta ordenados por mi empresa. Mi especial agradecimiento a Elizabe\",\n  \"competidores_sol\": [\n    {\n      \"competidor\": \"ORAL CONCEPT INVISALIGN\",\n      \"mensaje\": \"Excelente servicio, amabilidad y cortesía. Santiago fue muy considerado y me trató con mucho cuidado\"\n    },\n    {\n      \"competidor\": \"Dr. Mauricio Arias - Odontólogo Experto en Medellín English Dentist\",\n      \"mensaje\": \"Buenas tardes, me siento muy feliz y agradecido con todo el personal del consulto especialmente con \"\n    },\n    {\n      \"competidor\": \"Dra. Tatiana Lopera\",\n      \"mensaje\": \"\\\"Dra.TATIANA LOPERA, quería pasar por aquí para darle las gracias de todo corazón por el increíble t\"\n    }\n  ],\n  \"oportunidad\": \"De 5 competidores, 1 no tienen web activa.\"\n}\n\n=== MALETA_4_DIFERENCIALES ===\n{\n  \"lista\": [\n    {\n      \"diferencial\": \"Excelencia general del servicio\",\n      \"frecuencia\": 12\n    },\n    {\n      \"diferencial\": \"Trato amable y personalizado\",\n      \"frecuencia\": 6\n    },\n    {\n      \"diferencial\": \"Profesionalismo del equipo\",\n      \"frecuencia\": 5\n    },\n    {\n      \"diferencial\": \"Alta tasa de recomendación espontánea\",\n      \"frecuencia\": 4\n    },\n    {\n      \"diferencial\": \"Calidad percibida del servicio\",\n      \"frecuencia\": 2\n    },\n    {\n      \"diferencial\": \"Rapidez y puntualidad\",\n      \"frecuencia\": 1\n    }\n  ],\n  \"menos_saturado\": {\n    \"diferencial\": \"Sin diferencial claro detectado en web\",\n    \"en_comp\": 1\n  },\n  \"recomendacion\": \"DESTACA 'Sin diferencial claro detectado en web' — diferencial con menor saturación detectada en competidores.\"\n}\n\n=== MALETA_5_TESTIMONIOS ===\n{\n  \"rating\": 4.9,\n  \"total_reviews\": 655,\n  \"top_5\": [\n    {\n      \"texto\": \"Desconozco de la calidad del resto de los laboratorios pero puedo decir que Home Test Lab ha resuelto mi problema en un tiempo récord. Supieron adaptarse perfectamente a la urgencia de los análisis que me hacían falta ordenados por mi empresa. Mi especial agradecimiento a Elizabe\",\n      \"fuente\": \"Google Maps — Test\"\n    },\n    {\n      \"texto\": \"Excelente servicio.  La atención fue muy agradable,  la persona que prestó el servicio una dulzura de mujer, muy humana y linda con la paciente mi hermana, de una consideración única para una paciente tan vulnerable. Gracias por un servicio tan profesional y humano. Los recomiend\",\n      \"fuente\": \"Google Maps — Test\"\n    },\n    {\n      \"texto\": \"Los recomiendo 100% excelente servicio y muy rápida y buena atención. Los contacte a las 6:40am de un sábado y a las 8 am ya estaba la muchacha en mi casa. Excelente\",\n      \"fuente\": \"Google Maps — Test\"\n    },\n    {\n      \"texto\": \"Quiero agradecer por la excelente atención que recibí. Desde el primer momento fueron muy amables, me ayudaron con rapidez y resolvieron todo sin demoras. Es un gusto encontrar un servicio tan eficiente y humano. ¡Sigan así!\\n100%recomendado\",\n      \"fuente\": \"Google Maps — Test\"\n    },\n    {\n      \"texto\": \"Excelente servicio. Muy rápido y eficaz, además de su buena atención, son muy amables.\",\n      \"fuente\": \"Google Maps — Test\"\n    }\n  ],\n  \"patrones\": [\n    \"13% menciona: Calidad percibida del servicio\",\n    \"80% menciona: Excelencia general del servicio\",\n    \"33% menciona: Profesionalismo del equipo\",\n    \"27% menciona: Alta tasa de recomendación espontánea\"\n  ],\n  \"meta_30_dias\": \"Pasar de 655 a 730 reviews en 30 días\",\n  \"script_review\": \"'Hola [nombre], ¿quedaste satisfecho/a? Nos dejarías una reseña en Google? 🙏 [link]'\"\n}\n\n=== MALETA_6_OBJECIONES ===\n{\n  \"lista_10_plus\": [\n    {\n      \"objecion\": \"Precio elevado\",\n      \"evidencia\": \"Objeción frecuente en odontologos\",\n      \"riesgo\": \"🟡 MEDIO\"\n    },\n    {\n      \"objecion\": \"No confío en la calidad\",\n      \"evidencia\": \"Objeción frecuente en odontologos\",\n      \"riesgo\": \"🟡 MEDIO\"\n    },\n    {\n      \"objecion\": \"No sé si vale la pena\",\n      \"evidencia\": \"Objeción frecuente en odontologos\",\n      \"riesgo\": \"🟡 MEDIO\"\n    },\n    {\n      \"objecion\": \"Hay opciones más baratas\",\n      \"evidencia\": \"Objeción frecuente en odontologos\",\n      \"riesgo\": \"🟡 MEDIO\"\n    },\n    {\n      \"objecion\": \"No tengo tiempo\",\n      \"evidencia\": \"Objeción frecuente en odontologos\",\n      \"riesgo\": \"🟡 MEDIO\"\n    },\n    {\n      \"objecion\": \"No sé si es para mí\",\n      \"evidencia\": \"Objeción frecuente en odontologos\",\n      \"riesgo\": \"🟡 MEDIO\"\n    },\n    {\n      \"objecion\": \"Malas experiencias\",\n      \"evidencia\": \"Objeción frecuente en odontologos\",\n      \"riesgo\": \"🟡 MEDIO\"\n    },\n    {\n      \"objecion\": \"Lejos de mi casa\",\n      \"evidencia\": \"Objeción frecuente en odontologos\",\n      \"riesgo\": \"🟡 MEDIO\"\n    },\n    {\n      \"objecion\": \"Sin cita disponible\",\n      \"evidencia\": \"Objeción frecuente en odontologos\",\n      \"riesgo\": \"🟡 MEDIO\"\n    },\n    {\n      \"objecion\": \"Prefiero esperar\",\n      \"evidencia\": \"Objeción frecuente en odontologos\",\n      \"riesgo\": \"🟡 MEDIO\"\n    }\n  ],\n  \"principal\": {\n    \"objecion\": \"Precio elevado\",\n    \"evidencia\": \"Objeción frecuente en odontologos\",\n    \"riesgo\": \"🟡 MEDIO\"\n  },\n  \"como_resolver\": {\n    \"en_web\": \"FAQ que responda: 'Precio elevado'\",\n    \"en_anuncios\": \"Incluye garantía explícita en el copy del anuncio\",\n    \"en_ventas\": \"Script: 'Entiendo tu duda. Por eso en [nombre] ofrecemos [solución].'\"\n  }\n}\n\n=== MALETA_7_GARANTIA ===\n{\n  \"garantia_actual\": \"No se detectó garantía explícita en la web\",\n  \"garantia_sugerida\": \"'Si no quedas satisfecho/a con tu odontologos en Test, repetimos el servicio sin costo. Sin preguntas.'\",\n  \"justificacion\": [\n    \"Resuelve la objeción #1: 'Precio elevado'\",\n    \"Solo 0 competidores ofrecen garantía visible\",\n    \"Garantías aumentan conversión 20-40% en sector servicios\"\n  ],\n  \"recomendacion\": \"IMPLEMENTA garantía explícita en web y anuncios — diferencial de bajo costo con alto impacto.\"\n}\n\n=== ADS_MESSAGES ===\n[{'tipo': 'Enfoque en Problema', 'headline': '¿Cansado de Falta de confianza y seguimiento?', 'descripcion': 'En Test, lo resolvemos. Sin diferencial claro detectado en web.\\n\\n\"Desconozco de la calidad del resto de los laboratorios pero puedo decir que Home\"\\n\\nNo se detectó garantía explícita en la web → Agenda ahora', 'cta': 'Agendar cita'}, {'tipo': 'Diferencial único', 'headline': 'Sin diferencial claro detectado en web — solo en Test', 'descripcion': \"Resolvemos 'Falta de confianza y seguimiento' de una vez. Atención personalizada en Medellin.\\n\\nPrimeras citas disponibles esta semana.\", 'cta': 'Ver disponibilidad'}, {'tipo': 'Testimonio/Resultado', 'headline': '\"Desconozco de la calidad del resto de los laboratorios pero puedo deci...\"', 'descripcion': 'Así describió un cliente su experiencia en Test.\\n¿Listo para el mismo resultado?\\n\\nNo se detectó garantía explícita en la web → Contáctanos', 'cta': 'Quiero este resultado'}]\n\n=== PROXIMOS_PASOS ===\n{\n  \"esta_semana\": [\n    {\n      \"accion\": \"Actualiza Google Business con fotos recientes y responde todas las reviews\",\n      \"impacto\": \"Más visibilidad local inmediata\"\n    },\n    {\n      \"accion\": \"Agrega garantía explícita a tu web\",\n      \"impacto\": \"Reduce objeción principal\"\n    },\n    {\n      \"accion\": \"Implementa solicitud de reviews vía WhatsApp post-servicio\",\n      \"impacto\": \"+5-10 reviews/mes\"\n    }\n  ],\n  \"este_mes\": [\n    \"Entrevista 5-10 clientes: ¿Por qué nos elegiste?\",\n    \"Lanza campaña Meta Ads con Anuncio 1 (dolor: Falta de confianza y seguimiento)\",\n    \"Crea contenido: 'Cómo elegir el mejor odontologos en Medellin — 3 factores clave'\"\n  ]\n}\n\n=== FUENTES_RESUMEN ===\n{\n  \"reviews_negocio\": 655,\n  \"reviews_comp\": 1673,\n  \"total_reviews\": 2328,\n  \"competidores\": 5,\n  \"fb_ads\": 0,\n  \"academicas\": 6,\n  \"dane\": 0,\n  \"web_ok\": false,\n  \"instagram_ok\": false\n}",
+    "estrategia_ads": {},
+    "guiones": []
+  },
+  "auditoria_pm_b": {
+    "aprobado": true,
+    "etapa": "FASE1",
+    "frases_genericas": [],
+    "datos_reales": {
+      "menciona_nombre": true,
+      "menciona_nicho": true,
+      "menciona_ciudad": true,
+      "tiene_numeros": true,
+      "tiene_porcentaje": true
+    },
+    "score_datos": 5,
+    "timestamp": "2026-05-06T22:23:51.704545",
+    "decision": "APROBADO",
+    "motivo": "OK"
+  },
+  "listo_para_ejecucion": true,
+  "instruccion_humano": "Revisa el informe y usa APROBAR para lanzar emails, o RECHAZAR con comentarios para corregir."
+}

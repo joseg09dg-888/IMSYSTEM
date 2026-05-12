@@ -1,0 +1,33 @@
+# Credenciales - NUNCA subir
+.env
+
+# Base de datos y logs
+*.db
+*.log
+logs/handoffs/
+logs/*.json
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Temporales
+temp_*/
+*.zip
+*.tmp
+
+# Node
+node_modules/
+
+# Datos de investigaciones generadas
+data/investigaciones/
+reports/
+
+# Uploads de usuarios
+uploads/
+
+# Archivos de sistema
+.DS_Store
+Thumbs.db

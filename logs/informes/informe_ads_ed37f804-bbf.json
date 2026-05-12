@@ -1,0 +1,264 @@
+{
+  "nombre_negocio": "Clinica Dental Test",
+  "nicho": "odontologos",
+  "ciudad": "Medellin",
+  "tamanio": "mediana",
+  "investigacion_job_id": "",
+  "funnel": {
+    "etapas": [
+      {
+        "etapa": "Impresiones",
+        "benchmark_ctr": "2-4%",
+        "problema_tipico": "Creativos genéricos sin gancho emocional",
+        "causa_raiz": "No se usan los dolores reales del público en el copy",
+        "solucion": "Usar los 3 problemas principales identificados en Maleta 2 como hooks",
+        "prioridad": "ALTA"
+      },
+      {
+        "etapa": "Clics",
+        "benchmark_ctr": "1-3%",
+        "problema_tipico": "CTA poco claro o poco urgente",
+        "causa_raiz": "Oferta no diferenciada vs competencia",
+        "solucion": "Destacar 'servicio premium' en headline",
+        "prioridad": "ALTA"
+      },
+      {
+        "etapa": "Visitas",
+        "benchmark_ctr": "40-60% permanencia",
+        "problema_tipico": "Landing page no responde la promesa del anuncio",
+        "causa_raiz": "Mensaje inconsistente entre anuncio y página",
+        "solucion": "Alinear headline de landing con copy del anuncio (message match)",
+        "prioridad": "ALTA"
+      },
+      {
+        "etapa": "Contacto",
+        "benchmark_ctr": "5-15%",
+        "problema_tipico": "Formulario largo o sin trust signals",
+        "causa_raiz": "Poco social proof visible en el momento de decisión",
+        "solucion": "Mostrar '0 reseñas · 4.0★' justo sobre el formulario",
+        "prioridad": "ALTA"
+      },
+      {
+        "etapa": "Consulta",
+        "benchmark_ctr": "30-50%",
+        "problema_tipico": "Equipo de ventas sin manejo de objeciones",
+        "causa_raiz": "Objeciones no anticipadas en el proceso de cierre",
+        "solucion": "Script de objeciones para: ",
+        "prioridad": "MEDIA"
+      },
+      {
+        "etapa": "Cierre",
+        "benchmark_ctr": "20-40%",
+        "problema_tipico": "Sin garantía clara que reduzca el riesgo percibido",
+        "causa_raiz": "Cliente percibe riesgo alto sin red de seguridad",
+        "solucion": "Implementar: garantía de satisfacción 30 días",
+        "prioridad": "ALTA"
+      }
+    ],
+    "fugas_criticas": [
+      {
+        "etapa": "Impresiones",
+        "benchmark_ctr": "2-4%",
+        "problema_tipico": "Creativos genéricos sin gancho emocional",
+        "causa_raiz": "No se usan los dolores reales del público en el copy",
+        "solucion": "Usar los 3 problemas principales identificados en Maleta 2 como hooks",
+        "prioridad": "ALTA"
+      },
+      {
+        "etapa": "Clics",
+        "benchmark_ctr": "1-3%",
+        "problema_tipico": "CTA poco claro o poco urgente",
+        "causa_raiz": "Oferta no diferenciada vs competencia",
+        "solucion": "Destacar 'servicio premium' en headline",
+        "prioridad": "ALTA"
+      },
+      {
+        "etapa": "Visitas",
+        "benchmark_ctr": "40-60% permanencia",
+        "problema_tipico": "Landing page no responde la promesa del anuncio",
+        "causa_raiz": "Mensaje inconsistente entre anuncio y página",
+        "solucion": "Alinear headline de landing con copy del anuncio (message match)",
+        "prioridad": "ALTA"
+      },
+      {
+        "etapa": "Contacto",
+        "benchmark_ctr": "5-15%",
+        "problema_tipico": "Formulario largo o sin trust signals",
+        "causa_raiz": "Poco social proof visible en el momento de decisión",
+        "solucion": "Mostrar '0 reseñas · 4.0★' justo sobre el formulario",
+        "prioridad": "ALTA"
+      },
+      {
+        "etapa": "Cierre",
+        "benchmark_ctr": "20-40%",
+        "problema_tipico": "Sin garantía clara que reduzca el riesgo percibido",
+        "causa_raiz": "Cliente percibe riesgo alto sin red de seguridad",
+        "solucion": "Implementar: garantía de satisfacción 30 días",
+        "prioridad": "ALTA"
+      }
+    ],
+    "score_funnel": 2.5,
+    "rating": 4.0,
+    "total_reviews": 0,
+    "num_objeciones": 0,
+    "resumen": "Funnel score 2.5/10 — 5 fugas críticas detectadas. Rating 4.0★ con 0 reseñas."
+  },
+  "campanas": {
+    "campanas": [
+      {
+        "nombre": "C1 — Tráfico Frío | odontologos | Medellin",
+        "objetivo_meta": "LEADS",
+        "etapa_funnel": "Impresiones → Clics → Visitas",
+        "formato": "Video 9:16 (Reels) + Imagen carrusel",
+        "duracion_video": "15-30 segundos",
+        "publico": {
+          "ubicacion": "Medellin",
+          "edad": "25-54",
+          "genero": "Todos",
+          "intereses": [
+            "odontologos",
+            "emprendimiento"
+          ],
+          "comportamientos": [
+            "pequeñas_empresas",
+            "compradores_en_linea"
+          ],
+          "ingresos_estimados": "medio"
+        },
+        "copies": [
+          {
+            "variacion": "A — Dolor directo",
+            "hook": "¿Cansado de encontrar odontologos confiable?",
+            "cuerpo": "En Clinica Dental Test lo resolvemos diferente. servicio personalizado de odontologos. Más de  clientes satisfechos en Medellin. 👉 Agenda tu consulta GRATIS hoy.",
+            "cta": "QUIERO SABER MÁS",
+            "principio_psicologico": "Pain-Agitate-Solve (Sugarman)"
+          },
+          {
+            "variacion": "B — Prueba social",
+            "hook": "Así resolvimos encontrar odontologos confiable",
+            "cuerpo": "'' — cliente real de Clinica Dental Test. Ofrecemos servicio personalizado de odontologos en Medellin. Sin compromisos. Respuesta en menos de 2 horas.",
+            "cta": "VER CASOS DE ÉXITO",
+            "principio_psicologico": "Social Proof (Cialdini)"
+          },
+          {
+            "variacion": "C — Escasez/Urgencia",
+            "hook": "Solo 5 cupos disponibles este mes en Medellin",
+            "cuerpo": "Clinica Dental Test — especialistas en odontologos. servicio personalizado de odontologos. Agenda antes del viernes y recibe una auditoría gratuita de tu situación actual.",
+            "cta": "RESERVAR MI CUPO",
+            "principio_psicologico": "Scarcity + Loss Aversion (Kahneman)"
+          }
+        ],
+        "presupuesto_cop": 2500000,
+        "roas_objetivo": 3.6,
+        "kpis": {
+          "cpm_max": 8000,
+          "ctr_min": "2%",
+          "cpl_max": 25000
+        },
+        "notas": "Audiencia fría. Priorizar hook emocional en primeros 3s."
+      },
+      {
+        "nombre": "C2 — Retargeting | Visitantes web | Medellin",
+        "objetivo_meta": "CONVERSIONES",
+        "etapa_funnel": "Visitas → Contacto → Consulta",
+        "formato": "Imagen estática + Story con CTA swipe-up",
+        "duracion_video": "N/A",
+        "publico": {
+          "ubicacion": "Medellin",
+          "edad": "25-54",
+          "genero": "Todos",
+          "audiencia_personalizada": "Visitantes web últimos 30 días",
+          "excluir": "Compradores recientes"
+        },
+        "copies": [
+          {
+            "variacion": "A — Dolor directo",
+            "hook": "¿Cansado de encontrar odontologos confiable?",
+            "cuerpo": "En Clinica Dental Test lo resolvemos diferente. servicio personalizado de odontologos. Más de  clientes satisfechos en Medellin. 👉 Agenda tu consulta GRATIS hoy.",
+            "cta": "QUIERO SABER MÁS",
+            "principio_psicologico": "Pain-Agitate-Solve (Sugarman)"
+          },
+          {
+            "variacion": "B — Prueba social",
+            "hook": "Así resolvimos encontrar odontologos confiable",
+            "cuerpo": "'' — cliente real de Clinica Dental Test. Ofrecemos servicio personalizado de odontologos en Medellin. Sin compromisos. Respuesta en menos de 2 horas.",
+            "cta": "VER CASOS DE ÉXITO",
+            "principio_psicologico": "Social Proof (Cialdini)"
+          },
+          {
+            "variacion": "C — Escasez/Urgencia",
+            "hook": "Solo 5 cupos disponibles este mes en Medellin",
+            "cuerpo": "Clinica Dental Test — especialistas en odontologos. servicio personalizado de odontologos. Agenda antes del viernes y recibe una auditoría gratuita de tu situación actual.",
+            "cta": "RESERVAR MI CUPO",
+            "principio_psicologico": "Scarcity + Loss Aversion (Kahneman)"
+          }
+        ],
+        "presupuesto_cop": 1500000,
+        "roas_objetivo": 5.3999999999999995,
+        "kpis": {
+          "ctr_min": "3%",
+          "cpl_max": 15000,
+          "frecuencia_max": 7
+        },
+        "notas": "Manejo de objeciones en copy. Mostrar garantía prominente."
+      },
+      {
+        "nombre": "C3 — Lookalike | Clientes actuales | Medellin",
+        "objetivo_meta": "REACH + LEADS",
+        "etapa_funnel": "Impresiones → Clics",
+        "formato": "Video corto 15s + carrusel testimonios",
+        "duracion_video": "15 segundos",
+        "publico": {
+          "ubicacion": "Medellin",
+          "edad": "25-54",
+          "genero": "Todos",
+          "lookalike": "1-3% similares a base de clientes"
+        },
+        "copies": [
+          {
+            "variacion": "A — Dolor directo",
+            "hook": "¿Cansado de encontrar odontologos confiable?",
+            "cuerpo": "En Clinica Dental Test lo resolvemos diferente. servicio personalizado de odontologos. Más de  clientes satisfechos en Medellin. 👉 Agenda tu consulta GRATIS hoy.",
+            "cta": "QUIERO SABER MÁS",
+            "principio_psicologico": "Pain-Agitate-Solve (Sugarman)"
+          },
+          {
+            "variacion": "B — Prueba social",
+            "hook": "Así resolvimos encontrar odontologos confiable",
+            "cuerpo": "'' — cliente real de Clinica Dental Test. Ofrecemos servicio personalizado de odontologos en Medellin. Sin compromisos. Respuesta en menos de 2 horas.",
+            "cta": "VER CASOS DE ÉXITO",
+            "principio_psicologico": "Social Proof (Cialdini)"
+          },
+          {
+            "variacion": "C — Escasez/Urgencia",
+            "hook": "Solo 5 cupos disponibles este mes en Medellin",
+            "cuerpo": "Clinica Dental Test — especialistas en odontologos. servicio personalizado de odontologos. Agenda antes del viernes y recibe una auditoría gratuita de tu situación actual.",
+            "cta": "RESERVAR MI CUPO",
+            "principio_psicologico": "Scarcity + Loss Aversion (Kahneman)"
+          }
+        ],
+        "presupuesto_cop": 1000000,
+        "roas_objetivo": 4.5,
+        "kpis": {
+          "cpm_max": 6000,
+          "ctr_min": "2.5%",
+          "cpl_max": 20000
+        },
+        "notas": "Usar testimonios reales como prueba social. A/B test de hooks."
+      }
+    ],
+    "presupuesto_total_cop": 5000000,
+    "roas_objetivo_global": 4.5,
+    "descripcion_tier": "Empresa en crecimiento — foco en escalar leads calificados y retargeting",
+    "horizonte_prueba": "14 días para validar copies, 30 días para optimizar pujas",
+    "regla_70_20_10": {
+      "70": "Presupuesto en lo que ya probó funcionar",
+      "20": "Prueba de nuevos formatos/audiencias",
+      "10": "Experimentos creativos arriesgados"
+    }
+  },
+  "claude_insights": "",
+  "generado_at": "2026-05-06 16:26",
+  "html_filename": "ads-strategy-clinica-dental-test-20260506.html",
+  "html_path": "C:\\Users\\jose-\\Downloads\\IM-COMPLETO\\agent\\..\\reports\\ads-strategy-clinica-dental-test-20260506.html"
+}

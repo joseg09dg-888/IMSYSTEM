@@ -1,0 +1,16 @@
+{
+  "aprobado": true,
+  "etapa": "FASE1",
+  "frases_genericas": [],
+  "datos_reales": {
+    "menciona_nombre": true,
+    "menciona_nicho": true,
+    "menciona_ciudad": true,
+    "tiene_numeros": true,
+    "tiene_porcentaje": true
+  },
+  "score_datos": 5,
+  "timestamp": "2026-05-06T22:23:51.704545",
+  "decision": "APROBADO",
+  "motivo": "OK"
+}

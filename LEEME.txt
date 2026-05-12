@@ -1,0 +1,82 @@
+IM SYSTEM v3 COMPLETO — INTELLIGENT MARKETS
+===========================================
+intelligentmarkets@gmail.com
+
+CONTENIDO DE ESTA CARPETA
+--------------------------
+INSTALAR.bat              <- EMPIEZA AQUI (doble clic)
+INICIAR_PLATAFORMA.bat    <- Abre el panel web completo
+mateo.bat                 <- Mateo modo interactivo (probar)
+jose.bat                  <- Jose modo interactivo (probar)
+mateo_scheduler.bat       <- Mateo automatico (todo el dia)
+jose_scheduler.bat        <- Jose automatico (todo el dia)
+buscar_leads.bat          <- Buscar nuevos leads
+analizar_cliente.bat      <- Analizar cliente que firmo
+stats.bat                 <- Ver estadisticas
+horario.bat               <- Ver horario actual Colombia
+validar_emails.bat        <- Validar lista de emails
+
+PRIMEROS PASOS
+--------------
+1. Doble clic en INSTALAR.bat (solo la primera vez)
+2. Doble clic en INICIAR_PLATAFORMA.bat
+3. Se abre http://localhost:5000 en el navegador
+
+FLUJO COMPLETO
+--------------
+PROSPECCION:
+  buscar_leads.bat -> mateo_scheduler.bat / jose_scheduler.bat
+
+CUANDO ALGUIEN AGENDA REUNION:
+  La plataforma web muestra el informe pre-reunion
+  con diagnostico digital, puntos de mejora y preguntas clave
+
+CUANDO FIRMA COMO CLIENTE:
+  1. Agregarlo en la plataforma (seccion Clientes)
+  2. Clic en "Analizar" -> genera reporte completo con:
+     - Investigacion de mercado + neurociencia + 7 Maletas
+     - Estrategia de marketing 360 (Meta Ads, Google, TikTok)
+     - Plan de contenido 30 dias (pilares, hooks, guiones)
+     - Identidad de marca (arquetipo, voz, sistema visual, UVP)
+
+HORARIO DE LOS AGENTES (Colombia UTC-5)
+---------------------------------------
+Lunes a Viernes: 6:00am - 7:00pm
+Pausa mediodia:  varía entre 12:00 y 13:30 (diferente cada dia)
+Sabado:          6:00am - 12:00pm
+Domingo:         Apagado
+
+ANTI-SPAM
+---------
+El sistema incluye warmup automatico:
+  Dia 1-5:   5-20 emails/dia
+  Dia 6-15:  25-65 emails/dia
+  Dia 16-21: 70-100 emails/dia
+  Dia 21+:   100 emails/dia maximo
+
+ARCHIVOS IMPORTANTES
+--------------------
+.env                         <- API keys y contrasenas (NO compartir)
+logs\actividad_agentes.csv   <- Log de todos los emails
+logs\tracking.db             <- Aperturas, clicks, respuestas
+reports\                     <- Informes HTML generados
+data\                        <- CSVs de leads y JSONs de clientes
+
+ERRORES COMUNES
+---------------
+"python no reconocido"
+  -> Reinstala Python y marca [X] Add Python to PATH
+
+"SMTPAuthenticationError"  
+  -> Crea nueva App Password en myaccount.google.com/apppasswords
+
+"Error API Claude"
+  -> Recarga creditos en console.anthropic.com
+
+LINKS IMPORTANTES
+-----------------
+Gmail App Password: https://myaccount.google.com/apppasswords
+Apollo.io keys:     https://app.apollo.io/settings/api-keys
+Anthropic credits:  https://console.anthropic.com
+Cal.com Empresas:   https://cal.com/intelligent-markets-agencia/30min
+Cal.com Musica:     https://cal.com/intelligent-markets-agencia/sello-30min

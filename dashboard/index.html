@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IM System — Intelligent Markets</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --p: #6200FF; --pl: #8B2FFF; --pd: rgba(98,0,255,0.12);
+  --bk: #060606; --dk: #0f0f0f; --cd: #141414; --bd: rgba(255,255,255,0.055);
+  --tx: #E5E5E5; --mt: #555; --gr: #00F5A0; --yw: #FFD600; --rd: #FF4444;
+  --fn: 'Syne', sans-serif; --fm: 'DM Mono', monospace; --fh: 'Bebas Neue', cursive;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { background: var(--bk); color: var(--tx); font-family: var(--fn); overflow-x: hidden; }
+
+/* ── SIDEBAR ── */
+.sb { position: fixed; left:0; top:0; bottom:0; width:230px; background:var(--dk); border-right:1px solid var(--bd); display:flex; flex-direction:column; z-index:200; }
+.sb-logo { padding:28px 22px 22px; border-bottom:1px solid var(--bd); }
+.im-wordmark { font-family:var(--fh); font-size:40px; color:#fff; letter-spacing:3px; line-height:1; position:relative; display:inline-block; }
+.im-cursor { display:inline-block; width:4px; height:40px; background:var(--p); margin-left:2px; vertical-align:bottom; animation: bc 1.1s step-end infinite; }
+@keyframes bc { 0%,100%{opacity:1} 50%{opacity:0} }
+.im-sub { font-size:9px; letter-spacing:4px; color:var(--mt); text-transform:uppercase; margin-top:3px; }
+.sb-nav { flex:1; overflow-y:auto; padding:10px 0; }
+.nb { font-size:8px; letter-spacing:2.5px; text-transform:uppercase; color:var(--mt); padding:14px 18px 6px; }
+.ni { display:flex; align-items:center; gap:10px; padding:9px 18px; cursor:pointer; font-size:12.5px; font-weight:500; color:#888; border:none; background:none; width:100%; text-align:left; transition:all .15s; border-left:3px solid transparent; }
+.ni:hover, .ni.on { color:var(--tx); background:var(--pd); border-left-color:var(--p); }
+.ni .ico { font-size:15px; width:18px; text-align:center; }
+.sb-foot { padding:14px 18px; border-top:1px solid var(--bd); font-size:10px; color:var(--mt); line-height:1.6; }
+
+/* ── MAIN ── */
+.main { margin-left:230px; min-height:100vh; }
+.topbar { position:sticky; top:0; background:rgba(6,6,6,0.92); backdrop-filter:blur(24px); border-bottom:1px solid var(--bd); padding:14px 28px; display:flex; align-items:center; justify-content:space-between; z-index:100; }
+.topbar-title { font-family:var(--fh); font-size:20px; letter-spacing:2.5px; }
+.sys-badge { display:flex; align-items:center; gap:6px; background:rgba(0,245,160,.08); border:1px solid rgba(0,245,160,.2); color:var(--gr); padding:5px 14px; border-radius:20px; font-size:11px; font-weight:600; }
+.pulse { width:6px; height:6px; border-radius:50%; background:var(--gr); animation:pulse 2s infinite; }
+@keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.4;transform:scale(.7)} }
+
+.content { padding:28px; }
+.panel { display:none; }
+.panel.on { display:block; animation:fd .25s ease; }
+@keyframes fd { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
+
+/* ── CARDS ── */
+.card { background:var(--cd); border:1px solid var(--bd); border-radius:12px; padding:22px 24px; }
+.card-t { font-family:var(--fh); font-size:15px; letter-spacing:2px; color:var(--pl); margin-bottom:16px; display:flex; align-items:center; gap:8px; }
+.g2 { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+.g3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; }
+.g4 { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; }
+.mb20 { margin-bottom:20px; }
+.mb16 { margin-bottom:16px; }
+
+/* ── STATS ── */
+.stat { background:var(--cd); border:1px solid var(--bd); border-radius:12px; padding:18px 20px; position:relative; overflow:hidden; }
+.stat::after { content:''; position:absolute; top:0; left:0; right:0; height:2px; background:var(--p); }
+.stat.gr::after { background:var(--gr); }
+.stat.yw::after { background:var(--yw); }
+.stat.rd::after { background:var(--rd); }
+.stat-l { font-size:9px; letter-spacing:2px; text-transform:uppercase; color:var(--mt); margin-bottom:8px; }
+.stat-v { font-family:var(--fh); font-size:44px; color:#fff; letter-spacing:1px; line-height:1; }
+.stat-s { font-size:10px; color:var(--mt); margin-top:5px; }
+
+/* ── PIPELINE ── */
+.pipeline { display:flex; border:1px solid var(--bd); border-radius:10px; overflow:hidden; margin-bottom:20px; }
+.ps { flex:1; background:var(--cd); padding:14px 10px; text-align:center; border-right:1px solid var(--bd); }
+.ps:last-child { border-right:none; }
+.ps-l { font-size:8px; letter-spacing:2px; text-transform:uppercase; color:var(--mt); margin-bottom:6px; }
+.ps-v { font-family:var(--fh); font-size:28px; color:#fff; }
+
+/* ── TERMINAL ── */
+.term { background:#070707; border:1px solid var(--bd); border-radius:10px; overflow:hidden; }
+.term-bar { background:#141414; padding:8px 14px; display:flex; align-items:center; gap:7px; border-bottom:1px solid var(--bd); }
+.tdot { width:9px; height:9px; border-radius:50%; }
+.tr { background:#FF5F57; }
+.ty { background:#FFBD2E; }
+.tg { background:#28C840; }
+.term-title { flex:1; text-align:center; font-family:var(--fm); font-size:10px; color:var(--mt); }
+.term-body { padding:16px 18px; min-height:160px; max-height:320px; overflow-y:auto; font-family:var(--fm); font-size:12px; line-height:1.7; color:var(--gr); }
+.tc { color:#444; }
+.tw { color:var(--tx); }
+.tyw { color:var(--yw); }
+.tp { color:var(--pl); }
+
+/* ── FORMS ── */
+label { font-size:9px; letter-spacing:2px; text-transform:uppercase; color:var(--mt); display:block; margin-bottom:4px; }
+input, select, textarea { width:100%; background:var(--bk); border:1px solid var(--bd); color:var(--tx); padding:9px 13px; border-radius:8px; font-family:var(--fn); font-size:12.5px; outline:none; transition:border-color .2s; }
+input:focus, select:focus, textarea:focus { border-color:var(--p); box-shadow:0 0 0 3px rgba(98,0,255,.1); }
+textarea { resize:vertical; min-height:100px; }
+select option { background:var(--dk); }
+.row { display:grid; gap:12px; margin-bottom:12px; }
+.r2 { grid-template-columns:1fr 1fr; }
+.r3 { grid-template-columns:1fr 1fr 1fr; }
+
+/* ── BUTTONS ── */
+.btn { padding:9px 20px; border-radius:8px; font-family:var(--fn); font-size:12px; font-weight:600; cursor:pointer; border:none; transition:all .18s; display:inline-flex; align-items:center; gap:7px; letter-spacing:.3px; }
+.bp { background:var(--p); color:#fff; }
+.bp:hover { background:var(--pl); transform:translateY(-1px); box-shadow:0 8px 24px rgba(98,0,255,.35); }
+.bo { background:transparent; color:var(--tx); border:1px solid var(--bd); }
+.bo:hover { border-color:var(--p); color:var(--pl); }
+.bgr { background:var(--gr); color:#000; }
+.bgr:hover { background:#00d988; transform:translateY(-1px); }
+.byw { background:var(--yw); color:#000; }
+.bsm { padding:5px 13px; font-size:11px; }
+
+/* ── TABLE ── */
+.tbl { width:100%; border-collapse:collapse; font-size:12px; }
+.tbl th { text-align:left; padding:8px 12px; font-size:8.5px; letter-spacing:2px; text-transform:uppercase; color:var(--mt); border-bottom:1px solid var(--bd); }
+.tbl td { padding:10px 12px; border-bottom:1px solid rgba(255,255,255,.025); }
+.tbl tr:hover td { background:rgba(255,255,255,.018); }
+
+/* ── TAGS ── */
+.tag { display:inline-block; padding:2px 9px; border-radius:20px; font-size:9.5px; font-weight:600; }
+.tm { background:rgba(98,0,255,.18); color:#a97bff; border:1px solid rgba(98,0,255,.25); }
+.ts { background:rgba(0,245,160,.1); color:var(--gr); border:1px solid rgba(0,245,160,.2); }
+.tv { background:rgba(255,214,0,.1); color:var(--yw); border:1px solid rgba(255,214,0,.2); }
+.trd { background:rgba(255,68,68,.1); color:#ff9090; border:1px solid rgba(255,68,68,.2); }
+
+/* ── STATUS ── */
+.sd { width:6px; height:6px; border-radius:50%; display:inline-block; margin-right:5px; }
+.spe { background:var(--yw); }
+.sse { background:var(--gr); }
+.sre { background:var(--pl); }
+.sme { background:var(--gr); box-shadow:0 0 7px var(--gr); }
+
+/* ── COUNTRY GRID ── */
+.cg { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:14px; }
+.cc { background:var(--bk); border:1px solid var(--bd); border-radius:8px; padding:10px 12px; cursor:pointer; text-align:center; transition:all .2s; }
+.cc:hover, .cc.sel { border-color:var(--p); background:var(--pd); }
+.cf { font-size:20px; margin-bottom:3px; }
+.cn { font-size:10px; font-weight:600; }
+.ci { font-size:9px; color:var(--mt); margin-top:1px; }
+
+/* ── PROGRESS ── */
+.pbar { height:3px; background:var(--bd); border-radius:2px; overflow:hidden; margin-top:7px; }
+.pfill { height:100%; background:linear-gradient(90deg,var(--p),var(--pl)); border-radius:2px; transition:width .5s; }
+
+/* ── ALERTS ── */
+.alert { padding:12px 16px; border-radius:8px; font-size:12px; margin-bottom:14px; display:flex; gap:10px; align-items:flex-start; }
+.ai { background:rgba(0,168,255,.07); border:1px solid rgba(0,168,255,.18); color:#7dd4f8; }
+.as { background:rgba(0,245,160,.07); border:1px solid rgba(0,245,160,.18); color:var(--gr); }
+.aw { background:rgba(255,214,0,.07); border:1px solid rgba(255,214,0,.18); color:var(--yw); }
+
+/* ── WORKFLOW ── */
+.flow { display:flex; align-items:center; gap:0; margin-bottom:22px; }
+.fs { flex:1; background:var(--cd); border:1px solid var(--bd); padding:14px 12px; text-align:center; position:relative; }
+.fs:first-child { border-radius:10px 0 0 10px; }
+.fs:last-child { border-radius:0 10px 10px 0; }
+.fs-ico { font-size:20px; margin-bottom:6px; }
+.fs-l { font-size:9px; letter-spacing:1.5px; text-transform:uppercase; color:var(--mt); }
+.fs-n { font-family:var(--fh); font-size:22px; color:#fff; margin:4px 0 2px; }
+.fa { color:var(--p); font-size:16px; padding:0 4px; }
+.fs.done { border-color:rgba(0,245,160,.3); }
+.fs.done .fs-n { color:var(--gr); }
+.fs.active { border-color:rgba(98,0,255,.5); background:var(--pd); }
+
+/* ── REPORT CARDS ── */
+.rep-card { background:var(--cd); border:1px solid var(--bd); border-radius:12px; padding:18px 20px; cursor:pointer; transition:all .2s; }
+.rep-card:hover { border-color:var(--p); background:var(--pd); }
+.rep-ico { font-size:28px; margin-bottom:10px; }
+.rep-t { font-weight:600; font-size:13px; margin-bottom:4px; }
+.rep-s { font-size:11px; color:var(--mt); }
+.rep-badge { display:inline-block; background:rgba(98,0,255,.15); color:var(--pl); border:1px solid rgba(98,0,255,.25); padding:2px 8px; border-radius:10px; font-size:9px; margin-top:8px; }
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar { width:4px; height:4px; }
+::-webkit-scrollbar-track { background:transparent; }
+::-webkit-scrollbar-thumb { background:#222; border-radius:2px; }
+::-webkit-scrollbar-thumb:hover { background:var(--p); }
+hr { border:none; border-top:1px solid var(--bd); margin:18px 0; }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sb">
+  <div class="sb-logo">
+    <div class="im-wordmark">IM<span class="im-cursor"></span></div>
+    <div class="im-sub">System v2.0</div>
+  </div>
+  <nav class="sb-nav">
+    <div class="nb">Core</div>
+    <button class="ni on" onclick="nav('home',this)"><span class="ico">⚡</span>Command Center</button>
+    <button class="ni" onclick="nav('leads',this)"><span class="ico">🎯</span>Base de Leads</button>
+    <button class="ni" onclick="nav('finder',this)"><span class="ico">🔍</span>Lead Finder</button>
+    <div class="nb">Inteligencia</div>
+    <button class="ni" onclick="nav('clientes',this)"><span class="ico">🏢</span>Mis Clientes</button>
+    <button class="ni" onclick="nav('intelligence',this)"><span class="ico">🧠</span>Intelligence Engine</button>
+    <button class="ni" onclick="nav('reportes',this)"><span class="ico">📄</span>Reportes</button>
+    <div class="nb">Campañas</div>
+    <button class="ni" onclick="nav('campanas',this)"><span class="ico">📧</span>Campañas Email</button>
+    <button class="ni" onclick="nav('comandos',this)"><span class="ico">💻</span>Comandos Terminal</button>
+    <div class="nb">Config</div>
+    <button class="ni" onclick="nav('config',this)"><span class="ico">⚙️</span>Configuración</button>
+  </nav>
+  <div class="sb-foot">Intelligent Markets<br>intelligentmarkets@gmail.com</div>
+</aside>
+
+<main class="main">
+  <div class="topbar">
+    <div class="topbar-title" id="tt">COMMAND CENTER</div>
+    <div class="sys-badge"><div class="pulse"></div>Sistema activo</div>
+  </div>
+  <div class="content">
+
+    <!-- ══ HOME ══ -->
+    <div class="panel on" id="p-home">
+
+      <div class="g4 mb20">
+        <div class="stat"><div class="stat-l">Total Leads</div><div class="stat-v" id="s-tot">0</div><div class="stat-s">En base de datos</div><div class="pbar"><div class="pfill" id="pb-tot" style="width:0%"></div></div></div>
+        <div class="stat gr"><div class="stat-l">Emails Enviados</div><div class="stat-v" id="s-sent">0</div><div class="stat-s">Histórico</div><div class="pbar"><div class="pfill" id="pb-sent" style="width:0%"></div></div></div>
+        <div class="stat yw"><div class="stat-l">Clientes IM</div><div class="stat-v" id="s-cli">0</div><div class="stat-s">Con reporte generado</div><div class="pbar"><div class="pfill" id="pb-cli" style="width:0%"></div></div></div>
+        <div class="stat rd"><div class="stat-l">Reuniones</div><div class="stat-v" id="s-meet">0</div><div class="stat-s">Agendadas</div><div class="pbar"><div class="pfill" id="pb-meet" style="width:0%"></div></div></div>
+      </div>
+
+      <div class="pipeline mb20">
+        <div class="ps"><div class="ps-l">Leads</div><div class="ps-v" id="fl1">0</div></div>
+        <div class="ps"><div class="ps-l">Contactados</div><div class="ps-v" id="fl2">0</div></div>
+        <div class="ps"><div class="ps-l">Respondieron</div><div class="ps-v" id="fl3">0</div></div>
+        <div class="ps"><div class="ps-l">Reunión</div><div class="ps-v" id="fl4">0</div></div>
+        <div class="ps"><div class="ps-l">Cliente IM</div><div class="ps-v" id="fl5">0</div></div>
+        <div class="ps"><div class="ps-l">Reporte</div><div class="ps-v" id="fl6">0</div></div>
+        <div class="ps"><div class="ps-l">Cerrado ✓</div><div class="ps-v" id="fl7">0</div></div>
+      </div>
+
+      <div class="card mb20">
+        <div class="card-t">⚡ FLUJO IM — DEL PROSPECTO AL CLIENTE ESTRATÉGICO</div>
+        <div class="flow">
+          <div class="fs"><div class="fs-ico">🔍</div><div class="fs-l">Fase 1</div><div class="fs-n">LEADS</div><div class="fs-l">Finder</div></div>
+          <div class="fa">→</div>
+          <div class="fs"><div class="fs-ico">📧</div><div class="fs-l">Fase 2</div><div class="fs-n">EMAIL</div><div class="fs-l">Campaña</div></div>
+          <div class="fa">→</div>
+          <div class="fs"><div class="fs-ico">📅</div><div class="fs-l">Fase 3</div><div class="fs-n">REUNIÓN</div><div class="fs-l">Cal.com</div></div>
+          <div class="fa">→</div>
+          <div class="fs"><div class="fs-ico">🤝</div><div class="fs-l">Fase 4</div><div class="fs-n">CLIENTE</div><div class="fs-l">Onboarding</div></div>
+          <div class="fa">→</div>
+          <div class="fs"><div class="fs-ico">🧠</div><div class="fs-l">Fase 5</div><div class="fs-n">INTEL</div><div class="fs-l">Engine</div></div>
+          <div class="fa">→</div>
+          <div class="fs"><div class="fs-ico">🚀</div><div class="fs-l">Fase 6</div><div class="fs-n">ESTRATEGIA</div><div class="fs-l">+ Contenido</div></div>
+        </div>
+      </div>
+
+      <div class="g2">
+        <div class="card">
+          <div class="card-t">🎯 NICHOS ACTIVOS</div>
+          <div id="nicho-stats" style="color:var(--mt);font-size:12px">Agrega leads para ver estadísticas por nicho</div>
+        </div>
+        <div class="card">
+          <div class="card-t">📅 ACCIONES RÁPIDAS</div>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <button class="btn bp" onclick="nav('finder',document.querySelector('[onclick*=finder]'))">🔍 Buscar nuevos leads</button>
+            <button class="btn bo" onclick="nav('intelligence',document.querySelector('[onclick*=intelligence]'))">🧠 Analizar cliente</button>
+            <button class="btn bo" onclick="nav('campanas',document.querySelector('[onclick*=campanas]'))">📧 Nueva campaña</button>
+            <button class="btn bo" onclick="nav('comandos',document.querySelector('[onclick*=comandos]'))">💻 Ver comandos</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ LEADS ══ -->
+    <div class="panel" id="p-leads">
+      <div style="display:flex;justify-content:space-between;align-items:center" class="mb20">
+        <div><div style="font-size:11px;color:var(--mt);margin-bottom:3px">Base de datos</div><div style="font-family:var(--fh);font-size:22px" id="leads-ct">0 leads</div></div>
+        <div style="display:flex;gap:8px">
+          <button class="btn bo bsm" onclick="document.getElementById('csv-up').click()">📂 Importar CSV</button>
+          <button class="btn bp bsm" onclick="nav('finder',document.querySelector('[onclick*=finder]'))">+ Buscar Leads</button>
+          <input type="file" id="csv-up" accept=".csv" style="display:none" onchange="loadCSV(this)">
+        </div>
+      </div>
+      <div class="card">
+        <table class="tbl" id="leads-tbl">
+          <thead><tr>
+            <th><input type="checkbox" id="sa" onchange="selAll(this)"></th>
+            <th>Nombre</th><th>Empresa</th><th>Email</th><th>Ciudad</th>
+            <th>Nicho</th><th>Fuente</th><th>Estado</th><th>Acción</th>
+          </tr></thead>
+          <tbody id="leads-tb">
+            <tr><td colspan="9" style="text-align:center;color:var(--mt);padding:40px">Importa un CSV o usa Lead Finder →</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ══ LEAD FINDER ══ -->
+    <div class="panel" id="p-finder">
+      <div class="alert ai mb20">💡 <div>El Lead Finder funciona <strong>100% sin APIs</strong>. Opcionalmente puedes conectar <strong>Apollo.io</strong> para leads más enriquecidos. Los comandos se ejecutan desde tu terminal con Claude Code.</div></div>
+
+      <div class="g2">
+        <div class="card">
+          <div class="card-t">🎯 CONFIGURAR BÚSQUEDA</div>
+
+          <div class="row"><div><label>Nicho</label>
+            <select id="fn">
+              <optgroup label="Salud">
+                <option value="odontologos">🦷 Odontólogos</option>
+                <option value="dermatologo">💆 Dermatólogos</option>
+                <option value="psicologo">🧠 Psicólogos</option>
+                <option value="fisioterapeuta">💪 Fisioterapeutas</option>
+              </optgroup>
+              <optgroup label="Empresas">
+                <option value="agencia_viajes">✈️ Agencias de Viajes</option>
+                <option value="seguros">🛡️ Seguros</option>
+                <option value="autos_alta_gama">🚗 Carros Alta Gama</option>
+              </optgroup>
+              <optgroup label="Música">
+                <option value="sello_musical">🎵 Sellos Musicales</option>
+                <option value="manager_musical">🎤 Managers / Booking</option>
+                <option value="artista_independiente">🎙️ Artistas Independientes</option>
+                <option value="estudio_grabacion">🎚️ Estudios de Grabación</option>
+              </optgroup>
+            </select>
+          </div></div>
+
+          <label style="margin-bottom:8px;display:block">País objetivo</label>
+          <div class="cg" id="cg">
+            <div class="cc sel" onclick="selC(this,'colombia','Colombia')"><div class="cf">🇨🇴</div><div class="cn">Colombia</div><div class="ci">Medellín · Bogotá</div></div>
+            <div class="cc" onclick="selC(this,'spain','España')"><div class="cf">🇪🇸</div><div class="cn">España</div><div class="ci">Madrid · Barcelona</div></div>
+            <div class="cc" onclick="selC(this,'mexico','México')"><div class="cf">🇲🇽</div><div class="cn">México</div><div class="ci">CDMX · GDL</div></div>
+            <div class="cc" onclick="selC(this,'puerto_rico','Puerto Rico')"><div class="cf">🇵🇷</div><div class="cn">Puerto Rico</div><div class="ci">San Juan</div></div>
+            <div class="cc" onclick="selC(this,'dominican','Rep. Dominicana')"><div class="cf">🇩🇴</div><div class="cn">Rep. Dominicana</div><div class="ci">Santo Domingo</div></div>
+          </div>
+
+          <div class="row r2">
+            <div><label>Ciudad</label><input id="fcity" value="Medellín"></div>
+            <div><label>Máx. leads</label><input id="fmax" type="number" value="50" min="10" max="300"></div>
+          </div>
+
+          <div style="display:flex;align-items:center;gap:10px;padding:10px;background:var(--bk);border-radius:8px;border:1px solid var(--bd);margin-bottom:14px">
+            <input type="checkbox" id="use-apollo" style="width:auto">
+            <div>
+              <div style="font-size:12px;font-weight:600">Usar Apollo.io API</div>
+              <div style="font-size:10px;color:var(--mt)">Requiere <code>APOLLO_API_KEY</code> configurado. Mejora calidad de emails.</div>
+            </div>
+          </div>
+
+          <button class="btn bp" style="width:100%;justify-content:center" onclick="genCmd()">⚡ Generar comando</button>
+        </div>
+
+        <div class="card">
+          <div class="card-t">💻 COMANDO GENERADO</div>
+          <div class="term">
+            <div class="term-bar"><div class="tdot tr"></div><div class="tdot ty"></div><div class="tdot tg"></div><div class="term-title">Claude Code Terminal</div></div>
+            <div class="term-body" id="cmd-out"><span class="tc"># Configura parámetros y haz clic en Generar</span></div>
+          </div>
+          <div style="display:flex;gap:8px;margin-top:10px">
+            <button class="btn bo bsm" onclick="copyCmd()">📋 Copiar</button>
+            <button class="btn bo bsm" onclick="genBulkCmd()">🌍 Multi-ciudad</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card mt16" style="margin-top:16px">
+        <div class="card-t">🎙️ ARTISTAS INDEPENDIENTES — Estrategia especial</div>
+        <div class="alert aw">🎵 <div>Para artistas independientes el sistema busca en Google, Spotify y SoundCloud sin autenticación. Los mejores resultados se obtienen combinando búsqueda web + revisión manual de perfiles en redes sociales.</div></div>
+        <div class="term">
+          <div class="term-bar"><div class="tdot tr"></div><div class="tdot ty"></div><div class="tdot tg"></div><div class="term-title">artistas-independientes.sh</div></div>
+          <div class="term-body">
+            <div class="tc"># Buscar artistas independientes en Colombia</div>
+            <div><span class="tp">$ </span><span class="tw">python agent/lead_finder_v2.py --nicho artista_independiente --city Medellín --country Colombia --max 50</span></div><br>
+            <div class="tc"># Puerto Rico (para IM Music)</div>
+            <div><span class="tp">$ </span><span class="tw">python agent/lead_finder_v2.py --nicho artista_independiente --city "San Juan" --country "Puerto Rico" --max 30</span></div><br>
+            <div class="tc"># Con Apollo (mejor para managers y sellos)</div>
+            <div><span class="tp">$ </span><span class="tw">python agent/lead_finder_v2.py --nicho sello_musical --city Madrid --country España --apollo --max 40</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ CLIENTES ══ -->
+    <div class="panel" id="p-clientes">
+      <div style="display:flex;justify-content:space-between;align-items:center" class="mb20">
+        <div><div style="font-size:11px;color:var(--mt);margin-bottom:3px">Clientes activos de IM</div><div style="font-family:var(--fh);font-size:22px" id="cli-ct">0 clientes</div></div>
+        <button class="btn bp" onclick="showNewClient()">+ Nuevo Cliente</button>
+      </div>
+
+      <div id="clientes-grid" class="g3 mb20">
+        <div style="color:var(--mt);font-size:12px;grid-column:1/-1">Agrega clientes para comenzar a generar reportes de inteligencia.</div>
+      </div>
+
+      <!-- FORM NUEVO CLIENTE -->
+      <div class="card" id="new-client-form" style="display:none">
+        <div class="card-t">➕ NUEVO CLIENTE</div>
+        <div class="row r2">
+          <div><label>Nombre del negocio *</label><input id="c-name" placeholder="Ej: Clínica Dental Ospina"></div>
+          <div><label>Nicho *</label>
+            <select id="c-nicho">
+              <option value="odontologos">🦷 Odontólogos</option>
+              <option value="dermatologo">💆 Dermatólogos</option>
+              <option value="psicologo">🧠 Psicólogos</option>
+              <option value="fisioterapeuta">💪 Fisioterapeutas</option>
+              <option value="agencia_viajes">✈️ Agencias de Viajes</option>
+              <option value="seguros">🛡️ Seguros</option>
+              <option value="autos_alta_gama">🚗 Carros Alta Gama</option>
+              <option value="sello_musical">🎵 Sello Musical</option>
+              <option value="manager_musical">🎤 Manager Musical</option>
+              <option value="artista_independiente">🎙️ Artista Independiente</option>
+            </select>
+          </div>
+        </div>
+        <div class="row r3">
+          <div><label>Ciudad</label><input id="c-city" value="Medellín"></div>
+          <div><label>País</label><input id="c-country" value="Colombia"></div>
+          <div><label>Presupuesto marketing</label><input id="c-budget" placeholder="Ej: 3.000.000 COP/mes"></div>
+        </div>
+        <div class="row">
+          <div><label>Descripción del negocio</label><textarea id="c-desc" placeholder="Qué hace, cuántos años, cuántas sedes, situación actual..."></textarea></div>
+        </div>
+        <div class="row r2">
+          <div><label>Objetivo principal</label><input id="c-goal" placeholder="Ej: 30 pacientes nuevos al mes"></div>
+          <div><label>Diferenciador clave</label><input id="c-diff" placeholder="Qué los hace únicos"></div>
+        </div>
+        <div class="row">
+          <div><label>Canales actuales</label><input id="c-channels" placeholder="Instagram, Google Maps, voz a voz..."></div>
+        </div>
+        <div class="row">
+          <div><label>Notas adicionales</label><textarea id="c-notes" placeholder="Reviews, competidores, contexto relevante..." style="min-height:70px"></textarea></div>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:8px">
+          <button class="btn bp" onclick="saveClient()">💾 Guardar cliente</button>
+          <button class="btn bo" onclick="document.getElementById('new-client-form').style.display='none'">Cancelar</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ INTELLIGENCE ENGINE ══ -->
+    <div class="panel" id="p-intelligence">
+      <div class="alert ai mb20">🧠 <div>El Intelligence Engine analiza a tu cliente con <strong>Neurociencia + 7 Maletas + Estrategia 360° + Plan de Contenido 30 días + Branding</strong>. Requiere que el cliente esté guardado y que tengas la API de Claude configurada.</div></div>
+
+      <div class="g2 mb20">
+        <div class="card">
+          <div class="card-t">⚙️ EJECUTAR ANÁLISIS</div>
+          <div class="row"><div><label>Cliente a analizar</label><select id="ie-client"><option value="">— Seleccionar cliente —</option></select></div></div>
+          <div class="row"><div><label>Módulos a ejecutar</label>
+            <div style="display:grid;gap:6px;margin-top:4px">
+              <label style="display:flex;align-items:center;gap:8px;font-size:12px;letter-spacing:0;text-transform:none;color:var(--tx)"><input type="checkbox" id="m-inv" checked style="width:auto">🧠 Investigación + Neurociencia + 7 Maletas</label>
+              <label style="display:flex;align-items:center;gap:8px;font-size:12px;letter-spacing:0;text-transform:none;color:var(--tx)"><input type="checkbox" id="m-est" checked style="width:auto">🎯 Estrategia de Marketing 360°</label>
+              <label style="display:flex;align-items:center;gap:8px;font-size:12px;letter-spacing:0;text-transform:none;color:var(--tx)"><input type="checkbox" id="m-con" checked style="width:auto">📅 Plan de Contenido 30 Días</label>
+              <label style="display:flex;align-items:center;gap:8px;font-size:12px;letter-spacing:0;text-transform:none;color:var(--tx)"><input type="checkbox" id="m-brd" checked style="width:auto">🏷️ Identidad y Construcción de Marca</label>
+            </div>
+          </div></div>
+          <button class="btn bp" style="width:100%;justify-content:center;margin-top:8px" onclick="genIntelCmd()">🚀 Generar comando de análisis</button>
+        </div>
+        <div class="card">
+          <div class="card-t">💻 COMANDO</div>
+          <div class="term">
+            <div class="term-bar"><div class="tdot tr"></div><div class="tdot ty"></div><div class="tdot tg"></div><div class="term-title">intelligence_engine.py</div></div>
+            <div class="term-body" id="ie-cmd"><span class="tc"># Selecciona un cliente y los módulos</span></div>
+          </div>
+          <button class="btn bo bsm" style="margin-top:8px" onclick="copyIECmd()">📋 Copiar</button>
+        </div>
+      </div>
+
+      <div class="g4">
+        <div class="rep-card" onclick="">
+          <div class="rep-ico">🧠</div>
+          <div class="rep-t">Investigación + Neurociencia</div>
+          <div class="rep-s">7 Maletas · Sesgos cognitivos · 100 razones · Psicografía</div>
+          <div class="rep-badge">~15 min</div>
+        </div>
+        <div class="rep-card">
+          <div class="rep-ico">🎯</div>
+          <div class="rep-t">Estrategia 360°</div>
+          <div class="rep-s">Paid media · Orgánico · Embudo · Cronograma · Presupuesto</div>
+          <div class="rep-badge">~10 min</div>
+        </div>
+        <div class="rep-card">
+          <div class="rep-ico">📅</div>
+          <div class="rep-t">Plan de Contenido</div>
+          <div class="rep-s">30 días · 5 pilares · 20 hooks · 5 guiones · Ads copy</div>
+          <div class="rep-badge">~12 min</div>
+        </div>
+        <div class="rep-card">
+          <div class="rep-ico">🏷️</div>
+          <div class="rep-t">Branding</div>
+          <div class="rep-s">Arquetipo · Voz · Sistema visual · UVP · Posicionamiento</div>
+          <div class="rep-badge">~8 min</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ REPORTES ══ -->
+    <div class="panel" id="p-reportes">
+      <div class="card">
+        <div class="card-t">📄 REPORTES GENERADOS</div>
+        <div id="reportes-list" style="color:var(--mt);font-size:12px">Los reportes HTML aparecerán aquí después de ejecutar el Intelligence Engine. Se guardan en <code>im-system/reports/</code></div>
+      </div>
+    </div>
+
+    <!-- ══ CAMPAÑAS ══ -->
+    <div class="panel" id="p-campanas">
+      <div class="g2">
+        <div class="card">
+          <div class="card-t">📧 CONFIGURAR CAMPAÑA</div>
+          <div class="row r2">
+            <div><label>Vertical</label>
+              <select id="cv" onchange="updateTemplates()">
+                <option value="music">🎵 IM Music</option>
+                <option value="empresas">🏢 IM Empresas</option>
+              </select>
+            </div>
+            <div><label>Template</label>
+              <select id="ct" onchange="previewEmail()">
+                <option value="music_sello">Sello Musical</option>
+                <option value="music_manager">Manager / Booking</option>
+                <option value="music_artista">Artista Independiente</option>
+              </select>
+            </div>
+          </div>
+          <div class="row r2">
+            <div><label>Nombre (prueba)</label><input id="tn" placeholder="Carlos Restrepo" oninput="previewEmail()"></div>
+            <div><label>Empresa</label><input id="te" placeholder="Sello Urban" oninput="previewEmail()"></div>
+          </div>
+          <div class="row r2">
+            <div><label>Ciudad</label><input id="tc" value="Medellín" oninput="previewEmail()"></div>
+            <div><label>Especialidad</label><input id="tsp" placeholder="odontología" oninput="previewEmail()"></div>
+          </div>
+          <div style="display:flex;gap:8px;margin-top:8px">
+            <button class="btn bo" onclick="previewEmail()">👁 Preview</button>
+            <button class="btn bp" onclick="genSendCmd()">💻 Generar comando envío</button>
+          </div>
+        </div>
+        <div>
+          <div class="card-t" style="font-family:var(--fh);font-size:15px;letter-spacing:2px;color:var(--pl);margin-bottom:12px">👁 PREVIEW</div>
+          <div style="background:#0a0a0a;border:1px solid var(--bd);border-radius:10px;overflow:hidden">
+            <div style="background:#141414;padding:12px 16px;border-bottom:1px solid var(--bd)">
+              <div style="font-size:11px;color:var(--mt);margin-bottom:3px">Asunto: <span id="pv-sub" style="color:var(--tx)">—</span></div>
+              <div style="font-size:11px;color:var(--mt)">Para: <span id="pv-to" style="color:var(--pl)">—</span></div>
+            </div>
+            <div id="pv-body" style="padding:16px;font-size:12px;line-height:1.8;white-space:pre-wrap;color:#ccc;max-height:320px;overflow-y:auto"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ COMANDOS ══ -->
+    <div class="panel" id="p-comandos">
+      <div class="alert ai mb20">⚡ <div>Abre una <strong>ventana separada de Claude Code</strong> y copia estos comandos. El agente trabajará en paralelo mientras Claude Code continúa con la plataforma de música.</div></div>
+
+      <div class="card mb20">
+        <div class="card-t">🚀 SETUP INICIAL (solo una vez)</div>
+        <div class="term">
+          <div class="term-bar"><div class="tdot tr"></div><div class="tdot ty"></div><div class="tdot tg"></div><div class="term-title">setup.sh</div></div>
+          <div class="term-body">
+            <div class="tc"># Instalar dependencias</div>
+            <div><span class="tp">$ </span><span class="tw">pip install requests beautifulsoup4</span></div><br>
+            <div class="tc"># Configurar email (App Password de Gmail)</div>
+            <div><span class="tp">$ </span><span class="tw">export IM_EMAIL_PASSWORD="xxxx-xxxx-xxxx-xxxx"</span></div><br>
+            <div class="tc"># Apollo.io OPCIONAL (mejora calidad de leads)</div>
+            <div><span class="tp">$ </span><span class="tw">export APOLLO_API_KEY="tu-api-key-de-apollo"</span></div><br>
+            <div class="tc"># Verificar que todo funciona</div>
+            <div><span class="tp">$ </span><span class="tw">python agent/lead_finder_v2.py --list</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card mb20">
+        <div class="card-t">🔍 PROSPECCIÓN — FLUJO COMPLETO</div>
+        <div class="term">
+          <div class="term-bar"><div class="tdot tr"></div><div class="tdot ty"></div><div class="tdot tg"></div><div class="term-title">prospeccion-completa.sh</div></div>
+          <div class="term-body">
+            <div class="tc"># ═══ SALUD — Medellín, Bogotá, Cali ═══</div>
+            <div><span class="tp">$ </span><span class="tw">python agent/lead_finder_v2.py --nicho odontologos --city Medellín --country Colombia --max 60</span></div>
+            <div><span class="tp">$ </span><span class="tw">python agent/lead_finder_v2.py --nicho dermatologo --city Bogotá --country Colombia --max 40</span></div>
+            <div><span class="tp">$ </span><span class="tw">python agent/lead_finder_v2.py --nicho psicologo --city Cali --country Colombia --max 40</span></div><br>
+            <div class="tc"># ═══ MÚSICA — Colombia + México + España + PR ═══</div>
+            <div><span class="tp">$ </span><span class="tw">python agent/lead_finder_v2.py --nicho sello_musical --city Medellín --country Colombia --max 30</span></div>
+            <div><span class="tp">$ </span><span class="tw">python agent/lead_finder_v2.py --nicho artista_independiente --city "Ciudad de México" --country México --max 50</span></div>
+            <div><span class="tp">$ </span><span class="tw">python agent/lead_finder_v2.py --nicho manager_musical --city Madrid --country España --max 30</span></div>
+            <div><span class="tp">$ </span><span class="tw">python agent/lead_finder_v2.py --nicho sello_musical --city "San Juan" --country "Puerto Rico" --max 25</span></div><br>
+            <div class="tc"># ═══ ENVIAR EMAILS ═══</div>
+            <div><span class="tp">$ </span><span class="tw">python agent/prospector.py --vertical empresas --template empresa_salud --csv data/leads_odontologos_*.csv --dry-run</span></div>
+            <div><span class="tp">$ </span><span class="tw">python agent/prospector.py --vertical music --template music_sello --csv data/leads_sello_*.csv</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-t">🧠 INTELLIGENCE ENGINE — Cuando ya tienes el cliente</div>
+        <div class="term">
+          <div class="term-bar"><div class="tdot tr"></div><div class="tdot ty"></div><div class="tdot tg"></div><div class="term-title">intelligence.sh</div></div>
+          <div class="term-body">
+            <div class="tc"># Crear perfil del cliente interactivamente</div>
+            <div><span class="tp">$ </span><span class="tw">python agent/intelligence_engine.py --nuevo-cliente</span></div><br>
+            <div class="tc"># O cargar desde JSON (exportado desde el dashboard)</div>
+            <div><span class="tp">$ </span><span class="tw">python agent/intelligence_engine.py --cliente data/cliente_clinica_ospina.json</span></div><br>
+            <div class="tc"># Solo investigación + estrategia (sin contenido ni branding)</div>
+            <div><span class="tp">$ </span><span class="tw">python agent/intelligence_engine.py --cliente data/cliente.json --modulos investigacion estrategia</span></div><br>
+            <div class="tc"># Ver reporte HTML generado</div>
+            <div><span class="tp">$ </span><span class="tw">open reports/im-report-*.html</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ CONFIG ══ -->
+    <div class="panel" id="p-config">
+      <div class="g2">
+        <div class="card">
+          <div class="card-t">⚙️ CREDENCIALES</div>
+          <div class="row"><div><label>Gmail App Password</label><input type="password" id="cfg-gp" placeholder="xxxx xxxx xxxx xxxx"></div></div>
+          <div class="row"><div>
+            <label>Apollo.io API Key (opcional)</label>
+            <input id="cfg-ap" placeholder="Obtén en: app.apollo.io/settings/api-keys">
+            <div style="font-size:10px;color:var(--mt);margin-top:4px">Free: 50 leads/mes · Paid: ilimitado — <a href="https://www.apollo.io/pricing" target="_blank" style="color:var(--pl)">apollo.io/pricing</a></div>
+          </div></div>
+          <button class="btn bp" style="margin-top:8px" onclick="saveConfig()">💾 Guardar</button>
+          <div class="alert as" style="margin-top:12px">🔑 <div>Genera tu App Password en <a href="https://myaccount.google.com/apppasswords" target="_blank" style="color:var(--gr)">myaccount.google.com/apppasswords</a> (requiere 2FA)</div></div>
+        </div>
+        <div class="card">
+          <div class="card-t">📅 CAL.COM</div>
+          <div class="row"><div><label>🎵 IM Music</label><input value="https://cal.com/intelligent-markets-agencia/sello-30min"></div></div>
+          <div class="row"><div><label>🏢 IM Empresas</label><input value="https://cal.com/intelligent-markets-agencia/30min"></div></div>
+          <hr>
+          <div class="card-t" style="margin-top:12px">📎 BROCHURES</div>
+          <div class="row"><div><label>PDF IM Music</label><input value="brochures/im_music_2026.pdf"></div></div>
+          <div class="row"><div><label>PDF IM Empresas</label><input value="brochures/deck_im_empresas.pdf"></div></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<script>
+// ── STATE ──────────────────────────────────────────────
+let leads = JSON.parse(localStorage.getItem('im_leads')||'[]');
+let clients = JSON.parse(localStorage.getItem('im_clients')||'[]');
+let selCountry = 'colombia'; let selCountryName = 'Colombia';
+
+// ── NAV ──────────────────────────────────────────────
+function nav(id, btn) {
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.ni').forEach(n=>n.classList.remove('on'));
+  document.getElementById('p-'+id).classList.add('on');
+  if(btn) btn.classList.add('on');
+  const T={home:'COMMAND CENTER',leads:'BASE DE LEADS',finder:'LEAD FINDER',
+    clientes:'MIS CLIENTES',intelligence:'INTELLIGENCE ENGINE',reportes:'REPORTES',
+    campanas:'CAMPAÑAS EMAIL',comandos:'COMANDOS TERMINAL',config:'CONFIGURACIÓN'};
+  document.getElementById('tt').textContent=T[id]||id.toUpperCase();
+  updateStats();
+  if(id==='clientes') renderClients();
+  if(id==='intelligence') populateClientSelect();
+}
+
+// ── STATS ──────────────────────────────────────────────
+function updateStats() {
+  const tot=leads.length;
+  const sent=leads.filter(l=>['sent','opened','replied','meeting','closed'].includes(l.status)).length;
+  const cli=clients.length;
+  const meet=leads.filter(l=>l.status==='meeting').length;
+  set('s-tot',tot); set('s-sent',sent); set('s-cli',cli); set('s-meet',meet);
+  pw('pb-tot',Math.min(tot/200*100,100)); pw('pb-sent',tot?sent/tot*100:0);
+  pw('pb-cli',Math.min(cli/20*100,100)); pw('pb-meet',Math.min(meet/10*100,100));
+  set('fl1',tot); set('fl2',sent);
+  set('fl3',leads.filter(l=>['replied','meeting','closed'].includes(l.status)).length);
+  set('fl4',meet); set('fl5',cli); set('fl6',clients.filter(c=>c.report).length);
+  set('fl7',leads.filter(l=>l.status==='closed').length);
+  set('leads-ct',tot+' leads');
+  set('cli-ct',cli+' clientes');
+}
+function set(id,v){const el=document.getElementById(id);if(el)el.textContent=v;}
+function pw(id,w){const el=document.getElementById(id);if(el)el.style.width=w+'%';}
+
+// ── CSV ──────────────────────────────────────────────
+function loadCSV(input) {
+  const file=input.files[0]; if(!file) return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    const lines=e.target.result.trim().split('\n');
+    const headers=lines[0].split(',').map(h=>h.trim().replace(/"/g,''));
+    const newL=[]; let dupes=0;
+    const existEmails=new Set(leads.map(l=>l.email));
+    for(let i=1;i<lines.length;i++){
+      const vals=lines[i].split(',').map(v=>v.trim().replace(/"/g,''));
+      const obj={};
+      headers.forEach((h,j)=>obj[h]=vals[j]||'');
+      obj.status=obj.status||'pendiente';
+      obj.id=Date.now()+i;
+      if(obj.email&&obj.email.includes('@')) {
+        if(existEmails.has(obj.email)){dupes++;}
+        else{existEmails.add(obj.email);newL.push(obj);}
+      }
+    }
+    leads=[...leads,...newL];
+    localStorage.setItem('im_leads',JSON.stringify(leads));
+    renderLeads(); updateStats();
+    alert(`✅ ${newL.length} leads importados\n⚠️ ${dupes} duplicados omitidos`);
+  };
+  reader.readAsText(file);
+}
+
+function renderLeads() {
+  const tb=document.getElementById('leads-tb');
+  if(!leads.length){tb.innerHTML='<tr><td colspan="9" style="text-align:center;color:var(--mt);padding:40px">Sin leads — importa un CSV o usa Lead Finder</td></tr>';return;}
+  const tmap={music:'tm',sello_musical:'tm',artista_independiente:'tm',manager_musical:'tm',
+    odontologos:'ts',dermatologo:'ts',psicologo:'ts',fisioterapeuta:'ts',
+    agencia_viajes:'tv',seguros:'tv',autos_alta_gama:'trd'};
+  const smap={pendiente:['spe','Pendiente'],sent:['sse','Enviado'],opened:['sse','Abierto'],
+    replied:['sre','Respondió'],meeting:['sme','Reunión ✓'],closed:['sse','Cerrado']};
+  tb.innerHTML=leads.slice(0,300).map(l=>{
+    const tc=tmap[l.nicho||l.vertical]||'ts';
+    const [sd,st]=smap[l.status]||['spe','Pendiente'];
+    return `<tr>
+      <td><input type="checkbox" class="lcb" value="${l.id}"></td>
+      <td style="max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${l.nombre||'—'}</td>
+      <td style="max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${l.empresa||'—'}</td>
+      <td style="color:var(--pl)">${l.email}</td>
+      <td>${l.ciudad||'—'}</td>
+      <td><span class="tag ${tc}">${(l.nicho||l.vertical||'').replace(/_/g,' ')}</span></td>
+      <td style="color:var(--mt);font-size:10px">${l.fuente||'manual'}</td>
+      <td><span class="sd ${sd}"></span>${st}</td>
+      <td>
+        <button class="btn bo bsm" onclick="chSt(${l.id},'sent')">📧</button>
+        <button class="btn bo bsm" onclick="chSt(${l.id},'meeting')" style="margin-left:3px">📅</button>
+        <button class="btn bo bsm" onclick="promoteClient(${l.id})" style="margin-left:3px;color:var(--gr)" title="Convertir en cliente IM">🏢</button>
+      </td>
+    </tr>`;
+  }).join('');
+}
+function chSt(id,s){const l=leads.find(x=>x.id==id);if(l){l.status=s;localStorage.setItem('im_leads',JSON.stringify(leads));renderLeads();updateStats();}}
+function selAll(cb){document.querySelectorAll('.lcb').forEach(c=>c.checked=cb.checked);}
+
+// ── CLIENTS ──────────────────────────────────────────
+function showNewClient(){document.getElementById('new-client-form').style.display='block';}
+function saveClient(){
+  const c={
+    id:Date.now(),
+    nombre_negocio:document.getElementById('c-name').value,
+    nicho:document.getElementById('c-nicho').value,
+    ciudad:document.getElementById('c-city').value,
+    pais:document.getElementById('c-country').value,
+    presupuesto_marketing:document.getElementById('c-budget').value,
+    descripcion:document.getElementById('c-desc').value,
+    objetivo_principal:document.getElementById('c-goal').value,
+    diferenciador:document.getElementById('c-diff').value,
+    canales_actuales:document.getElementById('c-channels').value,
+    notas:document.getElementById('c-notes').value,
+    fecha_creacion:new Date().toLocaleDateString('es-CO'),
+    vertical: ['sello_musical','manager_musical','artista_independiente','estudio_grabacion'].includes(document.getElementById('c-nicho').value)?'music':'empresas',
+  };
+  if(!c.nombre_negocio){alert('Falta el nombre del negocio');return;}
+  clients.push(c);
+  localStorage.setItem('im_clients',JSON.stringify(clients));
+  document.getElementById('new-client-form').style.display='none';
+  renderClients(); updateStats(); populateClientSelect();
+  alert(`✅ Cliente guardado: ${c.nombre_negocio}`);
+}
+
+function promoteClient(leadId){
+  const l=leads.find(x=>x.id==leadId);
+  if(!l) return;
+  document.getElementById('c-name').value=l.empresa||l.nombre||'';
+  document.getElementById('c-city').value=l.ciudad||'';
+  document.getElementById('c-country').value=l.pais||'Colombia';
+  const nm=document.querySelector('#c-nicho option[value="'+l.nicho+'"]');
+  if(nm) document.getElementById('c-nicho').value=l.nicho;
+  showNewClient();
+  nav('clientes',document.querySelector('[onclick*=clientes]'));
+  alert('Completa los datos del cliente y guarda para generar su reporte de inteligencia.');
+}
+
+function renderClients(){
+  const g=document.getElementById('clientes-grid');
+  if(!clients.length){g.innerHTML='<div style="color:var(--mt);font-size:12px;grid-column:1/-1">Agrega clientes para comenzar a generar reportes de inteligencia.</div>';return;}
+  const ico={odontologos:'🦷',dermatologo:'💆',psicologo:'🧠',fisioterapeuta:'💪',agencia_viajes:'✈️',seguros:'🛡️',autos_alta_gama:'🚗',sello_musical:'🎵',manager_musical:'🎤',artista_independiente:'🎙️'};
+  g.innerHTML=clients.map(c=>`
+    <div class="card" style="border-left:3px solid var(--p)">
+      <div style="font-size:24px;margin-bottom:8px">${ico[c.nicho]||'🏢'}</div>
+      <div style="font-weight:700;font-size:14px;margin-bottom:4px">${c.nombre_negocio}</div>
+      <div style="font-size:11px;color:var(--mt);margin-bottom:8px">${c.ciudad}, ${c.pais} · ${c.nicho.replace(/_/g,' ')}</div>
+      <div style="font-size:11px;color:#aaa;line-height:1.5">${(c.objetivo_principal||'').slice(0,80)}</div>
+      <div style="display:flex;gap:6px;margin-top:12px">
+        <button class="btn bp bsm" onclick="runIntelClient(${c.id})">🧠 Analizar</button>
+        <button class="btn bo bsm" onclick="exportClient(${c.id})">💾 JSON</button>
+        <button class="btn bo bsm" style="color:var(--rd)" onclick="delClient(${c.id})">🗑</button>
+      </div>
+    </div>`).join('');
+}
+
+function delClient(id){if(confirm('¿Eliminar cliente?')){clients=clients.filter(c=>c.id!==id);localStorage.setItem('im_clients',JSON.stringify(clients));renderClients();updateStats();}}
+
+function exportClient(id){
+  const c=clients.find(x=>x.id===id);
+  if(!c) return;
+  const blob=new Blob([JSON.stringify(c,null,2)],{type:'application/json'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download=`cliente_${c.nombre_negocio.toLowerCase().replace(/\s+/g,'-')}.json`;
+  a.click();
+}
+
+function runIntelClient(id){
+  const c=clients.find(x=>x.id===id);
+  if(!c) return;
+  nav('intelligence',document.querySelector('[onclick*=intelligence]'));
+  setTimeout(()=>{
+    const sel=document.getElementById('ie-client');
+    if(sel) sel.value=id;
+    genIntelCmd();
+  },100);
+}
+
+function populateClientSelect(){
+  const sel=document.getElementById('ie-client');
+  if(!sel) return;
+  sel.innerHTML='<option value="">— Seleccionar cliente —</option>'+
+    clients.map(c=>`<option value="${c.id}">${c.nombre_negocio} (${c.nicho.replace(/_/g,' ')})</option>`).join('');
+}
+
+// ── FINDER ──────────────────────────────────────────
+function selC(el, key, name){
+  document.querySelectorAll('.cc').forEach(c=>c.classList.remove('sel'));
+  el.classList.add('sel'); selCountry=key; selCountryName=name;
+  const cities={colombia:'Medellín',spain:'Madrid',mexico:'Ciudad de México',puerto_rico:'San Juan',dominican:'Santo Domingo'};
+  document.getElementById('fcity').value=cities[key]||'';
+}
+
+function genCmd(){
+  const n=document.getElementById('fn').value;
+  const city=document.getElementById('fcity').value;
+  const max=document.getElementById('fmax').value;
+  const apollo=document.getElementById('use-apollo').checked;
+  const apolloFlag=apollo?' --apollo':'';
+  const lines=[
+    `# Buscar leads — ${n.replace(/_/g,' ')} en ${city}`,
+    `python agent/lead_finder_v2.py \\`,
+    `  --nicho ${n} \\`,
+    `  --city "${city}" \\`,
+    `  --country "${selCountryName}" \\`,
+    `  --max ${max}${apolloFlag}`,
+    ``,
+    `# Ver resultados`,
+    `ls data/leads_${n}_*.csv`,
+    `cat data/leads_${n}_*.csv | head -15`,
+  ];
+  document.getElementById('cmd-out').innerHTML=lines.map(l=>
+    l.startsWith('#')?`<div class="tc">${l}</div>`:
+    l.trim()==''?'<br>':
+    `<div><span class="tp">$ </span><span class="tw">${l}</span></div>`
+  ).join('');
+}
+
+function genBulkCmd(){
+  const n=document.getElementById('fn').value;
+  const max=document.getElementById('fmax').value;
+  const cities=[
+    {city:'Medellín',country:'Colombia'},{city:'Bogotá',country:'Colombia'},
+    {city:'Madrid',country:'España'},{city:'Ciudad de México',country:'México'},
+  ];
+  const lines=[
+    `# Multi-ciudad — ${n.replace(/_/g,' ')}`,
+    ...cities.map(c=>`python agent/lead_finder_v2.py --nicho ${n} --city "${c.city}" --country "${c.country}" --max ${max}`),
+  ];
+  document.getElementById('cmd-out').innerHTML=lines.map(l=>
+    l.startsWith('#')?`<div class="tc">${l}</div>`:
+    `<div><span class="tp">$ </span><span class="tw">${l}</span></div>`
+  ).join('');
+}
+
+function copyCmd(){navigator.clipboard.writeText(document.getElementById('cmd-out').innerText).then(()=>alert('✅ Copiado'));}
+
+// ── INTELLIGENCE ──────────────────────────────────────
+function genIntelCmd(){
+  const id=document.getElementById('ie-client')?.value;
+  const c=clients.find(x=>x.id==id);
+  const mods=[];
+  if(document.getElementById('m-inv')?.checked) mods.push('investigacion');
+  if(document.getElementById('m-est')?.checked) mods.push('estrategia');
+  if(document.getElementById('m-con')?.checked) mods.push('contenido');
+  if(document.getElementById('m-brd')?.checked) mods.push('marca');
+
+  const el=document.getElementById('ie-cmd');
+  if(!c){el.innerHTML='<span class="tc"># Selecciona un cliente primero</span>';return;}
+
+  const slug=c.nombre_negocio.toLowerCase().replace(/\s+/g,'_').slice(0,20);
+  const modsStr=mods.join(' ');
+  const lines=[
+    `# Intelligence Engine — ${c.nombre_negocio}`,
+    `python agent/intelligence_engine.py \\`,
+    `  --cliente data/cliente_${slug}.json \\`,
+    `  --modulos ${modsStr}`,
+    ``,
+    `# Ver reporte`,
+    `open reports/im-report-${slug}-*.html`,
+  ];
+  el.innerHTML=lines.map(l=>
+    l.startsWith('#')?`<div class="tc">${l}</div>`:
+    l.trim()==''?'<br>':
+    `<div><span class="tp">$ </span><span class="tw">${l}</span></div>`
+  ).join('');
+
+  // Auto-exportar JSON del cliente
+  exportClient(parseInt(id));
+}
+function copyIECmd(){navigator.clipboard.writeText(document.getElementById('ie-cmd').innerText).then(()=>alert('✅ Copiado'));}
+
+// ── EMAIL PREVIEW ──────────────────────────────────────
+const TMPLS={
+  music_sello:{sub:"Tu artista merece más que streams — IM Music 🎵",body:`Hola {n},\n\nVi el trabajo de {e} y me llamó la atención.\n\nSoy Mateo Galvis, Gerente de Marketing en Intelligent Markets. Trabajamos con sellos y artistas para construir carreras con retorno de inversión real — no solo métricas vacías.\n\nAplicamos neurociencia y psicología del consumidor a cada estrategia de posicionamiento.\n\n¿Tienes 30 minutos esta semana?\n👉 https://cal.com/intelligent-markets-agencia/sello-30min\n\nAdjunto nuestro deck completo.\n\nMateo Galvis\nGerente de Marketing | Intelligent Markets`},
+  music_manager:{sub:"Llevemos la carrera de tus artistas al siguiente nivel 🚀",body:`Hola {n},\n\nTe escribo porque manejas artistas en {c} y creo que podemos ser tu aliado estratégico.\n\nEn IM Music somos más que una agencia — somos tu socio de crecimiento a largo plazo.\n\nNuestro enfoque en neurociencia del consumidor genera resultados medibles: más streams genuinos, fans comprometidos y más ingresos reales.\n\n¿Agendamos una llamada de 30 min?\n📅 https://cal.com/intelligent-markets-agencia/sello-30min\n\nMateo Galvis | IM Music`},
+  music_artista:{sub:"Construye tu carrera musical sobre bases sólidas 🎙️",body:`Hola {n},\n\nVi tu música y creo que tienes algo real. El talento está — lo que falta es la estrategia correcta para llegar a las personas correctas.\n\nEn IM Music te ayudamos a:\n→ Distribuir tu música en todas las plataformas\n→ Crear campañas que construyen fans reales\n→ Conectarte con productores e ingenieros de primer nivel\n→ Acceder a financiamiento para tu proyecto\n\nNo somos solo una agencia. Somos tu socio a largo plazo.\n\n¿30 minutos?\n📅 https://cal.com/intelligent-markets-agencia/sello-30min\n\nMateo Galvis | IM Music`},
+  empresa_salud:{sub:"Más pacientes de {sp} sin depender del voz a voz",body:`Hola {n},\n\nVi tu consulta en {c} y quería contactarte directamente.\n\nSoy Mateo Galvis de Intelligent Markets. Ayudamos a profesionales de la salud a conseguir pacientes nuevos de manera predecible y medible, usando publicidad digital y neurociencia del consumidor.\n\nResultado típico: 886 contactos nuevos optimizando la inversión.\n\n¿30 minutos sin compromiso?\n📅 https://cal.com/intelligent-markets-agencia/30min\n\nMateo Galvis | Intelligent Markets`},
+  empresa_viajes:{sub:"Más reservas directas para {e}",body:`Hola {n},\n\nVi tu agencia y creo que hay una oportunidad que probablemente estás dejando en la mesa.\n\nEn Intelligent Markets generamos reservas directas con publicidad digital altamente segmentada — sin depender de Booking u OTAs.\n\n¿30 minutos?\n📅 https://cal.com/intelligent-markets-agencia/30min\n\nMateo Galvis | Intelligent Markets`},
+  empresa_seguros:{sub:"Leads de seguros cualificados — {e}",body:`Hola {n},\n\nTrabajo con corredores de seguros en {c} para generar leads de calidad de manera consistente.\n\nUsamos neurociencia aplicada al marketing para conectar emocionalmente con el cliente potencial — mucho más efectivo que anuncios genéricos.\n\n¿Te parece una llamada de 30 min?\n📅 https://cal.com/intelligent-markets-agencia/30min\n\nMateo Galvis | Intelligent Markets`},
+  empresa_autos:{sub:"Más compradores de alta gama para {e} 🚗",body:`Hola {n},\n\nVi {e} y quería contactarlos directamente.\n\nTrabajamos con concesionarios para atraer compradores con real intención y capacidad de compra, usando segmentación por NSE alto en Meta e Instagram.\n\n¿30 minutos?\n📅 https://cal.com/intelligent-markets-agencia/30min\n\nMateo Galvis | Intelligent Markets`},
+};
+
+function updateTemplates(){
+  const v=document.getElementById('cv').value;
+  const sel=document.getElementById('ct');
+  sel.innerHTML=v==='music'
+    ?'<option value="music_sello">Sello Musical</option><option value="music_manager">Manager / Booking</option><option value="music_artista">Artista Independiente</option>'
+    :'<option value="empresa_salud">Salud</option><option value="empresa_viajes">Agencia de Viajes</option><option value="empresa_seguros">Seguros</option><option value="empresa_autos">Carros Alta Gama</option>';
+  previewEmail();
+}
+
+function previewEmail(){
+  const key=document.getElementById('ct').value;
+  const t=TMPLS[key]; if(!t) return;
+  const n=document.getElementById('tn').value||'Carlos';
+  const e=document.getElementById('te').value||'Tu Empresa';
+  const c=document.getElementById('tc').value||'Medellín';
+  const sp=document.getElementById('tsp').value||'odontología';
+  const fill=s=>s.replace(/{n}/g,n).replace(/{e}/g,e).replace(/{c}/g,c).replace(/{sp}/g,sp);
+  document.getElementById('pv-sub').textContent=fill(t.sub);
+  document.getElementById('pv-body').textContent=fill(t.body);
+  document.getElementById('pv-to').textContent=`${n} <${n.toLowerCase().replace(/\s/g,'.')}@empresa.com>`;
+}
+
+function genSendCmd(){
+  const v=document.getElementById('cv').value;
+  const key=document.getElementById('ct').value;
+  const lines=[
+    `# Dry-run primero`,
+    `python agent/prospector.py --vertical ${v} --template ${key} --csv data/leads_*.csv --dry-run`,
+    ``,
+    `# Envío real`,
+    `python agent/prospector.py --vertical ${v} --template ${key} --csv data/leads_*.csv`,
+  ];
+  alert('Comando para terminal:\n\n'+lines.join('\n'));
+}
+
+function saveConfig(){alert('Configura en terminal:\nexport IM_EMAIL_PASSWORD="tu-password"\nexport APOLLO_API_KEY="tu-key"');}
+
+// ── INIT ──────────────────────────────────────────────
+updateStats();
+previewEmail();
+renderLeads();
+renderClients();
+populateClientSelect();
+</script>
+</body>
+</html>

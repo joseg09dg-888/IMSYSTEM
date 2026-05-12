@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IM Agents — Vale & Santi</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bk:#060606; --dk:#0d0d0d; --cd:#131313; --bd:rgba(255,255,255,.06);
+  --p:#6200FF; --pl:#9B59FF; --pd:rgba(98,0,255,.1);
+  --tx:#EBEBEB; --mt:#545454; --gr:#00F5A0; --yw:#F5C518; --rd:#FF4F4F;
+  --fh:'Bebas Neue',cursive; --fs:'Instrument Serif',serif; --fb:'DM Sans',sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bk);color:var(--tx);font-family:var(--fb);min-height:100vh;}
+
+/* ── TOP NAV ── */
+.nav{background:var(--dk);border-bottom:1px solid var(--bd);padding:16px 36px;display:flex;align-items:center;justify-content:space-between;}
+.wordmark{font-family:var(--fh);font-size:28px;color:#fff;letter-spacing:3px;display:flex;align-items:flex-end;gap:0;}
+.wbar{width:3px;height:28px;background:var(--p);margin-left:2px;animation:bc 1.1s step-end infinite;}
+@keyframes bc{0%,100%{opacity:1}50%{opacity:0}}
+.nav-links{display:flex;gap:6px;}
+.nlk{padding:7px 16px;border-radius:6px;font-size:12px;font-weight:500;cursor:pointer;border:none;background:transparent;color:#888;transition:all .15s;}
+.nlk:hover,.nlk.on{background:var(--pd);color:var(--pl);}
+
+/* ── HERO AGENTES ── */
+.agents-hero{padding:48px 36px 32px;display:grid;grid-template-columns:1fr 1fr;gap:24px;max-width:960px;margin:0 auto;}
+
+.agent-card{border-radius:16px;overflow:hidden;position:relative;cursor:pointer;transition:transform .2s,box-shadow .2s;}
+.agent-card:hover{transform:translateY(-3px);}
+
+.ac-vale{background:linear-gradient(135deg,#0d0006 0%,#1a0010 50%,#0d0006 100%);border:1px solid rgba(180,0,80,.25);}
+.ac-santi{background:linear-gradient(135deg,#00060d 0%,#001020 50%,#00060d 100%);border:1px solid rgba(0,100,180,.25);}
+
+.ac-header{padding:28px 28px 0;}
+.ac-emoji{font-size:44px;margin-bottom:12px;}
+.ac-name{font-family:var(--fh);font-size:36px;letter-spacing:3px;line-height:1;}
+.ac-vale .ac-name{color:#ff6eb4;}
+.ac-santi .ac-name{color:#5db8ff;}
+.ac-role{font-size:11px;letter-spacing:2px;text-transform:uppercase;margin-top:4px;}
+.ac-vale .ac-role{color:rgba(255,110,180,.6);}
+.ac-santi .ac-role{color:rgba(93,184,255,.6);}
+
+.ac-bio{padding:16px 28px;font-size:12.5px;line-height:1.7;color:#aaa;font-family:var(--fs);font-style:italic;}
+
+.ac-traits{padding:0 28px 20px;display:flex;flex-wrap:wrap;gap:6px;}
+.trait{padding:3px 10px;border-radius:12px;font-size:10px;font-weight:600;letter-spacing:.5px;}
+.ac-vale .trait{background:rgba(255,110,180,.1);color:#ff9dcf;border:1px solid rgba(255,110,180,.2);}
+.ac-santi .trait{background:rgba(93,184,255,.1);color:#8dceff;border:1px solid rgba(93,184,255,.2);}
+
+.ac-stats{padding:16px 28px;border-top:1px solid var(--bd);display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+.ac-stat-v{font-family:var(--fh);font-size:22px;color:#fff;}
+.ac-vale .ac-stat-v{color:#ff6eb4;}
+.ac-santi .ac-stat-v{color:#5db8ff;}
+.ac-stat-l{font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--mt);margin-top:2px;}
+
+.ac-footer{padding:16px 28px 24px;display:flex;gap:8px;}
+
+/* ── MAIN CONTENT ── */
+.main-content{max-width:960px;margin:0 auto;padding:0 36px 60px;}
+
+/* ── PANEL AGENTE ── */
+.agent-panel{display:none;}
+.agent-panel.on{display:block;animation:fd .3s ease;}
+@keyframes fd{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+.panel-header{display:flex;align-items:center;gap:16px;margin-bottom:28px;padding:20px 24px;border-radius:12px;}
+.ph-vale{background:linear-gradient(135deg,#0d0006,#1a0010);border:1px solid rgba(180,0,80,.2);}
+.ph-santi{background:linear-gradient(135deg,#00060d,#001020);border:1px solid rgba(0,100,180,.2);}
+.ph-ico{font-size:40px;}
+.ph-name{font-family:var(--fh);font-size:28px;letter-spacing:2px;}
+.ph-vale .ph-name{color:#ff6eb4;}
+.ph-santi .ph-name{color:#5db8ff;}
+.ph-sub{font-size:11px;color:var(--mt);margin-top:3px;}
+
+/* ── SECTIONS ── */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:18px;}
+.card{background:var(--cd);border:1px solid var(--bd);border-radius:12px;padding:22px 24px;}
+.ct{font-family:var(--fh);font-size:14px;letter-spacing:2px;margin-bottom:16px;}
+.vale-accent{color:#ff6eb4;}
+.santi-accent{color:#5db8ff;}
+
+label{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--mt);display:block;margin-bottom:4px;}
+input,select,textarea{width:100%;background:var(--bk);border:1px solid var(--bd);color:var(--tx);padding:9px 13px;border-radius:8px;font-family:var(--fb);font-size:12.5px;outline:none;transition:border-color .2s;}
+input:focus,select:focus,textarea:focus{border-color:var(--p);}
+textarea{resize:vertical;min-height:90px;}
+select option{background:var(--dk);}
+.row{display:grid;gap:10px;margin-bottom:10px;}
+.r2{grid-template-columns:1fr 1fr;}
+.r3{grid-template-columns:1fr 1fr 1fr;}
+
+.btn{padding:9px 20px;border-radius:8px;font-family:var(--fb);font-size:12px;font-weight:600;cursor:pointer;border:none;transition:all .18s;display:inline-flex;align-items:center;gap:7px;}
+.bp{background:var(--p);color:#fff;}
+.bp:hover{background:var(--pl);transform:translateY(-1px);box-shadow:0 8px 24px rgba(98,0,255,.3);}
+.bo{background:transparent;color:var(--tx);border:1px solid var(--bd);}
+.bo:hover{border-color:var(--p);color:var(--pl);}
+.bvale{background:rgba(255,110,180,.15);color:#ff6eb4;border:1px solid rgba(255,110,180,.25);}
+.bvale:hover{background:rgba(255,110,180,.25);}
+.bsanti{background:rgba(93,184,255,.15);color:#5db8ff;border:1px solid rgba(93,184,255,.25);}
+.bsanti:hover{background:rgba(93,184,255,.25);}
+.bsm{padding:5px 13px;font-size:11px;}
+.bfull{width:100%;justify-content:center;margin-top:10px;}
+
+/* ── EMAIL PREVIEW ── */
+.email-canvas{background:#0a0a0a;border:1px solid var(--bd);border-radius:10px;overflow:hidden;}
+.ec-header{background:#111;padding:14px 18px;border-bottom:1px solid var(--bd);}
+.ec-field{font-size:11px;color:var(--mt);margin-bottom:4px;}
+.ec-field span{color:var(--tx);}
+.ec-from-vale{color:#ff6eb4!important;}
+.ec-from-santi{color:#5db8ff!important;}
+.ec-body{padding:18px;font-size:13px;line-height:1.85;white-space:pre-wrap;color:#ccc;max-height:400px;overflow-y:auto;font-family:var(--fs);}
+
+/* ── TERMINAL ── */
+.term{background:#050505;border:1px solid var(--bd);border-radius:10px;overflow:hidden;}
+.tbar{background:#111;padding:8px 14px;display:flex;align-items:center;gap:7px;border-bottom:1px solid var(--bd);}
+.td{width:9px;height:9px;border-radius:50%;}
+.tr{background:#FF5F57;}.ty{background:#FFBD2E;}.tg{background:#28C840;}
+.ttitle{flex:1;text-align:center;font-size:10px;color:var(--mt);font-family:monospace;}
+.tbody{padding:16px 18px;min-height:140px;max-height:280px;overflow-y:auto;font-family:'DM Mono',monospace;font-size:12px;line-height:1.7;color:var(--gr);}
+.tc{color:#3a3a3a;} .tw{color:var(--tx);} .tp{color:var(--pl);}
+
+/* ── REGLAS ── */
+.rules-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px;}
+.rule{background:var(--bk);border-radius:8px;padding:12px 14px;border-left:3px solid;}
+.rule-ok{border-left-color:var(--gr);}
+.rule-no{border-left-color:var(--rd);}
+.rule-icon{font-size:16px;margin-bottom:4px;}
+.rule-text{font-size:11px;color:#bbb;line-height:1.4;}
+
+/* ── WORKFLOW STEPS ── */
+.steps{display:flex;gap:0;margin-bottom:20px;}
+.step{flex:1;background:var(--cd);border:1px solid var(--bd);padding:14px 10px;text-align:center;}
+.step:first-child{border-radius:10px 0 0 10px;}
+.step:last-child{border-radius:0 10px 10px 0;}
+.step-n{font-family:var(--fh);font-size:28px;color:var(--p);line-height:1;}
+.step-l{font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--mt);margin-top:4px;}
+.step-d{font-size:11px;color:#888;margin-top:3px;}
+.step-arr{color:var(--mt);font-size:14px;display:flex;align-items:center;padding:0 3px;}
+
+/* ── ALERT ── */
+.alert{padding:12px 16px;border-radius:8px;font-size:12px;margin-bottom:16px;display:flex;gap:10px;}
+.ai{background:rgba(0,168,255,.07);border:1px solid rgba(0,168,255,.18);color:#7dd4f8;}
+.as{background:rgba(0,245,160,.07);border:1px solid rgba(0,245,160,.18);color:var(--gr);}
+.aw{background:rgba(245,197,24,.07);border:1px solid rgba(245,197,24,.18);color:var(--yw);}
+
+::-webkit-scrollbar{width:4px;height:4px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:#1e1e1e;border-radius:2px;}
+::-webkit-scrollbar-thumb:hover{background:var(--p);}
+hr{border:none;border-top:1px solid var(--bd);margin:18px 0;}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="wordmark">IM<span class="wbar"></span></div>
+  <div class="nav-links">
+    <button class="nlk on" onclick="showSection('home',this)">Agentes</button>
+    <button class="nlk" onclick="showSection('vale',this)">Vale 👩</button>
+    <button class="nlk" onclick="showSection('santi',this)">Santi 👨</button>
+    <button class="nlk" onclick="showSection('reglas',this)">Reglas del Copy</button>
+    <button class="nlk" onclick="showSection('comandos',this)">Comandos</button>
+  </div>
+</nav>
+
+<!-- ══════════ HOME ══════════ -->
+<section id="s-home">
+
+  <div class="agents-hero">
+
+    <!-- VALENTINA -->
+    <div class="agent-card ac-vale" onclick="showSection('vale',document.querySelectorAll('.nlk')[1])">
+      <div class="ac-header">
+        <div class="ac-emoji">👩‍💼</div>
+        <div class="ac-name">VALENTINA</div>
+        <div class="ac-role">Estratega de Negocio · IM Empresas</div>
+      </div>
+      <div class="ac-bio">
+        "Hola, me dicen Vale. Medellín, 29 años. Trabajo con dueños de negocio desde hace 3 años y aprendí algo: la gente no compra servicios, compra confianza. Por eso nunca entro vendiendo."
+      </div>
+      <div class="ac-traits">
+        <span class="trait">Cálida pero directa</span>
+        <span class="trait">Frases cortas</span>
+        <span class="trait">Cero corporativo</span>
+        <span class="trait">Una pregunta al final</span>
+        <span class="trait">Investiga antes</span>
+      </div>
+      <div class="ac-stats">
+        <div><div class="ac-stat-v">0</div><div class="ac-stat-l">Enviados</div></div>
+        <div><div class="ac-stat-v" id="v-open">0%</div><div class="ac-stat-l">Respuestas</div></div>
+        <div><div class="ac-stat-v" id="v-meet">0</div><div class="ac-stat-l">Reuniones</div></div>
+      </div>
+      <div class="ac-footer">
+        <button class="btn bvale" onclick="event.stopPropagation();showSection('vale',document.querySelectorAll('.nlk')[1])">Trabajar con Vale</button>
+      </div>
+    </div>
+
+    <!-- SANTIAGO -->
+    <div class="agent-card ac-santi" onclick="showSection('santi',document.querySelectorAll('.nlk')[2])">
+      <div class="ac-header">
+        <div class="ac-emoji">🎧</div>
+        <div class="ac-name">SANTIAGO</div>
+        <div class="ac-role">Conector de Industria Musical · IM Music</div>
+      </div>
+      <div class="ac-bio">
+        "Soy Santi. Medellín / Bogotá. 5 años en la industria musical — sé lo que es lanzar música sin presupuesto y que nadie la escuche. Por eso nunca entro como agencia. Entro como alguien del sector."
+      </div>
+      <div class="ac-traits">
+        <span class="trait">Habla de industria</span>
+        <span class="trait">Muy conciso</span>
+        <span class="trait">WhatsApp vibe</span>
+        <span class="trait">Cero ventas</span>
+        <span class="trait">Conoce el dolor</span>
+      </div>
+      <div class="ac-stats">
+        <div><div class="ac-stat-v">0</div><div class="ac-stat-l">Enviados</div></div>
+        <div><div class="ac-stat-v" id="s-open">0%</div><div class="ac-stat-l">Respuestas</div></div>
+        <div><div class="ac-stat-v" id="s-meet">0</div><div class="ac-stat-l">Reuniones</div></div>
+      </div>
+      <div class="ac-footer">
+        <button class="btn bsanti" onclick="event.stopPropagation();showSection('santi',document.querySelectorAll('.nlk')[2])">Trabajar con Santi</button>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="main-content">
+    <div class="steps">
+      <div class="step"><div class="step-n">01</div><div class="step-l">Leads</div><div class="step-d">CSV importado</div></div>
+      <div class="step-arr">→</div>
+      <div class="step"><div class="step-n">02</div><div class="step-l">Investiga</div><div class="step-d">Web + noticias</div></div>
+      <div class="step-arr">→</div>
+      <div class="step"><div class="step-n">03</div><div class="step-l">Perfila</div><div class="step-d">Nicho + dolor</div></div>
+      <div class="step-arr">→</div>
+      <div class="step"><div class="step-n">04</div><div class="step-l">Escribe</div><div class="step-d">Copy humanizado</div></div>
+      <div class="step-arr">→</div>
+      <div class="step"><div class="step-n">05</div><div class="step-l">Envía</div><div class="step-d">Con pausa humana</div></div>
+      <div class="step-arr">→</div>
+      <div class="step"><div class="step-n">06</div><div class="step-l">Conversación</div><div class="step-d">No venta directa</div></div>
+    </div>
+
+    <div class="alert ai">🧠 <div>Los agentes <strong>investigan cada prospecto</strong> antes de escribir una sola palabra. Buscan su web, noticias recientes, su situación actual. Solo entonces generan el email — personalizado, no de plantilla.</div></div>
+  </div>
+</section>
+
+<!-- ══════════ VALE ══════════ -->
+<section id="s-vale" style="display:none">
+<div class="main-content">
+
+  <div class="panel-header ph-vale">
+    <div class="ph-ico">👩‍💼</div>
+    <div><div class="ph-name vale-accent">VALENTINA — "VALE"</div><div class="ph-sub">Estratega de Negocio · Empresas · Medellín, 29 años</div></div>
+  </div>
+
+  <div class="g2">
+
+    <div class="card">
+      <div class="ct vale-accent">⚡ GENERAR EMAIL</div>
+      <div class="row"><div><label>Nicho</label>
+        <select id="v-nicho">
+          <option value="odontologos">🦷 Odontólogos</option>
+          <option value="dermatologo">💆 Dermatólogos</option>
+          <option value="psicologo">🧠 Psicólogos</option>
+          <option value="fisioterapeuta">💪 Fisioterapeutas</option>
+          <option value="agencia_viajes">✈️ Agencias de Viajes</option>
+          <option value="seguros">🛡️ Seguros</option>
+          <option value="autos_alta_gama">🚗 Carros Alta Gama</option>
+        </select>
+      </div></div>
+      <div class="row r2">
+        <div><label>Nombre</label><input id="v-nombre" placeholder="Ej: Dr. Andrés Ospina" oninput="previewVale()"></div>
+        <div><label>Empresa</label><input id="v-empresa" placeholder="Ej: Clínica Dental Ospina" oninput="previewVale()"></div>
+      </div>
+      <div class="row r2">
+        <div><label>Ciudad</label><input id="v-ciudad" value="Medellín" oninput="previewVale()"></div>
+        <div><label>Tipo</label>
+          <select id="v-tipo" onchange="previewVale()">
+            <option value="1">Primer contacto</option>
+            <option value="2">Follow-up (sin respuesta)</option>
+            <option value="3">Respondió con interés</option>
+          </select>
+        </div>
+      </div>
+      <div class="row"><div><label>Contexto específico (opcional)</label>
+        <input id="v-ctx" placeholder="Ej: Vi que inauguraron segunda sede el mes pasado" oninput="previewVale()">
+      </div></div>
+      <div style="display:flex;gap:8px;margin-top:10px">
+        <button class="btn bvale" onclick="previewVale()">👁 Preview</button>
+        <button class="btn bo bsm" onclick="rotateSubject('v')">🔄 Rotar asunto</button>
+      </div>
+    </div>
+
+    <div>
+      <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--mt);margin-bottom:10px">PREVIEW DEL EMAIL</div>
+      <div class="email-canvas">
+        <div class="ec-header">
+          <div class="ec-field">De: <span class="ec-from-vale">Valentina Ríos &lt;intelligentmarkets@gmail.com&gt;</span></div>
+          <div class="ec-field">Para: <span id="v-to">destinatario@correo.com</span></div>
+          <div class="ec-field">Asunto: <span id="v-sub" style="color:var(--tx)">—</span></div>
+        </div>
+        <div class="ec-body" id="v-body">Configura los campos y haz clic en Preview</div>
+      </div>
+      <div style="display:flex;gap:6px;margin-top:8px">
+        <button class="btn bvale bsm" onclick="genValeCmd()">💻 Generar comando</button>
+        <button class="btn bo bsm" onclick="copyEmail('v')">📋 Copiar email</button>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="card" style="margin-bottom:18px">
+    <div class="ct vale-accent">💻 COMANDO PARA TERMINAL</div>
+    <div class="term">
+      <div class="tbar"><div class="td tr"></div><div class="td ty"></div><div class="td tg"></div><div class="ttitle">im_agents.py — valentina</div></div>
+      <div class="tbody" id="v-cmd">
+        <div class="tc"># Configura los parámetros arriba y haz clic en Generar</div>
+      </div>
+    </div>
+    <button class="btn bo bsm" style="margin-top:8px" onclick="copyCmd('v')">📋 Copiar</button>
+  </div>
+
+  <div class="card">
+    <div class="ct vale-accent">📝 CÓMO ESCRIBE VALE</div>
+    <div class="rules-grid">
+      <div class="rule rule-ok"><div class="rule-icon">✅</div><div class="rule-text">Empieza con algo específico de ellos, no de IM</div></div>
+      <div class="rule rule-ok"><div class="rule-icon">✅</div><div class="rule-text">Frases cortas. A veces una oración sola en un párrafo.</div></div>
+      <div class="rule rule-ok"><div class="rule-icon">✅</div><div class="rule-text">Una pregunta al final que invite a responder</div></div>
+      <div class="rule rule-ok"><div class="rule-icon">✅</div><div class="rule-text">Máximo 120 palabras en el primer email</div></div>
+      <div class="rule rule-no"><div class="rule-icon">🚫</div><div class="rule-text">NUNCA: "potenciar", "sinergia", "escalar", "360°"</div></div>
+      <div class="rule rule-no"><div class="rule-icon">🚫</div><div class="rule-text">NUNCA: menciona que es agencia de marketing</div></div>
+      <div class="rule rule-no"><div class="rule-icon">🚫</div><div class="rule-text">NUNCA: "agenda una llamada sin compromiso"</div></div>
+      <div class="rule rule-no"><div class="rule-icon">🚫</div><div class="rule-text">NUNCA: adjunta nada en el primer email</div></div>
+    </div>
+  </div>
+
+</div>
+</section>
+
+<!-- ══════════ SANTI ══════════ -->
+<section id="s-santi" style="display:none">
+<div class="main-content">
+
+  <div class="panel-header ph-santi">
+    <div class="ph-ico">🎧</div>
+    <div><div class="ph-name santi-accent">SANTIAGO — "SANTI"</div><div class="ph-sub">Conector de Industria · IM Music · Medellín / Bogotá · 27 años</div></div>
+  </div>
+
+  <div class="g2">
+
+    <div class="card">
+      <div class="ct santi-accent">⚡ GENERAR EMAIL</div>
+      <div class="row"><div><label>Nicho musical</label>
+        <select id="s-nicho">
+          <option value="sello_musical">🎵 Sello Musical</option>
+          <option value="manager_musical">🎤 Manager / Booking</option>
+          <option value="artista_independiente">🎙️ Artista Independiente</option>
+          <option value="estudio_grabacion">🎚️ Estudio de Grabación</option>
+        </select>
+      </div></div>
+      <div class="row r2">
+        <div><label>Nombre</label><input id="s-nombre" placeholder="Ej: Carlos Restrepo" oninput="previewSanti()"></div>
+        <div><label>Proyecto / Sello</label><input id="s-empresa" placeholder="Ej: Urban Roots Records" oninput="previewSanti()"></div>
+      </div>
+      <div class="row r2">
+        <div><label>País</label>
+          <select id="s-pais" onchange="previewSanti()">
+            <option>Colombia</option><option>México</option><option>España</option>
+            <option>Puerto Rico</option><option>Rep. Dominicana</option>
+          </select>
+        </div>
+        <div><label>Tipo</label>
+          <select id="s-tipo" onchange="previewSanti()">
+            <option value="1">Primer contacto</option>
+            <option value="2">Follow-up</option>
+            <option value="3">Respondió con interés</option>
+          </select>
+        </div>
+      </div>
+      <div class="row"><div><label>Algo específico de su proyecto (opcional)</label>
+        <input id="s-ctx" placeholder="Ej: Vi que lanzaron un EP en marzo y está sonando" oninput="previewSanti()">
+      </div></div>
+      <div style="display:flex;gap:8px;margin-top:10px">
+        <button class="btn bsanti" onclick="previewSanti()">👁 Preview</button>
+        <button class="btn bo bsm" onclick="rotateSubject('s')">🔄 Rotar asunto</button>
+      </div>
+    </div>
+
+    <div>
+      <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--mt);margin-bottom:10px">PREVIEW DEL EMAIL</div>
+      <div class="email-canvas">
+        <div class="ec-header">
+          <div class="ec-field">De: <span class="ec-from-santi">Santiago Mora &lt;intelligentmarkets@gmail.com&gt;</span></div>
+          <div class="ec-field">Para: <span id="s-to">destinatario@correo.com</span></div>
+          <div class="ec-field">Asunto: <span id="s-sub" style="color:var(--tx)">—</span></div>
+        </div>
+        <div class="ec-body" id="s-body">Configura los campos y haz clic en Preview</div>
+      </div>
+      <div style="display:flex;gap:6px;margin-top:8px">
+        <button class="btn bsanti bsm" onclick="genSantiCmd()">💻 Generar comando</button>
+        <button class="btn bo bsm" onclick="copyEmail('s')">📋 Copiar email</button>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="card" style="margin-bottom:18px">
+    <div class="ct santi-accent">💻 COMANDO PARA TERMINAL</div>
+    <div class="term">
+      <div class="tbar"><div class="td tr"></div><div class="td ty"></div><div class="td tg"></div><div class="ttitle">im_agents.py — santiago</div></div>
+      <div class="tbody" id="s-cmd"><div class="tc"># Configura los parámetros arriba y haz clic en Generar</div></div>
+    </div>
+    <button class="btn bo bsm" style="margin-top:8px" onclick="copyCmd('s')">📋 Copiar</button>
+  </div>
+
+  <div class="card">
+    <div class="ct santi-accent">📝 CÓMO ESCRIBE SANTI</div>
+    <div class="rules-grid">
+      <div class="rule rule-ok"><div class="rule-icon">✅</div><div class="rule-text">Usa lenguaje de la industria: DSPs, streams, fanbase, booking</div></div>
+      <div class="rule rule-ok"><div class="rule-icon">✅</div><div class="rule-text">Muy corto. Máximo 100 palabras. WhatsApp vibe.</div></div>
+      <div class="rule rule-ok"><div class="rule-icon">✅</div><div class="rule-text">Menciona algo concreto de su música o carrera</div></div>
+      <div class="rule rule-ok"><div class="rule-icon">✅</div><div class="rule-text">Habla desde el sector, no desde arriba</div></div>
+      <div class="rule rule-no"><div class="rule-icon">🚫</div><div class="rule-text">NUNCA suena a agencia de marketing</div></div>
+      <div class="rule rule-no"><div class="rule-icon">🚫</div><div class="rule-text">NUNCA: "maximizar streams", "siguiente nivel"</div></div>
+      <div class="rule rule-no"><div class="rule-icon">🚫</div><div class="rule-text">NUNCA habla de servicios en el primer email</div></div>
+      <div class="rule rule-no"><div class="rule-icon">🚫</div><div class="rule-text">NUNCA más de una pregunta</div></div>
+    </div>
+  </div>
+
+</div>
+</section>
+
+<!-- ══════════ REGLAS ══════════ -->
+<section id="s-reglas" style="display:none">
+<div class="main-content" style="padding-top:32px">
+
+  <div class="alert aw" style="margin-bottom:24px">⚠️ <div>La diferencia entre un email que genera respuesta y uno que va a spam es <strong>100% la humanización</strong>. Estos son los principios que usan Vale y Santi en cada mensaje.</div></div>
+
+  <div class="g2">
+    <div class="card">
+      <div class="ct" style="color:var(--gr)">✅ VENDER SIN VENDER</div>
+      <div style="display:flex;flex-direction:column;gap:12px;margin-top:4px">
+        <div style="padding:12px;background:var(--bk);border-radius:8px;border-left:3px solid var(--gr)">
+          <div style="font-size:11px;color:var(--gr);font-weight:600;margin-bottom:4px">PRINCIPIO 1 — El email es una conversación</div>
+          <div style="font-size:12px;color:#aaa;line-height:1.5">El primer email nunca cierra una venta. Abre una puerta. El objetivo es que respondan, no que compren. La compra viene después de la confianza.</div>
+        </div>
+        <div style="padding:12px;background:var(--bk);border-radius:8px;border-left:3px solid var(--gr)">
+          <div style="font-size:11px;color:var(--gr);font-weight:600;margin-bottom:4px">PRINCIPIO 2 — Demuestra que los investigaste</div>
+          <div style="font-size:12px;color:#aaa;line-height:1.5">Menciona algo específico de ellos. No "vi tu página". Sino "vi que inauguraron segunda sede" o "escuché el EP de marzo". Eso no es posible en un mensaje masivo.</div>
+        </div>
+        <div style="padding:12px;background:var(--bk);border-radius:8px;border-left:3px solid var(--gr)">
+          <div style="font-size:11px;color:var(--gr);font-weight:600;margin-bottom:4px">PRINCIPIO 3 — El dolor, sin nombrarlo</div>
+          <div style="font-size:12px;color:#aaa;line-height:1.5">No digas "sé que tienes este problema". Pregunta de forma que ellos confirmen el dolor. "¿Cómo están manejando el tema del voz a voz?" es mucho más poderoso que "ayudamos a conseguir más pacientes".</div>
+        </div>
+        <div style="padding:12px;background:var(--bk);border-radius:8px;border-left:3px solid var(--gr)">
+          <div style="font-size:11px;color:var(--gr);font-weight:600;margin-bottom:4px">PRINCIPIO 4 — Una sola pregunta, genuina</div>
+          <div style="font-size:12px;color:#aaa;line-height:1.5">El cierre nunca es un CTA de venta. Es una pregunta que cualquier conocido de la industria podría hacer. "¿Cómo lo están manejando?" / "¿Qué tal les está yendo con eso?" / "¿Estás trabajando eso de alguna forma?"</div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="ct" style="color:var(--rd)">🚫 LAS 10 FRASES PROHIBIDAS</div>
+      <div style="display:flex;flex-direction:column;gap:8px;margin-top:4px">
+        <div style="padding:10px 14px;background:rgba(255,79,79,.06);border-radius:7px;border:1px solid rgba(255,79,79,.15)">
+          <div style="font-size:12px;color:#ff8888;font-family:monospace">"Somos la agencia perfecta para ti"</div>
+          <div style="font-size:10px;color:var(--mt);margin-top:2px">→ Usa: demostrar con resultados reales, no afirmar</div>
+        </div>
+        <div style="padding:10px 14px;background:rgba(255,79,79,.06);border-radius:7px;border:1px solid rgba(255,79,79,.15)">
+          <div style="font-size:12px;color:#ff8888;font-family:monospace">"Llevar tu empresa al siguiente nivel"</div>
+          <div style="font-size:10px;color:var(--mt);margin-top:2px">→ Usa: nombrar el resultado específico que quieren</div>
+        </div>
+        <div style="padding:10px 14px;background:rgba(255,79,79,.06);border-radius:7px;border:1px solid rgba(255,79,79,.15)">
+          <div style="font-size:12px;color:#ff8888;font-family:monospace">"Agenda una llamada sin compromiso"</div>
+          <div style="font-size:10px;color:var(--mt);margin-top:2px">→ Usa: una pregunta que invite a conversar</div>
+        </div>
+        <div style="padding:10px 14px;background:rgba(255,79,79,.06);border-radius:7px;border:1px solid rgba(255,79,79,.15)">
+          <div style="font-size:12px;color:#ff8888;font-family:monospace">"Potenciar / Escalar / Sinergia / 360°"</div>
+          <div style="font-size:10px;color:var(--mt);margin-top:2px">→ Usa: palabras reales de personas reales</div>
+        </div>
+        <div style="padding:10px 14px;background:rgba(255,79,79,.06);border-radius:7px;border:1px solid rgba(255,79,79,.15)">
+          <div style="font-size:12px;color:#ff8888;font-family:monospace">"Somos expertos en marketing digital"</div>
+          <div style="font-size:10px;color:var(--mt);margin-top:2px">→ Usa: demostrar conocimiento del nicho</div>
+        </div>
+        <div style="padding:10px 14px;background:rgba(255,79,79,.06);border-radius:7px;border:1px solid rgba(255,79,79,.15)">
+          <div style="font-size:12px;color:#ff8888;font-family:monospace">"Maximizar tus resultados / ROI / KPI"</div>
+          <div style="font-size:10px;color:var(--mt);margin-top:2px">→ Usa: "más pacientes", "más reservas", "más streams"</div>
+        </div>
+        <div style="padding:10px 14px;background:rgba(255,79,79,.06);border-radius:7px;border:1px solid rgba(255,79,79,.15)">
+          <div style="font-size:12px;color:#ff8888;font-family:monospace">"Te ofrecemos una solución integral"</div>
+          <div style="font-size:10px;color:var(--mt);margin-top:2px">→ Usa: nombrar el problema específico que resuelves</div>
+        </div>
+        <div style="padding:10px 14px;background:rgba(255,79,79,.06);border-radius:7px;border:1px solid rgba(255,79,79,.15)">
+          <div style="font-size:12px;color:#ff8888;font-family:monospace">"Hola, somos Intelligent Markets y..."</div>
+          <div style="font-size:10px;color:var(--mt);margin-top:2px">→ Usa: empezar con ellos, no con tú</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</section>
+
+<!-- ══════════ COMANDOS ══════════ -->
+<section id="s-comandos" style="display:none">
+<div class="main-content" style="padding-top:32px">
+  <div class="card" style="margin-bottom:18px">
+    <div class="ct vale-accent">👩 VALENTINA — Empresas</div>
+    <div class="term">
+      <div class="tbar"><div class="td tr"></div><div class="td ty"></div><div class="td tg"></div><div class="ttitle">valentina.sh</div></div>
+      <div class="tbody">
+        <div class="tc"># Modo interactivo (probar un email único)</div>
+        <div><span class="tp">$ </span><span class="tw">python agent/im_agents.py --agente valentina --interactivo</span></div><br>
+        <div class="tc"># Procesar CSV — dry run</div>
+        <div><span class="tp">$ </span><span class="tw">python agent/im_agents.py --agente valentina --csv data/leads_odontologos_*.csv --dry-run</span></div><br>
+        <div class="tc"># Envío real — primer contacto</div>
+        <div><span class="tp">$ </span><span class="tw">python agent/im_agents.py --agente valentina --csv data/leads_odontologos_*.csv --tipo 1 --max 40</span></div><br>
+        <div class="tc"># Follow-up (sin respuesta en 5 días)</div>
+        <div><span class="tp">$ </span><span class="tw">python agent/im_agents.py --agente valentina --csv data/leads_odontologos_*.csv --tipo 2</span></div><br>
+        <div class="tc"># Respondieron con interés — con brochure</div>
+        <div><span class="tp">$ </span><span class="tw">python agent/im_agents.py --agente valentina --csv data/leads_interesados.csv --tipo 3 --brochure</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="ct santi-accent">🎧 SANTIAGO — Música</div>
+    <div class="term">
+      <div class="tbar"><div class="td tr"></div><div class="td ty"></div><div class="td tg"></div><div class="ttitle">santiago.sh</div></div>
+      <div class="tbody">
+        <div class="tc"># Modo interactivo</div>
+        <div><span class="tp">$ </span><span class="tw">python agent/im_agents.py --agente santiago --interactivo</span></div><br>
+        <div class="tc"># Artistas independientes — dry run</div>
+        <div><span class="tp">$ </span><span class="tw">python agent/im_agents.py --agente santiago --csv data/leads_artista_independiente_*.csv --dry-run</span></div><br>
+        <div class="tc"># Sellos musicales — envío real</div>
+        <div><span class="tp">$ </span><span class="tw">python agent/im_agents.py --agente santiago --csv data/leads_sello_musical_*.csv --tipo 1 --max 30</span></div><br>
+        <div class="tc"># Managers — follow-up</div>
+        <div><span class="tp">$ </span><span class="tw">python agent/im_agents.py --agente santiago --csv data/leads_manager_*.csv --tipo 2</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<script>
+// ── TEMPLATES HUMANIZADOS POR NICHO ──────────────────────────
+const VALE_EMAILS = {
+  odontologos: {
+    1: {
+      asuntos: ["algo que vi en tu clínica", "una observación sobre {e}", "rápida pregunta sobre {e}"],
+      cuerpo: `{"Hola {n}," || ""}
+
+{"Vi " + e + " y" || "Llegué a tu clínica y"} me quedé pensando en algo.
+
+La mayoría de odontólogos en {c} que conozco tienen agendas que dependen casi completamente del voz a voz. Funciona, pero es muy difícil de controlar.
+
+¿Cómo estás manejando tú ese tema?
+
+Vale Ríos | Estratega de Negocio`
+    },
+    2: {
+      asuntos: ["seguimiento", "algo diferente esta vez", "sobre {e}"],
+      cuerpo: `{"Hola {n}," || ""}
+
+Te escribí hace unos días. Entiendo que el tiempo es escaso.
+
+Solo quería dejar esta idea: los odontólogos que están creciendo en {c} este año tienen algo en común — dejaron de depender del voz a voz.
+
+¿Tiene sentido explorar algo así?
+
+Vale Ríos | Estratega de Negocio`
+    },
+    3: {
+      asuntos: ["te cuento un poco más", "aquí va lo que mencioné", "más contexto sobre lo que hablamos"],
+      cuerpo: `{"Hola {n}," || ""}
+
+Me alegra que hayas respondido.
+
+Lo que hacemos es ayudar a consultorios como {"el tuyo" || e} a conseguir pacientes nuevos de manera predecible — sin depender del voz a voz ni de las referencias.
+
+Trabajamos con neurociencia del consumidor aplicada a publicidad digital. Los resultados son medibles desde el primer mes.
+
+¿Tienes 30 minutos esta semana para que te muestre exactamente cómo funciona?
+
+Vale Ríos | Estratega de Negocio
+https://cal.com/intelligent-markets-agencia/30min`
+    }
+  },
+  agencia_viajes: {
+    1: {
+      asuntos: ["algo que noto en el sector", "una pregunta sobre {e}", "oye {n}"],
+      cuerpo: `{"Hola {n}," || ""}
+
+Vi {"lo que están haciendo en " + e || "tu agencia"} y me generó una pregunta.
+
+El tema de las reservas directas vs las OTAs está cambiando bastante este año. Algunas agencias en {c} lo están resolviendo muy bien, otras siguen dependiendo de Booking.
+
+¿Cómo lo están manejando ustedes?
+
+Vale Ríos | Estratega de Negocio`
+    },
+    2: { asuntos: ["seguimiento", "algo diferente"], cuerpo: `{"Hola {n}," || ""}\n\nTe escribí la semana pasada. Entiendo que enero es ajetreado en el sector.\n\nSolo una reflexión: las agencias que están ganando mercado este año son las que tienen reservas directas — no las que dependen de OTAs.\n\n¿Están trabajando eso de alguna forma?\n\nVale Ríos | Estratega de Negocio` },
+    3: { asuntos: ["te cuento más", "siguiente paso"], cuerpo: `{"Hola {n}," || ""}\n\nMe alegra saber de ti.\n\nLo que hacemos es ayudar a agencias como {"la tuya" || e} a conseguir reservas directas con publicidad digital segmentada — sin pagar comisiones a OTAs.\n\n¿Tienes 30 minutos para ver cómo funciona?\n\nVale Ríos | Estratega de Negocio\nhttps://cal.com/intelligent-markets-agencia/30min` },
+  },
+  seguros: {
+    1: {
+      asuntos: ["sobre el tema de los leads", "algo que noto en el sector seguros", "pregunta rápida"],
+      cuerpo: `{"Hola {n}," || ""}\n\nTrabajo con corredores de seguros en {c} y hay un patrón que noto mucho.\n\nLa mayoría tiene el mismo desafío: conseguir leads que realmente quieran comprar — no los que solo están comparando precios.\n\n¿Cómo lo están resolviendo ustedes?\n\nVale Ríos | Estratega de Negocio`
+    },
+    2: { asuntos: ["seguimiento", "algo diferente sobre leads"], cuerpo: `{"Hola {n}," || ""}\n\nTe escribí hace unos días. Solo quería retomar.\n\nEl tema de los leads cualificados en seguros es uno de los más difíciles del sector. Hay formas de resolverlo que funcionan mucho mejor que las tradicionales.\n\n¿Tiene sentido charlar 30 minutos?\n\nVale Ríos | Estratega de Negocio` },
+    3: { asuntos: ["aquí va lo que mencioné"], cuerpo: `{"Hola {n}," || ""}\n\nGenial que hayas respondido.\n\nUsamos publicidad digital con neurociencia del consumidor para generar leads de seguros cualificados — personas con intención real de compra.\n\nTe puedo mostrar casos concretos.\n\n👉 https://cal.com/intelligent-markets-agencia/30min\n\nVale Ríos | Estratega de Negocio` },
+  },
+  autos_alta_gama: {
+    1: {
+      asuntos: ["algo sobre el sector automotriz", "una observación sobre {e}", "oye {n}"],
+      cuerpo: `{"Hola {n}," || ""}\n\nVi {"el trabajo de " + e || "el concesionario"} y me pareció interesante lo que están haciendo.\n\nEl mercado de vehículos de alta gama en {c} está cambiando — los compradores investigan mucho más online antes de ir a una sala de ventas.\n\n¿Cómo están captando a esos compradores antes de que visiten a la competencia?\n\nVale Ríos | Estratega de Negocio`
+    },
+    2: { asuntos: ["seguimiento", "algo diferente"], cuerpo: `{"Hola {n}," || ""}\n\nRetomo por aquí. Solo una reflexión:\n\nLos compradores de alta gama en {c} toman su decisión digital mucho antes de entrar a una sala. Quien los captura online primero, los convierte.\n\n¿Lo están trabajando digitalmente?\n\nVale Ríos | Estratega de Negocio` },
+    3: { asuntos: ["siguiente paso"], cuerpo: `{"Hola {n}," || ""}\n\nMe alegra que hayas respondido.\n\nTrabajamos con concesionarios para atraer compradores de alto poder adquisitivo con publicidad segmentada en Meta e Instagram — personas que ya están en proceso de decisión.\n\nTe puedo mostrar cómo funciona:\n👉 https://cal.com/intelligent-markets-agencia/30min\n\nVale Ríos | Estratega de Negocio` },
+  },
+  dermatologo: {
+    1: {
+      asuntos: ["algo que vi sobre {e}", "una observación del sector", "pregunta rápida {n}"],
+      cuerpo: `{"Hola {n}," || ""}\n\nVi {"la clínica" || e} y me surgió una pregunta.\n\nEn dermatología, la competencia con centros de estética no médicos es cada vez más fuerte. La gente a veces no diferencia bien a un dermatólogo de un spa.\n\n¿Cómo están trabajando ese diferencial?\n\nVale Ríos | Estratega de Negocio`
+    },
+    2: { asuntos: ["seguimiento"], cuerpo: `{"Hola {n}," || ""}\n\nTe escribí hace unos días. Retomo brevemente.\n\nEl diferencial de un dermatólogo médico vs estética no médica es enorme — pero pocas clínicas lo comunican bien digitalmente.\n\n¿Les interesaría explorar cómo hacer eso?\n\nVale Ríos | Estratega de Negocio` },
+    3: { asuntos: ["siguiente paso"], cuerpo: `{"Hola {n}," || ""}\n\nMe alegra la respuesta.\n\nTrabajamos con clínicas de dermatología para conseguir pacientes de procedimientos cosméticos — los de mayor ticket y recurrencia.\n\n¿30 minutos?\n👉 https://cal.com/intelligent-markets-agencia/30min\n\nVale Ríos | Estratega de Negocio` },
+  },
+  psicologo: {
+    1: {
+      asuntos: ["algo que noto en el sector", "pregunta sobre {e}"],
+      cuerpo: `{"Hola {n}," || ""}\n\nVi {"la consulta" || e} y quería contactarte.\n\nEl sector de salud mental en {c} está creciendo bastante, pero sigue siendo difícil conseguir pacientes nuevos sin depender del voz a voz.\n\n¿Cómo estás manejando eso?\n\nVale Ríos | Estratega de Negocio`
+    },
+    2: { asuntos: ["seguimiento"], cuerpo: `{"Hola {n}," || ""}\n\nRetomo. Una reflexión:\n\nLos psicólogos que están llenando su agenda en {c} lo están haciendo con presencia digital bien trabajada — no solo con referencias.\n\n¿Tiene sentido explorar algo así?\n\nVale Ríos | Estratega de Negocio` },
+    3: { asuntos: ["siguiente paso"], cuerpo: `{"Hola {n}," || ""}\n\nGenial que hayas respondido.\n\nAyudamos a consultorios de psicología a conseguir pacientes nuevos de manera constante con publicidad digital sensible al sector.\n\n¿30 minutos?\n👉 https://cal.com/intelligent-markets-agencia/30min\n\nVale Ríos | Estratega de Negocio` },
+  },
+  fisioterapeuta: {
+    1: {
+      asuntos: ["algo sobre el sector", "pregunta para {n}"],
+      cuerpo: `{"Hola {n}," || ""}\n\nVi {"el centro" || e} y me surgió una pregunta.\n\nLa fisioterapia tiene algo interesante: la demanda existe, pero la mayoría de centros depende de los convenios o de los médicos que remiten.\n\n¿Cómo están generando pacientes propios?\n\nVale Ríos | Estratega de Negocio`
+    },
+    2: { asuntos: ["seguimiento"], cuerpo: `{"Hola {n}," || ""}\n\nRetomo brevemente.\n\nLos centros de fisioterapia que más crecen son los que tienen flujo propio de pacientes — no dependen de remisiones.\n\n¿Lo están trabajando?\n\nVale Ríos | Estratega de Negocio` },
+    3: { asuntos: ["siguiente paso"], cuerpo: `{"Hola {n}," || ""}\n\nMuchas gracias por responder.\n\nTrabajamos con centros de fisioterapia para generar pacientes directos con campañas digitales bien segmentadas.\n\n¿30 minutos?\n👉 https://cal.com/intelligent-markets-agencia/30min\n\nVale Ríos | Estratega de Negocio` },
+  }
+};
+
+const SANTI_EMAILS = {
+  sello_musical: {
+    1: {
+      asuntos: ["sobre {e}", "quería conectar", "algo que vi del sello"],
+      cuerpo: `{"Hola {n}," || ""}\n\nVi lo que están haciendo en {"el sello" || e} y quería conectar.\n\nTrabajo con sellos independientes en {pais} y hay algo interesante pasando en cómo se está distribuyendo la visibilidad este año.\n\n¿Cómo lo están viviendo desde {e || "el sello"}?\n\nSanti Mora | Industria Musical`
+    },
+    2: {
+      asuntos: ["retomo", "algo diferente sobre visibilidad"],
+      cuerpo: `{"Hola {n}," || ""}\n\nTe escribí hace unos días. Retomo con un ángulo diferente.\n\nLos sellos independientes que están ganando presencia en {pais} este año tienen una cosa en común: saben a quién le están hablando exactamente antes de lanzar.\n\n¿Cómo lo están trabajando ustedes?\n\nSanti Mora | Industria Musical`
+    },
+    3: {
+      asuntos: ["siguiente paso", "te cuento más"],
+      cuerpo: `{"Hola {n}," || ""}\n\nMe alegra que hayas respondido.\n\nEn IM Music trabajamos con sellos para posicionar artistas con estrategias basadas en psicología del consumidor musical — no solo en presupuesto publicitario.\n\nTe puedo mostrar casos concretos.\n\n📅 https://cal.com/intelligent-markets-agencia/sello-30min\n\nSanti Mora | IM Music`
+    }
+  },
+  artista_independiente: {
+    1: {
+      asuntos: ["escuché tu música", "sobre tu proyecto", "algo que noté"],
+      cuerpo: `{"Hola {n}," || ""}\n\nLlegué a tu música y hay algo que me llamó la atención.\n\nHay mucho talento independiente en {pais} que no está llegando a quien debería escucharlo — no por falta de calidad, sino por cómo se trabaja la visibilidad.\n\n¿Estás trabajando eso de alguna forma ahora?\n\nSanti Mora | Industria Musical`
+    },
+    2: {
+      asuntos: ["retomo", "algo sobre tu fanbase"],
+      cuerpo: `{"Hola {n}," || ""}\n\nTe escribí hace unos días. Solo quería retomar.\n\nLa diferencia entre los artistas independientes que escalan y los que no suele ser una sola cosa: saben exactamente quién es su fan antes de invertir en visibilidad.\n\n¿Lo tienes claro tú?\n\nSanti Mora | Industria Musical`
+    },
+    3: {
+      asuntos: ["siguiente paso", "te cuento más sobre lo que hacemos"],
+      cuerpo: `{"Hola {n}," || ""}\n\nGenial que hayas respondido.\n\nEn IM Music ayudamos a artistas independientes a construir fanbase real — con estrategia, no solo con pauta.\n\nTe puedo mostrar cómo funciona en 30 minutos.\n\n📅 https://cal.com/intelligent-markets-agencia/sello-30min\n\nSanti Mora | IM Music`
+    }
+  },
+  manager_musical: {
+    1: {
+      asuntos: ["sobre los artistas que manejas", "quería conectar", "algo del sector"],
+      cuerpo: `{"Hola {n}," || ""}\n\nVi que manejas artistas en {pais} y quería conectar.\n\nEl tema de visibilidad para artistas independientes está cambiando mucho — y quienes lo entienden primero tienen ventaja real en las negociaciones.\n\n¿Cómo lo están abordando tú y tus artistas?\n\nSanti Mora | Industria Musical`
+    },
+    2: { asuntos: ["retomo"], cuerpo: `{"Hola {n}," || ""}\n\nRetomo brevemente.\n\nLos managers que mejor negocian hoy son los que tienen artistas con tracción digital real — no solo números inflados.\n\n¿Están trabajando eso?\n\nSanti Mora | Industria Musical` },
+    3: { asuntos: ["siguiente paso"], cuerpo: `{"Hola {n}," || ""}\n\nMe alegra la respuesta.\n\nTrabajamos con managers para desarrollar la presencia digital de sus artistas con estrategia real.\n\n📅 https://cal.com/intelligent-markets-agencia/sello-30min\n\nSanti Mora | IM Music` }
+  },
+  estudio_grabacion: {
+    1: {
+      asuntos: ["sobre el estudio", "algo que vi de {e}", "pregunta rápida"],
+      cuerpo: `{"Hola {n}," || ""}\n\nVi {"el estudio" || e} y quería conectar.\n\nLos estudios de grabación que están ocupados todo el año son los que tienen presencia digital bien trabajada — no solo los que dependen del boca a boca de los artistas.\n\n¿Cómo está el tema de ocupación actualmente?\n\nSanti Mora | Industria Musical`
+    },
+    2: { asuntos: ["retomo"], cuerpo: `{"Hola {n}," || ""}\n\nRetomo brevemente.\n\nHay formas de mantener el estudio ocupado que van más allá del voz a voz en el sector.\n\n¿Tienen trabajado algo así?\n\nSanti Mora | Industria Musical` },
+    3: { asuntos: ["siguiente paso"], cuerpo: `{"Hola {n}," || ""}\n\nMe alegra la respuesta.\n\nAyudamos a estudios de grabación a conseguir reservas directas con publicidad digital segmentada en el sector musical.\n\n📅 https://cal.com/intelligent-markets-agencia/sello-30min\n\nSanti Mora | IM Music` }
+  }
+};
+
+let vSubIdx=0, sSubIdx=0;
+
+function renderEmail(templates, id_n, id_e, id_c, id_pais, id_tipo, to_id, sub_id, body_id) {
+  const nicho = document.getElementById(id_n)?.value || Object.keys(templates)[0];
+  const nombre = document.getElementById(id_e ? 'v-nombre' : 's-nombre')?.value || '';
+  const empresa = document.getElementById(id_e)?.value || '';
+  const ciudad = document.getElementById(id_c)?.value || 'Medellín';
+  const pais = document.getElementById(id_pais)?.value || 'Colombia';
+  const tipo = parseInt(document.getElementById(id_tipo)?.value || '1');
+  const ctx = document.getElementById(id_e==='v-empresa'?'v-ctx':'s-ctx')?.value || '';
+
+  const nicho_data = templates[nicho] || templates[Object.keys(templates)[0]];
+  const tipo_data = nicho_data[tipo] || nicho_data[1];
+  const asuntos = tipo_data.asuntos || [];
+
+  const idx = id_e==='v-empresa' ? vSubIdx : sSubIdx;
+  let asunto = (asuntos[idx % asuntos.length] || 'una pregunta')
+    .replace(/{n}/g, nombre.split(' ')[0] || '')
+    .replace(/{e}/g, empresa || '')
+    .replace(/{c}/g, ciudad)
+    .replace(/{pais}/g, pais);
+
+  const n0 = nombre.split(' ')[0];
+  const e0 = empresa;
+  let cuerpo = tipo_data.cuerpo;
+
+  // Interpolar variables simples
+  cuerpo = cuerpo
+    .replace(/{n}/g, n0)
+    .replace(/{e}/g, e0 || 'tu proyecto')
+    .replace(/{c}/g, ciudad)
+    .replace(/{pais}/g, pais);
+
+  // Resolver expresiones ternarias simples tipo {"A" || "B"}
+  cuerpo = cuerpo.replace(/\{"([^"]+)" \|\| "([^"]*)"\}/g, (_, a, b) => {
+    const filled = a.replace(/ \+ e\b/, ' ' + (e0||'')).replace(/\be\b/, e0||'').replace(/\bn\b/, n0||'').trim();
+    return filled || b;
+  });
+
+  // Agregar contexto específico si lo hay
+  if (ctx) {
+    const lines = cuerpo.split('\n');
+    lines.splice(2, 0, `Vi también que ${ctx.toLowerCase()}.`);
+    cuerpo = lines.join('\n');
+  }
+
+  document.getElementById(to_id).textContent = `${nombre || 'destinatario'} <${(nombre||'dest').toLowerCase().replace(/\s/g,'.')}@empresa.com>`;
+  document.getElementById(sub_id).textContent = asunto;
+  document.getElementById(body_id).textContent = cuerpo;
+}
+
+function previewVale() { renderEmail(VALE_EMAILS,'v-nicho','v-empresa','v-ciudad',null,'v-tipo','v-to','v-sub','v-body'); }
+function previewSanti() { renderEmail(SANTI_EMAILS,'s-nicho','s-empresa',null,'s-pais','s-tipo','s-to','s-sub','s-body'); }
+
+function rotateSubject(ag) {
+  if(ag==='v'){vSubIdx++;previewVale();}else{sSubIdx++;previewSanti();}
+}
+
+function copyEmail(ag) {
+  const asunto = document.getElementById(ag+'-sub').textContent;
+  const cuerpo = document.getElementById(ag+'-body').textContent;
+  navigator.clipboard.writeText(`Asunto: ${asunto}\n\n${cuerpo}`).then(()=>alert('✅ Email copiado'));
+}
+
+function genValeCmd() {
+  const csv = 'data/leads_'+document.getElementById('v-nicho').value+'_*.csv';
+  const tipo = document.getElementById('v-tipo').value;
+  const lines = [
+    `# Dry-run primero`,
+    `python agent/im_agents.py --agente valentina --csv ${csv} --tipo ${tipo} --dry-run`,
+    ``,
+    `# Envío real`,
+    `python agent/im_agents.py --agente valentina --csv ${csv} --tipo ${tipo} --max 40`,
+  ];
+  document.getElementById('v-cmd').innerHTML = lines.map(l=>
+    l.startsWith('#')?`<div class="tc">${l}</div>`:
+    l===''?'<br>':
+    `<div><span class="tp">$ </span><span class="tw">${l}</span></div>`
+  ).join('');
+}
+
+function genSantiCmd() {
+  const csv = 'data/leads_'+document.getElementById('s-nicho').value+'_*.csv';
+  const tipo = document.getElementById('s-tipo').value;
+  const lines = [
+    `# Dry-run primero`,
+    `python agent/im_agents.py --agente santiago --csv ${csv} --tipo ${tipo} --dry-run`,
+    ``,
+    `# Envío real`,
+    `python agent/im_agents.py --agente santiago --csv ${csv} --tipo ${tipo} --max 30`,
+  ];
+  document.getElementById('s-cmd').innerHTML = lines.map(l=>
+    l.startsWith('#')?`<div class="tc">${l}</div>`:
+    l===''?'<br>':
+    `<div><span class="tp">$ </span><span class="tw">${l}</span></div>`
+  ).join('');
+}
+
+function copyCmd(ag) { navigator.clipboard.writeText(document.getElementById(ag+'-cmd').innerText).then(()=>alert('✅ Copiado')); }
+
+function showSection(id, btn) {
+  document.querySelectorAll('section').forEach(s=>s.style.display='none');
+  document.querySelectorAll('.nlk').forEach(n=>n.classList.remove('on'));
+  const el = document.getElementById('s-'+id);
+  if(el) el.style.display='block';
+  if(btn) btn.classList.add('on');
+}
+
+// Init
+previewVale();
+previewSanti();
+</script>
+</body>
+</html>

@@ -1,0 +1,56 @@
+{
+  "total_scripts": 18,
+  "html_filename": "content-plan-clinica-dental-test-20260506.html",
+  "calendario": [
+    {
+      "dia": 1,
+      "fecha": "2026-05-07",
+      "hora": "07:00",
+      "dia_semana": "Jue",
+      "fase": "Fase 1 — Conexión con el Dolor",
+      "titulo": "V1.1 — Conexión con el Dolor",
+      "formato": "Reel 30-45s + historia personal",
+      "script_id": "V1.1"
+    },
+    {
+      "dia": 2,
+      "fecha": "2026-05-09",
+      "hora": "12:00",
+      "dia_semana": "Sáb",
+      "fase": "Fase 1 — Conexión con el Dolor",
+      "titulo": "V1.2 — Conexión con el Dolor",
+      "formato": "Reel 30-45s + historia personal",
+      "script_id": "V1.2"
+    },
+    {
+      "dia": 3,
+      "fecha": "2026-05-12",
+      "hora": "19:00",
+      "dia_semana": "Mar",
+      "fase": "Fase 1 — Conexión con el Dolor",
+      "titulo": "V1.3 — Conexión con el Dolor",
+      "formato": "Reel 30-45s + historia personal",
+      "script_id": "V1.3"
+    },
+    {
+      "dia": 4,
+      "fecha": "2026-05-14",
+      "hora": "07:00",
+      "dia_semana": "Jue",
+      "fase": "Fase 2 — Educación y Autoridad",
+      "titulo": "V2.1 — Educación y Autoridad",
+      "formato": "Carrusel educativo 5-8 slides",
+      "script_id": "V2.1"
+    },
+    {
+      "dia": 5,
+      "fecha": "2026-05-16",
+      "hora": "12:00",
+      "dia_semana": "Sáb",
+      "fase": "Fase 2 — Educación y Autoridad",
+      "titulo": "V2.2 — Educación y Autoridad",
+      "formato": "Carrusel educativo 5-8 slides",
+      "script_id": "V2.2"
+    }
+  ]
+}

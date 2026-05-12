@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Conectar Gmail — IM System</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=DM+Mono&display=swap" rel="stylesheet">
+<style>
+:root{--p:#6200FF;--pl:#9B59FF;--bk:#060606;--dk:#0d0d0d;--cd:#131313;--bd:rgba(255,255,255,.07);--tx:#EBEBEB;--mt:#545454;--gr:#00F5A0;--yw:#F5C518;--rd:#FF4F4F;--fh:'Bebas Neue',cursive;--fb:'DM Sans',sans-serif;--fm:'DM Mono',monospace;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bk);color:var(--tx);font-family:var(--fb);min-height:100vh;padding:0 0 60px;}
+.header{background:var(--dk);border-bottom:1px solid var(--bd);padding:20px 40px;display:flex;align-items:center;gap:16px;}
+.wm{font-family:var(--fh);font-size:28px;color:#fff;letter-spacing:3px;}
+.wbar{display:inline-block;width:3px;height:26px;background:var(--p);margin-left:2px;vertical-align:bottom;animation:bc 1.1s step-end infinite;}
+@keyframes bc{0%,100%{opacity:1}50%{opacity:0}}
+.hd{font-size:12px;color:var(--mt);margin-left:8px;}
+.container{max-width:800px;margin:0 auto;padding:40px 20px;}
+h1{font-family:var(--fh);font-size:38px;letter-spacing:2px;color:#fff;margin-bottom:8px;}
+.sub{font-size:13px;color:var(--mt);margin-bottom:40px;}
+.step-card{background:var(--cd);border:1px solid var(--bd);border-radius:14px;padding:28px 32px;margin-bottom:18px;position:relative;overflow:hidden;}
+.step-card::before{content:'';position:absolute;top:0;left:0;bottom:0;width:4px;}
+.s1::before{background:#FF6EB4;}
+.s2::before{background:var(--yw);}
+.s3::before{background:var(--p);}
+.s4::before{background:var(--gr);}
+.s5::before{background:var(--rd);}
+.sn{font-family:var(--fh);font-size:13px;letter-spacing:3px;color:var(--mt);margin-bottom:8px;}
+.st{font-family:var(--fh);font-size:22px;letter-spacing:2px;color:#fff;margin-bottom:12px;}
+.sd{font-size:13px;color:#bbb;line-height:1.7;margin-bottom:14px;}
+.link{display:inline-flex;align-items:center;gap:8px;background:rgba(98,0,255,.15);border:1px solid rgba(98,0,255,.3);color:var(--pl);padding:8px 16px;border-radius:8px;font-size:12px;font-weight:600;text-decoration:none;cursor:pointer;transition:all .2s;}
+.link:hover{background:rgba(98,0,255,.25);}
+.link-gr{background:rgba(0,245,160,.1);border-color:rgba(0,245,160,.25);color:var(--gr);}
+.img-placeholder{background:var(--bk);border:1px solid var(--bd);border-radius:8px;padding:20px;margin:14px 0;text-align:center;color:var(--mt);font-size:12px;font-family:var(--fm);}
+.code{background:#050505;border:1px solid var(--bd);border-radius:8px;padding:16px 18px;font-family:var(--fm);font-size:12.5px;color:var(--gr);margin:14px 0;position:relative;}
+.code .comment{color:#333;}
+.code .cmd{color:var(--tx);}
+.copy-btn{position:absolute;top:10px;right:10px;background:rgba(255,255,255,.05);border:1px solid var(--bd);color:var(--mt);padding:4px 10px;border-radius:6px;font-size:10px;cursor:pointer;transition:all .2s;}
+.copy-btn:hover{background:rgba(98,0,255,.2);color:var(--pl);border-color:var(--p);}
+.alert{padding:14px 18px;border-radius:8px;font-size:12.5px;margin-top:16px;display:flex;gap:10px;}
+.aw{background:rgba(245,197,24,.07);border:1px solid rgba(245,197,24,.2);color:var(--yw);}
+.ag{background:rgba(0,245,160,.07);border:1px solid rgba(0,245,160,.2);color:var(--gr);}
+.ai{background:rgba(98,0,255,.08);border:1px solid rgba(98,0,255,.2);color:var(--pl);}
+.badge{display:inline-block;padding:2px 10px;border-radius:12px;font-size:10px;font-weight:600;}
+.bg{background:rgba(0,245,160,.12);color:var(--gr);border:1px solid rgba(0,245,160,.2);}
+.by{background:rgba(245,197,24,.12);color:var(--yw);border:1px solid rgba(245,197,24,.2);}
+.bp{background:rgba(98,0,255,.12);color:var(--pl);border:1px solid rgba(98,0,255,.2);}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px;}
+.mini-card{background:var(--bk);border:1px solid var(--bd);border-radius:10px;padding:16px;}
+.mc-t{font-size:11px;font-weight:600;color:#fff;margin-bottom:6px;}
+.mc-d{font-size:11px;color:var(--mt);line-height:1.5;}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="wm">IM<span class="wbar"></span></div>
+  <div class="hd">Guía de Configuración Gmail — Inteligent Markets</div>
+</div>
+
+<div class="container">
+
+  <h1>CONECTAR GMAIL AL SISTEMA</h1>
+  <p class="sub">Guía paso a paso para que Vale y Santi puedan enviar emails desde intelligentmarkets@gmail.com</p>
+
+  <!-- PASO 1 -->
+  <div class="step-card s1">
+    <div class="sn">PASO 01</div>
+    <div class="st">VERIFICAR EN 2 PASOS (REQUISITO)</div>
+    <div class="sd">
+      Google requiere que tengas la Verificación en 2 pasos activada para poder crear App Passwords.
+      Si ya la tienes activa, pasa al Paso 2.
+    </div>
+    <a class="link" href="https://myaccount.google.com/security" target="_blank">
+      🔒 Ir a Seguridad de Google →
+    </a>
+    <div class="alert aw" style="margin-top:14px">
+      ⚠️ <span>Busca "Verificación en 2 pasos" y asegúrate que diga <strong>Activada</strong>. Sin esto no puedes continuar.</span>
+    </div>
+  </div>
+
+  <!-- PASO 2 -->
+  <div class="step-card s2">
+    <div class="sn">PASO 02</div>
+    <div class="st">CREAR APP PASSWORD</div>
+    <div class="sd">
+      Ve a la página de contraseñas de aplicaciones de Google. Aquí crearás una contraseña especial
+      solo para IM System, diferente a tu contraseña normal de Gmail.
+    </div>
+    <a class="link" href="https://myaccount.google.com/apppasswords" target="_blank">
+      🔑 Crear App Password →
+    </a>
+    <div class="alert ai" style="margin-top:14px">
+      ℹ️ <span>Si el link te da error 404, significa que la verificación en 2 pasos no está activa. Vuelve al Paso 1.</span>
+    </div>
+  </div>
+
+  <!-- PASO 3 -->
+  <div class="step-card s3">
+    <div class="sn">PASO 03</div>
+    <div class="st">CONFIGURAR LA APP PASSWORD</div>
+    <div class="sd">
+      En la página de App Passwords verás un formulario. Llénalo así:
+    </div>
+    <div class="two">
+      <div class="mini-card">
+        <div class="mc-t">📱 Seleccionar aplicación</div>
+        <div class="mc-d">Elige <strong>"Correo"</strong> o <strong>"Mail"</strong> del menú desplegable</div>
+      </div>
+      <div class="mini-card">
+        <div class="mc-t">💻 Seleccionar dispositivo</div>
+        <div class="mc-d">Elige <strong>"Otro (nombre personalizado)"</strong> y escribe <strong>"IM System"</strong></div>
+      </div>
+    </div>
+    <div class="alert ag" style="margin-top:14px">
+      ✅ <span>Haz clic en <strong>"Generar"</strong>. Aparecerá una contraseña de 16 caracteres como: <code style="color:#fff">abcd efgh ijkl mnop</code></span>
+    </div>
+  </div>
+
+  <!-- PASO 4 -->
+  <div class="step-card s4">
+    <div class="sn">PASO 04</div>
+    <div class="st">GUARDAR EN EL SISTEMA</div>
+    <div class="sd">
+      Copia la contraseña de 16 caracteres que generó Google (con o sin espacios, funciona igual)
+      y agrégala al archivo <code>.env</code> de IM System.
+    </div>
+
+    <div style="margin-bottom:10px">
+      <span class="badge bg">Opción A</span>
+      <span style="font-size:12px;color:#aaa;margin-left:8px">Si instalaste con install.py — el archivo .env ya existe</span>
+    </div>
+    <div class="code">
+      <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+      <div class="comment"># Abre el archivo .env en tu carpeta im-system/</div>
+      <div class="cmd">nano ~/im-system/.env</div>
+      <br>
+      <div class="comment"># Busca esta línea y pega tu App Password:</div>
+      <div class="cmd">IM_EMAIL_PASSWORD=abcdefghijklmnop</div>
+      <br>
+      <div class="comment"># Guarda con Ctrl+O → Enter → Ctrl+X</div>
+    </div>
+
+    <div style="margin-bottom:10px;margin-top:18px">
+      <span class="badge by">Opción B</span>
+      <span style="font-size:12px;color:#aaa;margin-left:8px">Exportar en terminal para sesión actual</span>
+    </div>
+    <div class="code">
+      <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+      <div class="comment"># Pega en tu terminal (reemplaza con tu contraseña real)</div>
+      <div class="cmd">export IM_EMAIL_PASSWORD="abcd efgh ijkl mnop"</div>
+      <br>
+      <div class="comment"># Para que sea permanente, agrégalo a tu perfil de shell:</div>
+      <div class="cmd">echo 'export IM_EMAIL_PASSWORD="tu-password"' >> ~/.zshrc</div>
+      <div class="comment"># O si usas bash:</div>
+      <div class="cmd">echo 'export IM_EMAIL_PASSWORD="tu-password"' >> ~/.bashrc</div>
+    </div>
+  </div>
+
+  <!-- PASO 5 -->
+  <div class="step-card s5">
+    <div class="sn">PASO 05</div>
+    <div class="st">VERIFICAR QUE FUNCIONA</div>
+    <div class="sd">
+      Prueba que la conexión funciona correctamente antes de enviar emails reales.
+      El modo interactivo genera y envía un email de prueba.
+    </div>
+    <div class="code">
+      <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+      <div class="comment"># Ve a tu carpeta de instalación</div>
+      <div class="cmd">cd ~/im-system</div>
+      <br>
+      <div class="comment"># Prueba a Vale en modo interactivo</div>
+      <div class="comment"># Ingresa TU propio email como destinatario para hacer la prueba</div>
+      <div class="cmd">python agent/im_agents.py --agente valentina --interactivo</div>
+      <br>
+      <div class="comment"># Si ves "✅ Enviado", todo está configurado correctamente</div>
+    </div>
+    <div class="alert ag" style="margin-top:14px">
+      ✅ <span>Cuando veas <strong>"✅ Enviado"</strong> en el terminal, ¡estás listo para prospectar!</span>
+    </div>
+    <div class="alert aw" style="margin-top:10px">
+      ⚠️ <span>Si ves error <strong>"SMTPAuthenticationError"</strong>: la App Password está mal copiada. Vuelve al Paso 3 y crea una nueva.</span>
+    </div>
+  </div>
+
+  <!-- LÍMITES GMAIL -->
+  <div class="step-card" style="border-left:4px solid var(--mt)">
+    <div class="sn">IMPORTANTE</div>
+    <div class="st">LÍMITES DE GMAIL</div>
+    <div class="sd">Gmail tiene límites de envío. Respétalos para mantener la cuenta saludable:</div>
+    <div class="two">
+      <div class="mini-card">
+        <div class="mc-t">📊 Límite diario</div>
+        <div class="mc-d"><strong style="color:var(--gr)">500 emails/día</strong> con Gmail estándar.<br>Los agentes ya incluyen pausas de 60-120 seg entre emails.</div>
+      </div>
+      <div class="mini-card">
+        <div class="mc-t">✅ Recomendación IM</div>
+        <div class="mc-d">Máximo <strong style="color:var(--yw)">40-60 emails/día</strong> para mantener la reputación del dominio y evitar spam.</div>
+      </div>
+    </div>
+    <div class="alert ai" style="margin-top:14px">
+      💡 <span>Si necesitas volumen mayor, considera <strong>Google Workspace</strong> (límite de 2,000/día) o <strong>SendGrid</strong> con dominio propio.</span>
+    </div>
+  </div>
+
+  <!-- APOLLO -->
+  <div class="step-card" style="border-left:4px solid var(--p)">
+    <div class="sn">OPCIONAL</div>
+    <div class="st">CONECTAR APOLLO.IO (MEJORA LEADS)</div>
+    <div class="sd">
+      Apollo.io permite encontrar emails verificados de decisores. El plan gratis da 50 contactos/mes.
+    </div>
+    <a class="link" href="https://app.apollo.io" target="_blank">Crear cuenta Apollo.io →</a>
+    <div class="code" style="margin-top:14px">
+      <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+      <div class="comment"># 1. Ve a: app.apollo.io/settings/api-keys</div>
+      <div class="comment"># 2. Crea una nueva API Key</div>
+      <div class="comment"># 3. Agrégala al .env:</div>
+      <div class="cmd">APOLLO_API_KEY=tu-api-key-aqui</div>
+      <br>
+      <div class="comment"># 4. Úsala en las búsquedas con --apollo:</div>
+      <div class="cmd">python agent/lead_finder_v2.py --nicho odontologos --city Medellín --country Colombia --apollo</div>
+    </div>
+    <div class="two">
+      <div class="mini-card">
+        <div class="mc-t">🆓 Plan Gratis</div>
+        <div class="mc-d">50 emails verificados/mes. Perfecto para empezar.</div>
+      </div>
+      <div class="mini-card">
+        <div class="mc-t">💰 Plan Basic ($49/mes)</div>
+        <div class="mc-d">1,000 emails/mes. Recomendado para IM cuando el volumen crezca.</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function copyCode(btn) {
+  const code = btn.parentElement;
+  const text = Array.from(code.querySelectorAll('.cmd'))
+    .map(el => el.textContent).join('\n');
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = '✅ Copiado';
+    setTimeout(() => btn.textContent = 'Copiar', 2000);
+  });
+}
+</script>
+</body>
+</html>
