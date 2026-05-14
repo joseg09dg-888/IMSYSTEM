@@ -1,133 +1,275 @@
+#!/usr/bin/env python3
 """
-session_memory.py — Registro de todo lo que hace Claude Code en cada sesión.
-Guarda en logs/claude_session_log.json.
+session_memory.py — Memoria persistente para todos los agentes IM.
+
+Guarda en platform.db:
+  memoria_leads          → historial de contactos por email
+  memoria_performance    → tasas de éxito por asunto / nicho / hora
+  memoria_investigaciones → cache de investigaciones (30 días TTL)
 """
+import sqlite3
 import json
-import os
-import threading
-from datetime import datetime
+from datetime import datetime, timedelta
 from pathlib import Path
 
-_LOG_PATH = Path(__file__).parent.parent / "logs" / "claude_session_log.json"
-_lock = threading.Lock()
-_SESSION_DATE = datetime.now().strftime("%Y-%m-%d")
+BASE = Path(__file__).parent.parent
+DB   = BASE / "logs" / "platform.db"
+
+# ── SCHEMA ────────────────────────────────────────────────────────
+
+_SCHEMA = """
+CREATE TABLE IF NOT EXISTS memoria_leads (
+    email              TEXT PRIMARY KEY,
+    veces_contactado   INTEGER DEFAULT 0,
+    ultimo_contacto    TEXT,
+    respondio          INTEGER DEFAULT 0,
+    ultimo_asunto      TEXT,
+    ultimo_copy        TEXT,
+    resultado          TEXT
+);
+
+CREATE TABLE IF NOT EXISTS memoria_performance (
+    id             INTEGER PRIMARY KEY AUTOINCREMENT,
+    tipo           TEXT,
+    valor          TEXT,
+    tasa_exito     REAL DEFAULT 0.0,
+    total_intentos INTEGER DEFAULT 1,
+    fecha          TEXT
+);
+
+CREATE TABLE IF NOT EXISTS memoria_investigaciones (
+    negocio              TEXT PRIMARY KEY,
+    url                  TEXT,
+    fecha_investigacion  TEXT,
+    job_id               TEXT,
+    resumen              TEXT
+);
+"""
 
 
-def _load():
-    if _LOG_PATH.exists():
-        try:
-            return json.loads(_LOG_PATH.read_text(encoding="utf-8"))
-        except Exception:
-            pass
-    return []
+def _conn():
+    DB.parent.mkdir(parents=True, exist_ok=True)
+    c = sqlite3.connect(str(DB))
+    c.row_factory = sqlite3.Row
+    return c
 
 
-def _save(sessions):
-    _LOG_PATH.parent.mkdir(parents=True, exist_ok=True)
-    _LOG_PATH.write_text(json.dumps(sessions, ensure_ascii=False, indent=2), encoding="utf-8")
+def _init():
+    c = _conn()
+    c.executescript(_SCHEMA)
+    c.commit()
+    c.close()
 
 
-def _get_bytes(path):
-    try:
-        return Path(path).stat().st_size
-    except Exception:
-        return 0
+_init()
 
 
-def registrar(archivo, accion, resultado="OK", bytes_antes=None, bytes_despues=None):
-    """
-    Registra una acción de Claude Code.
+# ════════════════════════════════════════════════════════════════
+# CLASE PRINCIPAL
+# ════════════════════════════════════════════════════════════════
 
-    archivo       — ruta relativa al archivo tocado (o 'sistema' si no aplica)
-    accion        — descripción de lo que se hizo
-    resultado     — 'OK', 'ERROR', o descripción del resultado
-    bytes_antes   — tamaño del archivo antes del cambio (opcional)
-    bytes_despues — tamaño del archivo después del cambio (opcional)
-    """
-    entrada = {
-        "timestamp": datetime.now().strftime("%H:%M:%S"),
-        "archivo": str(archivo),
-        "accion": str(accion),
-        "resultado": str(resultado),
-        "bytes_antes": bytes_antes,
-        "bytes_despues": bytes_despues,
-    }
+class MemoriaAgentes:
 
-    with _lock:
-        sessions = _load()
-        # Buscar o crear la sesión de hoy
-        sesion_hoy = None
-        for s in sessions:
-            if s.get("sesion") == _SESSION_DATE:
-                sesion_hoy = s
-                break
-        if sesion_hoy is None:
-            sesion_hoy = {"sesion": _SESSION_DATE, "acciones": []}
-            sessions.append(sesion_hoy)
-        sesion_hoy["acciones"].append(entrada)
-        _save(sessions)
+    # ── MEMORIA DE LEADS ──────────────────────────────────────────
 
-    return entrada
+    def ya_contactado(self, email: str) -> bool:
+        """True si el email ya fue contactado al menos una vez."""
+        c = _conn()
+        row = c.execute(
+            "SELECT veces_contactado FROM memoria_leads WHERE LOWER(email)=LOWER(?)",
+            (email,)
+        ).fetchone()
+        c.close()
+        return bool(row and row["veces_contactado"] > 0)
 
+    def registrar_contacto(self, email: str, asunto: str = "", copy: str = ""):
+        """Registra o incrementa el contador de contactos para un email."""
+        now = datetime.now().isoformat()
+        c = _conn()
+        c.execute("""
+            INSERT INTO memoria_leads (email, veces_contactado, ultimo_contacto, ultimo_asunto, ultimo_copy)
+            VALUES (LOWER(?), 1, ?, ?, ?)
+            ON CONFLICT(email) DO UPDATE SET
+                veces_contactado = veces_contactado + 1,
+                ultimo_contacto  = excluded.ultimo_contacto,
+                ultimo_asunto    = excluded.ultimo_asunto,
+                ultimo_copy      = excluded.ultimo_copy
+        """, (email, now, asunto[:200], copy[:500]))
+        c.commit()
+        c.close()
+        self._registrar_performance("asunto", asunto)
 
-def registrar_archivo(path, accion):
-    """Registra un cambio de archivo midiendo bytes antes y después automáticamente."""
-    antes = _get_bytes(path)
-    entrada = registrar(
-        archivo=path,
-        accion=accion,
-        resultado="OK",
-        bytes_antes=antes,
-        bytes_despues=antes,  # se actualiza tras la acción
-    )
-    return entrada
+    def marcar_apertura(self, email: str):
+        """Marca que el destinatario abrió el email."""
+        c = _conn()
+        c.execute(
+            "UPDATE memoria_leads SET resultado='abierto' WHERE LOWER(email)=LOWER(?)",
+            (email,)
+        )
+        c.commit()
+        c.close()
+        self._actualizar_tasa("apertura", email)
 
+    def marcar_respuesta(self, email: str):
+        """Marca que el destinatario respondió."""
+        c = _conn()
+        c.execute(
+            """UPDATE memoria_leads
+               SET respondio=1, resultado='respondio'
+               WHERE LOWER(email)=LOWER(?)""",
+            (email,)
+        )
+        c.commit()
+        c.close()
 
-def actualizar_bytes_despues(path):
-    """Llama esto después de escribir el archivo para actualizar bytes_despues."""
-    despues = _get_bytes(path)
-    with _lock:
-        sessions = _load()
-        for s in sessions:
-            if s.get("sesion") == _SESSION_DATE:
-                acciones = s.get("acciones", [])
-                for a in reversed(acciones):
-                    if a.get("archivo") == str(path):
-                        a["bytes_despues"] = despues
-                        break
-                break
-        _save(sessions)
+    def get_info_lead(self, email: str) -> dict:
+        """Retorna el registro completo de un lead."""
+        c = _conn()
+        row = c.execute(
+            "SELECT * FROM memoria_leads WHERE LOWER(email)=LOWER(?)",
+            (email,)
+        ).fetchone()
+        c.close()
+        return dict(row) if row else {}
 
+    # ── MEMORIA DE PERFORMANCE ────────────────────────────────────
 
-def get_sesion_hoy():
-    """Retorna todas las acciones de la sesión de hoy."""
-    with _lock:
-        sessions = _load()
-        for s in sessions:
-            if s.get("sesion") == _SESSION_DATE:
-                return s
-    return {"sesion": _SESSION_DATE, "acciones": []}
+    def _registrar_performance(self, tipo: str, valor: str):
+        if not valor:
+            return
+        now = datetime.now().isoformat()
+        c = _conn()
+        row = c.execute(
+            "SELECT id, total_intentos FROM memoria_performance WHERE tipo=? AND valor=?",
+            (tipo, valor[:200])
+        ).fetchone()
+        if row:
+            c.execute(
+                "UPDATE memoria_performance SET total_intentos=total_intentos+1, fecha=? WHERE id=?",
+                (now, row["id"])
+            )
+        else:
+            c.execute(
+                "INSERT INTO memoria_performance (tipo, valor, tasa_exito, total_intentos, fecha) "
+                "VALUES (?,?,0,1,?)",
+                (tipo, valor[:200], now)
+            )
+        c.commit()
+        c.close()
 
+    def _actualizar_tasa(self, evento: str, email: str):
+        """Cuando hay apertura, incrementa tasa_exito del último asunto usado."""
+        c = _conn()
+        row = c.execute(
+            "SELECT ultimo_asunto FROM memoria_leads WHERE LOWER(email)=LOWER(?)",
+            (email,)
+        ).fetchone()
+        if row and row["ultimo_asunto"]:
+            c.execute("""
+                UPDATE memoria_performance
+                SET tasa_exito = (tasa_exito * total_intentos + 1.0) / (total_intentos + 1)
+                WHERE tipo='asunto' AND valor=?
+            """, (row["ultimo_asunto"],))
+        c.commit()
+        c.close()
 
-def get_resumen():
-    """Retorna un resumen compacto de la sesión actual."""
-    sesion = get_sesion_hoy()
-    acciones = sesion.get("acciones", [])
-    ok = sum(1 for a in acciones if a.get("resultado") == "OK")
-    err = sum(1 for a in acciones if a.get("resultado") not in ("OK", ""))
-    archivos = list({a["archivo"] for a in acciones})
-    return {
-        "sesion": _SESSION_DATE,
-        "total_acciones": len(acciones),
-        "ok": ok,
-        "errores": err,
-        "archivos_tocados": archivos,
-        "ultima_accion": acciones[-1] if acciones else None,
-    }
+    def get_mejores_asuntos(self, top: int = 5) -> list:
+        """Retorna los asuntos con mayor tasa de éxito (mín. 3 intentos)."""
+        c = _conn()
+        rows = c.execute("""
+            SELECT valor, tasa_exito, total_intentos
+            FROM memoria_performance
+            WHERE tipo='asunto' AND total_intentos >= 3
+            ORDER BY tasa_exito DESC
+            LIMIT ?
+        """, (top,)).fetchall()
+        c.close()
+        return [dict(r) for r in rows]
 
+    def registrar_nicho(self, nicho: str, respondio: bool = False):
+        """Acumula stats de respuesta por nicho."""
+        self._registrar_performance("nicho", nicho)
+        if respondio:
+            c = _conn()
+            c.execute("""
+                UPDATE memoria_performance
+                SET tasa_exito = (tasa_exito * total_intentos + 1.0) / (total_intentos + 1)
+                WHERE tipo='nicho' AND valor=?
+            """, (nicho,))
+            c.commit()
+            c.close()
 
-if __name__ == "__main__":
-    # Test
-    registrar("frontend/index.html", "reemplazó frontend completo", "OK", 240033, 95000)
-    registrar("agent/session_memory.py", "creó módulo de memoria de sesión", "OK", 0, 2100)
-    print(json.dumps(get_resumen(), ensure_ascii=False, indent=2))
+    def get_performance_stats(self) -> dict:
+        """Resumen general de performance."""
+        c = _conn()
+        total_leads = c.execute("SELECT COUNT(*) FROM memoria_leads").fetchone()[0]
+        total_respondieron = c.execute(
+            "SELECT COUNT(*) FROM memoria_leads WHERE respondio=1"
+        ).fetchone()[0]
+        mejores = self.get_mejores_asuntos(3)
+        nichos = c.execute("""
+            SELECT valor, tasa_exito, total_intentos
+            FROM memoria_performance WHERE tipo='nicho'
+            ORDER BY tasa_exito DESC LIMIT 5
+        """).fetchall()
+        c.close()
+        tasa = round(total_respondieron / total_leads * 100, 1) if total_leads else 0
+        return {
+            "total_contactados": total_leads,
+            "total_respondieron": total_respondieron,
+            "tasa_respuesta_pct": tasa,
+            "mejores_asuntos": mejores,
+            "mejores_nichos": [dict(r) for r in nichos],
+        }
+
+    # ── MEMORIA DE INVESTIGACIONES ────────────────────────────────
+
+    def get_investigacion(self, negocio: str, dias_ttl: int = 30):
+        """
+        Retorna investigación guardada si existe y es menor de `dias_ttl` días.
+        Retorna None si no existe o expiró.
+        """
+        c = _conn()
+        row = c.execute(
+            "SELECT * FROM memoria_investigaciones WHERE LOWER(negocio)=LOWER(?)",
+            (negocio,)
+        ).fetchone()
+        c.close()
+        if not row:
+            return None
+        fecha = datetime.fromisoformat(row["fecha_investigacion"])
+        if datetime.now() - fecha > timedelta(days=dias_ttl):
+            return None
+        return dict(row)
+
+    def guardar_investigacion(self, negocio: str, url: str, job_id: str, resumen: str):
+        """Guarda o actualiza la investigación de un negocio."""
+        now = datetime.now().isoformat()
+        c = _conn()
+        c.execute("""
+            INSERT INTO memoria_investigaciones (negocio, url, fecha_investigacion, job_id, resumen)
+            VALUES (LOWER(?), ?, ?, ?, ?)
+            ON CONFLICT(negocio) DO UPDATE SET
+                url                 = excluded.url,
+                fecha_investigacion = excluded.fecha_investigacion,
+                job_id              = excluded.job_id,
+                resumen             = excluded.resumen
+        """, (negocio, url, now, job_id, resumen[:2000]))
+        c.commit()
+        c.close()
+
+    # ── MEMORIA DEL ORQUESTADOR ───────────────────────────────────
+
+    def nicho_reciente(self, nicho: str, dias: int = 7) -> bool:
+        """True si el nicho ya fue procesado en los últimos `dias` días."""
+        c = _conn()
+        row = c.execute("""
+            SELECT fecha FROM memoria_performance
+            WHERE tipo='nicho' AND valor=?
+            ORDER BY fecha DESC LIMIT 1
+        """, (nicho,)).fetchone()
+        c.close()
+        if not row:
+            return False
+        fecha = datetime.fromisoformat(row["fecha"])
+        return datetime.now() - fecha < timedelta(days=dias)

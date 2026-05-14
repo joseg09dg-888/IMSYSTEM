@@ -1,5 +1,6 @@
 # Credenciales - NUNCA subir
 .env
+.claude/settings.local.json
 
 # Base de datos y logs
 *.db

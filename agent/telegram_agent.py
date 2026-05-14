@@ -49,43 +49,49 @@ def _load_env():
 
 _load_env()
 
-TOKEN    = lambda: os.environ.get("TELEGRAM_BOT_TOKEN", "")
-CHAT_ID  = lambda: os.environ.get("TELEGRAM_CHAT_ID", "")
+TOKEN   = lambda: os.environ.get("TELEGRAM_BOT_TOKEN", "")
+CHAT_ID = lambda: os.environ.get("TELEGRAM_CHAT_ID", "").split(",")[0].strip()
+
+def CHAT_IDS() -> list:
+    """Retorna lista de todos los Chat IDs configurados."""
+    raw = os.environ.get("TELEGRAM_CHAT_ID", "")
+    return [i.strip() for i in raw.split(",") if i.strip()]
 
 
 # ── ENVIAR MENSAJES ───────────────────────────────────────────
 
 def send(texto, chat_id=None):
-    """Envía texto a Telegram (soporta Markdown)."""
-    cid = chat_id or CHAT_ID()
-    if not cid or not TOKEN():
+    """Envía texto a Telegram. Sin chat_id → envía a todos los IDs configurados."""
+    cids = [chat_id] if chat_id else CHAT_IDS()
+    if not cids or not TOKEN():
         return
-    # Telegram tiene límite de 4096 chars
-    for chunk in _split_msg(str(texto), 4000):
-        try:
-            requests.post(
-                f"https://api.telegram.org/bot{TOKEN()}/sendMessage",
-                json={"chat_id": cid, "text": chunk, "parse_mode": "Markdown"},
-                timeout=15,
-            )
-        except Exception:
-            pass
+    for cid in cids:
+        for chunk in _split_msg(str(texto), 4000):
+            try:
+                requests.post(
+                    f"https://api.telegram.org/bot{TOKEN()}/sendMessage",
+                    json={"chat_id": cid, "text": chunk, "parse_mode": "Markdown"},
+                    timeout=15,
+                )
+            except Exception:
+                pass
 
 def send_doc(filepath, chat_id=None, caption=""):
-    """Envía un archivo a Telegram."""
-    cid = chat_id or CHAT_ID()
-    if not cid or not TOKEN():
+    """Envía un archivo a Telegram. Sin chat_id → envía a todos los IDs configurados."""
+    cids = [chat_id] if chat_id else CHAT_IDS()
+    if not cids or not TOKEN():
         return
-    try:
-        with open(filepath, "rb") as f:
-            requests.post(
-                f"https://api.telegram.org/bot{TOKEN()}/sendDocument",
-                data={"chat_id": cid, "caption": caption},
-                files={"document": f},
-                timeout=60,
-            )
-    except Exception:
-        pass
+    for cid in cids:
+        try:
+            with open(filepath, "rb") as f:
+                requests.post(
+                    f"https://api.telegram.org/bot{TOKEN()}/sendDocument",
+                    data={"chat_id": cid, "caption": caption},
+                    files={"document": f},
+                    timeout=60,
+                )
+        except Exception:
+            pass
 
 def _split_msg(texto, max_len=4000):
     """Parte mensajes largos en chunks."""
@@ -574,31 +580,58 @@ Analiza qué quiere hacer y responde SOLO en JSON (sin markdown, sin texto extra
         send("No entendí el comando. Escribe *ayuda* para ver los disponibles.", chat_id)
         return
 
+    # Retry hasta 3 veces para errores temporales (529 overloaded)
+    resp = None
+    ultimo_error = None
+    for intento in range(3):
+        try:
+            client = anthropic.Anthropic(api_key=api_key)
+            resp = client.messages.create(
+                model="claude-sonnet-4-5",
+                max_tokens=1000,
+                messages=[{"role": "user", "content": prompt}],
+            )
+            break
+        except Exception as e:
+            ultimo_error = e
+            err = str(e).lower()
+            if "529" in err or "overload" in err:
+                if intento < 2:
+                    time.sleep(4 + intento * 3)
+                    continue
+            break
+
+    if resp is None:
+        err = str(ultimo_error).lower()
+        if "404" in err or "not_found" in err or "model" in err:
+            send(
+                "❌ Modelo de IA no disponible.\n"
+                "Verifica ANTHROPIC_API_KEY en .env\n\n"
+                "Usa *ayuda* para ver comandos directos.",
+                chat_id,
+            )
+        elif "529" in err or "overload" in err:
+            send(
+                "⏳ Claude API temporalmente sobrecargada.\n"
+                "Espera 1 minuto y vuelve a intentarlo.\n\n"
+                "Usa *ayuda* para comandos directos mientras tanto.",
+                chat_id,
+            )
+        elif "credit" in err or "billing" in err or "insufficient" in err:
+            send(
+                "❌ Créditos agotados en Claude API.\n"
+                "Recarga en console.anthropic.com/settings/billing",
+                chat_id,
+            )
+        else:
+            send("No entendí ese comando. Escribe *ayuda* para ver los disponibles.", chat_id)
+        return
+
     try:
-        client = anthropic.Anthropic(api_key=api_key)
-        resp = client.messages.create(
-            model="claude-sonnet-4-6",
-            max_tokens=1000,
-            messages=[{"role": "user", "content": prompt}],
-        )
         raw = resp.content[0].text.strip().lstrip("```json").rstrip("```").strip()
         datos = _json.loads(raw)
     except _json.JSONDecodeError:
         send("Procesé tu solicitud pero no pude estructurarla. Escribe *ayuda* para ver los comandos.", chat_id)
-        return
-    except Exception as e:
-        err = str(e).lower()
-        if "404" in err or "not_found" in err or "model" in err:
-            send(
-                "Los créditos de Claude API están agotados.\n"
-                "Recarga en console.anthropic.com/settings/billing\n\n"
-                "Mientras tanto escribe *ayuda* para usar comandos directos.",
-                chat_id,
-            )
-        elif "credit" in err or "billing" in err or "overload" in err:
-            send("Sin créditos en Claude API. Recarga en console.anthropic.com", chat_id)
-        else:
-            send("No entendí ese comando. Escribe *ayuda* para ver los disponibles.", chat_id)
         return
 
     accion = datos.get("accion", "otro")
@@ -700,20 +733,22 @@ def _ejecutar_confirmada(accion, chat_id):
 # ── GUARDAR CHAT_ID ───────────────────────────────────────────
 
 def _guardar_chat_id(chat_id):
-    """Guarda el chat_id en .env si no estaba configurado."""
-    if CHAT_ID():
+    """Agrega chat_id al .env si no está ya en la lista."""
+    if chat_id in CHAT_IDS():
         return
+    nuevos = CHAT_IDS() + [chat_id]
     env_path = BASE / ".env"
     if not env_path.exists():
         return
     contenido = env_path.read_text(encoding="utf-8")
+    nueva_linea = f"TELEGRAM_CHAT_ID={','.join(nuevos)}"
     if "TELEGRAM_CHAT_ID=" in contenido:
         import re
-        contenido = re.sub(r"TELEGRAM_CHAT_ID=.*", f"TELEGRAM_CHAT_ID={chat_id}", contenido)
+        contenido = re.sub(r"TELEGRAM_CHAT_ID=.*", nueva_linea, contenido)
     else:
-        contenido += f"\nTELEGRAM_CHAT_ID={chat_id}\n"
+        contenido += f"\n{nueva_linea}\n"
     env_path.write_text(contenido, encoding="utf-8")
-    os.environ["TELEGRAM_CHAT_ID"] = str(chat_id)
+    os.environ["TELEGRAM_CHAT_ID"] = ','.join(nuevos)
 
 
 # ── REPORTE DIARIO AUTOMÁTICO ─────────────────────────────────
@@ -733,8 +768,7 @@ def _reporte_diario():
             if datetime.now().hour != 8:
                 continue
 
-            chat_id = CHAT_ID()
-            if not chat_id:
+            if not CHAT_IDS():
                 time.sleep(3600)
                 continue
 
@@ -760,9 +794,9 @@ def _reporte_diario():
                     f"*Reuniones agendadas:* {mat.get('reuniones',0)}\n\n"
                     f"{meta_resumen}"
                 )
-                send(msg, chat_id)
+                send(msg)  # → envía a todos los IDs
             except Exception as e:
-                send(f"⚠️ Error generando reporte diario: {e}", chat_id)
+                send(f"⚠️ Error generando reporte diario: {e}")
 
             # Dormir 23h para no enviar dos veces
             time.sleep(82800)
@@ -836,31 +870,41 @@ def _transcribir_voz(file_id: str, token_telegram: str) -> str | None:
             return None
 
         client = anthropic.Anthropic(api_key=api_key)
-        msg = client.messages.create(
-            model="claude-sonnet-4-6",
-            max_tokens=500,
-            messages=[{
-                "role": "user",
-                "content": [
-                    {
-                        "type": "text",
-                        "text": (
-                            "Transcribe exactamente lo que dice este audio en español colombiano. "
-                            "Solo el texto transcrito, sin comentarios."
-                        ),
-                    },
-                    {
-                        "type": "document",
-                        "source": {
-                            "type": "base64",
-                            "media_type": "audio/mpeg",
-                            "data": audio_data,
-                        },
-                    },
-                ],
-            }],
-        )
-        return msg.content[0].text.strip() or None
+        # Retry para 529 overloaded
+        for intento in range(3):
+            try:
+                msg = client.messages.create(
+                    model="claude-sonnet-4-5",
+                    max_tokens=500,
+                    messages=[{
+                        "role": "user",
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": (
+                                    "Transcribe exactamente lo que dice este audio en español colombiano. "
+                                    "Solo el texto transcrito, sin comentarios."
+                                ),
+                            },
+                            {
+                                "type": "document",
+                                "source": {
+                                    "type": "base64",
+                                    "media_type": "audio/mpeg",
+                                    "data": audio_data,
+                                },
+                            },
+                        ],
+                    }],
+                )
+                return msg.content[0].text.strip() or None
+            except Exception as e:
+                err = str(e).lower()
+                if ("529" in err or "overload" in err) and intento < 2:
+                    time.sleep(4 + intento * 3)
+                    continue
+                print(f"[Telegram] Error transcribiendo voz: {e}")
+                return None
 
     except Exception as e:
         print(f"[Telegram] Error transcribiendo voz: {e}")
@@ -881,7 +925,7 @@ def run_bot():
     print("[Telegram] Bot del Orquestador activo — esperando mensajes de Mateo")
 
     # Mensaje de bienvenida al arrancar
-    if CHAT_ID():
+    if CHAT_IDS():
         send(
             f"🚀 *IM Sistema iniciado*\n"
             f"Hora Colombia: {datetime.now().strftime('%H:%M')}\n"

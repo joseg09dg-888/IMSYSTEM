@@ -131,7 +131,15 @@ def registrar_apertura(email_id, ip="", user_agent=""):
         "UPDATE emails_enviados SET estado='abierto' WHERE id=? AND estado='enviado'",
         (email_id,)
     )
+    row = conn.execute("SELECT to_email FROM emails_enviados WHERE id=?", (email_id,)).fetchone()
     conn.commit(); conn.close()
+    if row:
+        try:
+            import sys as _s; _s.path.insert(0, str(Path(__file__).parent))
+            from session_memory import MemoriaAgentes
+            MemoriaAgentes().marcar_apertura(row[0])
+        except Exception:
+            pass
 
 def registrar_click(email_id, url):
     conn = sqlite3.connect(str(DB_PATH))
@@ -148,7 +156,15 @@ def registrar_respuesta(email_id, fragmento=""):
         "INSERT INTO respuestas VALUES (NULL,?,?,?)",
         (email_id, datetime.now().isoformat(), fragmento[:500])
     )
+    row = conn.execute("SELECT to_email FROM emails_enviados WHERE id=?", (email_id,)).fetchone()
     conn.commit(); conn.close()
+    if row:
+        try:
+            import sys as _s; _s.path.insert(0, str(Path(__file__).parent))
+            from session_memory import MemoriaAgentes
+            MemoriaAgentes().marcar_respuesta(row[0])
+        except Exception:
+            pass
 
 def get_stats() -> dict:
     """Obtiene estadísticas completas de todos los emails"""
@@ -1265,7 +1281,7 @@ DEVUELVE SOLO el cuerpo del email listo para enviar (sin JSON, sin markdown)."""
         r = requests.post(
             "https://api.anthropic.com/v1/messages",
             headers={"Content-Type":"application/json","x-api-key":api_key,"anthropic-version":"2023-06-01"},
-            json={"model":"claude-sonnet-4-6","max_tokens":350,
+            json={"model":"claude-sonnet-4-5","max_tokens":350,
                   "messages":[{"role":"user","content":prompt}]},
             timeout=30,
         )

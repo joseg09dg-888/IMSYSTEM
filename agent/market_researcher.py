@@ -1571,7 +1571,7 @@ def _call_claude(system_prompt, user_prompt, max_tokens=4000):
     if not api_key: return ""
     try:
         payload = json.dumps({
-            "model": "claude-sonnet-4-6",
+            "model": "claude-sonnet-4-5",
             "max_tokens": max_tokens,
             "system": system_prompt,
             "messages": [{"role": "user", "content": user_prompt}],

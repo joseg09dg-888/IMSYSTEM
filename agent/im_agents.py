@@ -894,7 +894,7 @@ Devuelve SOLO este JSON limpio (sin markdown, sin texto extra):
                 "anthropic-version": "2023-06-01",
             },
             json={
-                "model": "claude-sonnet-4-6",
+                "model": "claude-sonnet-4-5",
                 "max_tokens": 1000,
                 "messages": [{"role": "user", "content": prompt}],
             },
@@ -1324,6 +1324,14 @@ def procesar_leads(csv_path, agente_key, tipo=1, dry_run=False,
     except Exception:
         _DELIV_OK = False
 
+    # Memoria persistente — evita re-contactar emails ya enviados
+    try:
+        from session_memory import MemoriaAgentes
+        _mem = MemoriaAgentes()
+        _MEM_OK = True
+    except Exception:
+        _MEM_OK = False
+
     # Dedup de dominios — no enviar dos veces al mismo dominio en una misma campaña
     dominios_enviados: set = set()
 
@@ -1346,6 +1354,11 @@ def procesar_leads(csv_path, agente_key, tipo=1, dry_run=False,
             print(f"  [{i}] ⚠️  Dominio {dominio} ya contactado — omitiendo {email}")
             continue
         dominios_enviados.add(dominio)
+
+        # Memoria persistente — saltar emails ya contactados
+        if _MEM_OK and tipo == 1 and _mem.ya_contactado(email):
+            print(f"  [{i}] ⏭  {email} — ya contactado (memoria persistente)")
+            continue
 
         nombre  = lead.get("nombre","") or lead.get("empresa","")
         empresa = lead.get("empresa","")
@@ -1402,6 +1415,11 @@ def procesar_leads(csv_path, agente_key, tipo=1, dry_run=False,
                 enviados += 1
                 if _DELIV_OK:
                     _deliv.registrar_email_warmup()
+                if _MEM_OK:
+                    _mem.registrar_contacto(email, asunto, cuerpo[:500])
+                    nicho = lead.get("nicho", lead.get("sector", ""))
+                    if nicho:
+                        _mem.registrar_nicho(nicho)
             if i < min(len(leads), max_envios):
                 delay = random.uniform(60, 120)
                 print(f"    ⏳ {delay:.0f}s...\n")

@@ -1104,7 +1104,7 @@ def _call_claude(prompt, max_tokens=3000):
     if not api_key: return ""
     try:
         payload = json.dumps({
-            "model": "claude-sonnet-4-6",
+            "model": "claude-sonnet-4-5",
             "max_tokens": max_tokens,
             "system": ("Eres un investigador de mercado experto en la metodología 7 Maletas de Felipe Vergara. "
                        "Analiza datos reales y genera insights accionables para estrategias de marketing digital en Colombia."),
@@ -1845,6 +1845,14 @@ def run_deep_investigation(job_id, nombre, url, instagram, ciudad, nicho, tamani
                     resultado=json.dumps(resultado, ensure_ascii=False),
                     terminado_at=datetime.now().isoformat())
 
+        # Guardar en memoria persistente para no repetir en 30 días
+        try:
+            from session_memory import MemoriaAgentes
+            resumen = str(resultado.get("insight_claude") or resultado.get("7_maletas") or "")[:2000]
+            MemoriaAgentes().guardar_investigacion(nombre, url or "", job_id, resumen)
+        except Exception:
+            pass
+
     except Exception as e:
         import traceback
         _update_job(job_id, estado="error", progreso=0,
@@ -2168,6 +2176,18 @@ def _generar_html_reporte(data):
 # ── API PÚBLICA ────────────────────────────────────────────────
 def crear_job(nombre, url, instagram, ciudad, nicho, tamanio="mediana"):
     init_investigacion_tables()
+
+    # Memoria: si ya investigamos este negocio en menos de 30 días, reusar
+    try:
+        sys.path.insert(0, str(BASE / "agent"))
+        from session_memory import MemoriaAgentes
+        cached = MemoriaAgentes().get_investigacion(nombre)
+        if cached:
+            print(f"[DeepResearcher] Cache hit — {nombre} investigado el {cached['fecha_investigacion'][:10]}")
+            return cached["job_id"]
+    except Exception:
+        pass
+
     raw    = f"{nombre}-{ciudad}-{nicho}-{time.time()}"
     job_id = hashlib.md5(raw.encode()).hexdigest()[:12]
     conn   = get_db()
