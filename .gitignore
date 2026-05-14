@@ -1,34 +1,39 @@
-# Credenciales - NUNCA subir
+# CREDENCIALES - NUNCA SUBIR
 .env
+*.env
 .claude/settings.local.json
 
-# Base de datos y logs
-*.db
-*.log
+# Base de datos con datos de clientes
+logs/platform.db
+logs/*.db
+logs/tracking.db
+logs/*.log
 logs/handoffs/
-logs/*.json
+logs/meta_audit.log
+logs/claude_session_log.json
+logs/watchdog.log
 
-# Python
+# Datos privados de investigaciones
+data/investigaciones/
+data/leads_*.csv
+
+# Temporales
 __pycache__/
 *.pyc
 *.pyo
-*.pyd
-
-# Temporales
 temp_*/
-*.zip
 *.tmp
+*.ogg
+*.mp3
 
-# Node
+# Archivos grandes
+*.zip
 node_modules/
 
-# Datos de investigaciones generadas
-data/investigaciones/
+# Reports generados
 reports/
-
-# Uploads de usuarios
 uploads/
 
-# Archivos de sistema
+# Sistema
 .DS_Store
 Thumbs.db
