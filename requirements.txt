@@ -7,4 +7,5 @@ anthropic>=0.97.0
 python-dotenv>=1.0.0
 schedule>=1.2.0
 httpx>=0.28.1
-lxml>=4.9.0
+lxml>=5.0.0
+gunicorn>=21.0.0

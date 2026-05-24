@@ -144,6 +144,46 @@ class MetaAdsMCP:
     def _ok(self):
         return bool(self.token and self.account)
 
+    def _verificar_token(self) -> float:
+        """
+        Consulta debug_token de Meta para saber cuántos días faltan para expirar.
+        Si quedan < 7 días envía alerta por Telegram.
+        Retorna días restantes, o -1 si el token no expira (token de sistema).
+        """
+        if not self.token:
+            return 0
+        try:
+            r = requests.get(
+                f"{GRAPH}/debug_token",
+                params={"input_token": self.token, "access_token": self.token},
+                timeout=10,
+            )
+            d = r.json().get("data", {})
+            expira_ts = d.get("expires_at", 0)
+            if not expira_ts:
+                return -1  # token de sistema / no expira
+            dias = (expira_ts - time.time()) / 86400
+            if dias < 7:
+                aviso = (
+                    f"⚠️ *Token Meta Ads expira en {dias:.0f} días*\n\n"
+                    f"Renueva en:\n"
+                    f"developers.facebook.com/tools/explorer\n\n"
+                    f"1. Selecciona tu app\n"
+                    f"2. Agrega permisos: ads\\_read, ads\\_management\n"
+                    f"3. Genera token → copia en .env como META\\_ACCESS\\_TOKEN"
+                )
+                try:
+                    import sys as _s
+                    _s.path.insert(0, str(BASE / "agent"))
+                    from telegram_agent import send
+                    send(aviso)
+                except Exception:
+                    pass
+                _meta_log.warning(f"Token expira en {dias:.1f} días")
+            return dias
+        except Exception:
+            return -1
+
     def _get(self, path, params=None):
         if not self._ok():
             raise MetaAdsError("META_ACCESS_TOKEN o META_AD_ACCOUNT_ID no configurados en .env")
@@ -257,6 +297,7 @@ class MetaAdsMCP:
         Resumen formateado para Telegram con todas las campañas activas
         y métricas clave del período.
         """
+        self._verificar_token()
         try:
             cuenta = self.get_account_info()
             nombre_cuenta = cuenta.get("name", "Cuenta")
@@ -620,7 +661,9 @@ class MetaAdsMCP:
         if token and account:
             try:
                 info = self.get_account_info()
-                return f"✅ Meta Ads conectado — {info.get('name','')}"
+                dias = self._verificar_token()
+                expiry_str = f" — expira en {dias:.0f} días" if dias > 0 else ""
+                return f"✅ Meta Ads conectado — {info.get('name','')}{expiry_str}"
             except MetaAdsError as e:
                 return f"⚠️ Token inválido o expirado: {e}"
         missing = []

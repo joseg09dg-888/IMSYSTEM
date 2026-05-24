@@ -13,7 +13,7 @@ Flujo:
   5. Envío + log
 """
 
-import os, json, time, random, csv, smtplib, argparse, re, sys
+import os, json, time, random, csv, smtplib, imaplib, email as _email_lib, argparse, re, sys, base64
 
 if hasattr(sys.stdout, 'reconfigure'):
     sys.stdout.reconfigure(encoding='utf-8', errors='replace')
@@ -1251,6 +1251,20 @@ def enviar_email(agente_key, to_email, asunto, cuerpo, adjuntar=False):
                     print(f"    Brochure grande — link Drive incluido en cuerpo")
                 else:
                     print(f"    Brochure {bp.name} ({bp.stat().st_size//1024//1024}MB) grande — agrega BROCHURE_LINK_EMPRESAS al .env para incluir link")
+        # Agregar pixel de tracking al cuerpo
+        ngrok_url = os.environ.get("NGROK_URL", "http://localhost:5000")
+        if ngrok_url and to_email:
+            import base64 as _b64
+            token_data = f"{to_email}|{agente.get('nombre_completo','')[:20]}|{asunto[:20]}"
+            token = _b64.b64encode(token_data.encode()).decode().rstrip('=')
+            pixel_url = f"{ngrok_url}/track/open/{token}"
+            # Adjuntar pixel al final del mensaje
+            payload = msg.get_payload()
+            if isinstance(payload, list) and payload:
+                texto_actual = payload[0].get_payload(decode=True)
+                if texto_actual:
+                    texto_nuevo = texto_actual.decode('utf-8', errors='ignore') + "\n\n[image: " + pixel_url + "]"
+                    msg.get_payload()[0] = MIMEText(texto_nuevo, "plain", "utf-8")
         with smtplib.SMTP("smtp.gmail.com", 587) as s:
             s.starttls()
             s.login(agente["email"], pwd)
@@ -1541,6 +1555,123 @@ EJEMPLOS:
     for f in archivos:
         procesar_leads(f, args.agente, args.tipo, args.dry_run,
                        args.max, args.brochure, not args.sin_informe)
+
+
+
+# ─── LECTOR DE RESPUESTAS IMAP ───────────────────────────────────────────────
+def leer_respuestas_imap(agente_key="mateo", max_emails=20):
+    """Lee respuestas recibidas via IMAP y las guarda en la DB."""
+    agente = AGENTES.get(agente_key, AGENTES["mateo"])
+    pwd    = os.environ.get("IM_EMAIL_PASSWORD", "")
+    if not pwd:
+        return []
+
+    imap_host = os.environ.get("IMAP_SERVER", "imap.gmail.com")
+    imap_port = int(os.environ.get("IMAP_PORT", "993"))
+    encontradas = []
+
+    try:
+        M = imaplib.IMAP4_SSL(imap_host, imap_port)
+        M.login(agente["email"], pwd)
+        M.select("INBOX")
+
+        # Buscar emails no leidos de los ultimos 7 dias
+        from datetime import timedelta
+        fecha_desde = (datetime.now() - timedelta(days=7)).strftime("%d-%b-%Y")
+        _, nums = M.search(None, f"UNSEEN SINCE {fecha_desde}")
+
+        for num in nums[0].split()[:max_emails]:
+            _, data = M.fetch(num, "(RFC822)")
+            msg_raw = data[0][1]
+            msg = _email_lib.message_from_bytes(msg_raw)
+
+            de = _email_lib.utils.parseaddr(msg.get("From", ""))
+            asunto = msg.get("Subject", "")
+            fecha  = msg.get("Date", "")
+
+            # Extraer cuerpo
+            cuerpo = ""
+            if msg.is_multipart():
+                for part in msg.walk():
+                    if part.get_content_type() == "text/plain":
+                        cuerpo = part.get_payload(decode=True).decode("utf-8", errors="ignore")
+                        break
+            else:
+                cuerpo = msg.get_payload(decode=True).decode("utf-8", errors="ignore")
+
+            entrada = {
+                "de_email": de[1],
+                "de_nombre": de[0],
+                "asunto": asunto,
+                "cuerpo": cuerpo[:2000],
+                "fecha": fecha,
+            }
+            encontradas.append(entrada)
+
+            # Guardar en DB
+            try:
+                db_path = Path(__file__).parent.parent / "logs" / "platform.db"
+                import sqlite3 as _sq
+                conn = _sq.connect(str(db_path))
+                conn.execute(
+                    "INSERT OR IGNORE INTO respuestas_recibidas (de_email, de_nombre, asunto, cuerpo, agente_asignado) VALUES (?,?,?,?,?)",
+                    (de[1], de[0], asunto, cuerpo[:2000], agente_key)
+                )
+                conn.commit()
+                conn.close()
+            except Exception:
+                pass
+
+        M.logout()
+    except Exception as e:
+        print(f"[IMAP] Error: {e}")
+
+    return encontradas
+
+
+def generar_respuesta_persuasiva(de_nombre, empresa, asunto, cuerpo_recibido, agente_key="mateo"):
+    """Genera una respuesta persuasiva a un email recibido usando Claude API."""
+    api_key = os.environ.get("ANTHROPIC_API_KEY", "")
+    if not api_key:
+        return None
+
+    import urllib.request as _req
+    import json as _json
+
+    agente = AGENTES.get(agente_key, AGENTES["mateo"])
+    prompt = f"""Eres {agente['nombre_completo']} de Intelligent Markets.
+Recibiste esta respuesta de {de_nombre} ({empresa}):
+
+ASUNTO: {asunto}
+MENSAJE: {cuerpo_recibido[:800]}
+
+Escribe una respuesta de 3-4 parrafos que:
+1. Reconozca lo que dijeron especificamente
+2. Genere curiosidad sobre el resultado que obtenemos con nuestros clientes
+3. Proponga una llamada de 15 minutos sin presion
+4. Sea conversacional, NO corporativo
+
+Tono: amigable, directo, como entre colegas. SIN frases de venta.
+Solo el cuerpo del email, sin saludo ni firma."""
+
+    try:
+        payload = _json.dumps({
+            "model": "claude-sonnet-4-5",
+            "max_tokens": 500,
+            "messages": [{"role": "user", "content": prompt}]
+        }).encode()
+        req = _req.Request(
+            "https://api.anthropic.com/v1/messages",
+            data=payload,
+            headers={"Content-Type": "application/json", "x-api-key": api_key, "anthropic-version": "2023-06-01"},
+            method="POST"
+        )
+        with _req.urlopen(req, timeout=30) as r:
+            data = _json.loads(r.read().decode())
+            return data.get("content", [{}])[0].get("text", "")
+    except Exception as e:
+        print(f"[Claude] Error generando respuesta: {e}")
+        return None
 
 if __name__ == "__main__":
     main()

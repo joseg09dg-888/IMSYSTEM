@@ -717,10 +717,21 @@ def get_informes():
     search = request.args.get("search","").lower()
     tipo   = request.args.get("tipo","")
     inf    = []
-    for f in sorted(d.glob("*.html"), reverse=True)[:50]:
+    todos  = sorted(d.glob("*.html"), reverse=True)
+    # Primero: investigaciones 7 Maletas (7m-*)
+    for f in [x for x in todos if x.name.startswith("7m-")][:20]:
+        s = f.stat()
+        if search and search not in f.name.lower(): continue
+        if tipo and tipo != "7maletas": continue
+        inf.append({"nombre": f.name, "ruta": f"/api/informes/{f.name}",
+                    "tamanio": f"{s.st_size//1024}KB",
+                    "fecha": datetime.fromtimestamp(s.st_mtime).strftime("%d/%m/%Y %H:%M"),
+                    "tipo": "7maletas"})
+    # Luego: otros informes (mercado, prospecto, cliente)
+    for f in [x for x in todos if not x.name.startswith("7m-")][:40]:
         s = f.stat()
         t = "cliente" if "im-report" in f.name else "prospecto"
-        if tipo   and t != tipo:               continue
+        if tipo and tipo != t: continue
         if search and search not in f.name.lower(): continue
         inf.append({"nombre": f.name, "ruta": f"/api/informes/{f.name}",
                     "tamanio": f"{s.st_size//1024}KB",
@@ -1077,16 +1088,16 @@ try:
                 modulos_raw = {}
         m = modulos_raw if isinstance(modulos_raw, dict) else {}
         def _pct(key):
-            v = m.get(key, {})
-            return v.get("progreso", 0) if isinstance(v, dict) else 0
+            v = m.get(key, 0)
+            if isinstance(v, dict): return int(v.get("progreso", 0))
+            return int(v) if isinstance(v, (int, float)) else 0
+        analisis_pct = max(_pct("analisis"), _pct("claude"), _pct("reporte"))
         return {
-            "web":           _pct("web"),
-            "reviews":       max(_pct("maps_negocio"), _pct("maps_competidores") // 2),
-            "facebook_ads":  _pct("facebook_ads"),
-            "instagram":     _pct("instagram"),
-            "competidores":  _pct("maps_competidores"),
-            "academico":     _pct("academico"),
-            "analisis":      max(_pct("analisis"), _pct("claude")),
+            "maletas":    analisis_pct,
+            "estrategia": max(_pct("facebook_ads"), _pct("maps_competidores") // 2),
+            "guiones":    max(_pct("academico"), _pct("instagram") // 2),
+            "branding":   max(_pct("web"), _pct("maps_negocio") // 2),
+            "informe":    _pct("reporte") or analisis_pct,
         }
 
     def _reporte_to_frontend(reporte):
@@ -1117,7 +1128,13 @@ try:
             "progreso": _modulos_to_progreso(reporte.get("modulos_detalle", {})),
             "html_filename": resultado.get("meta", {}).get("html_filename", ""),
             "datos": {
-                "analisis_7maletas": analisis_txt or "Sin análisis (configura ANTHROPIC_API_KEY)",
+                "analisis_7maletas": analisis_txt or "Sin analisis (configura ANTHROPIC_API_KEY)",
+                "estrategia_ads": (
+                    resultado.get("facebook_ads", {}).get("texto", "")
+                    if isinstance(resultado.get("facebook_ads"), dict)
+                    else ""
+                ) or "",
+                "guiones": str(resultado.get("guiones") or resultado.get("contenido") or ""),
                 "web": resultado.get("web_data", {}),
                 "reviews_google": resultado.get("reviews_positivas", []),
             },
@@ -1511,7 +1528,168 @@ def frontend(path=""):
     if f.exists() and f.is_file(): return send_file(str(f))
     return send_file(str(BASE / "frontend" / "index.html"))
 
+def _meta_token_renewal_daemon():
+    """Renueva el token de Meta automáticamente cuando quedan < 10 días."""
+    import threading, time as _time
+
+    def _loop():
+        while True:
+            try:
+                load_env()
+                token      = os.environ.get("META_ACCESS_TOKEN", "")
+                app_id     = os.environ.get("META_APP_ID", "")
+                app_secret = os.environ.get("META_APP_SECRET", "")
+
+                if not (token and app_id and app_secret):
+                    _time.sleep(3600)
+                    continue
+
+                r = requests.get(
+                    "https://graph.facebook.com/debug_token",
+                    params={"input_token": token, "access_token": f"{app_id}|{app_secret}"},
+                    timeout=10,
+                )
+                data = r.json().get("data", {})
+                expires_at = data.get("expires_at", 0)
+                dias = (expires_at - _time.time()) / 86400 if expires_at else 999
+
+                if dias < 10:
+                    r2 = requests.get(
+                        "https://graph.facebook.com/v19.0/oauth/access_token",
+                        params={
+                            "grant_type": "fb_exchange_token",
+                            "client_id": app_id,
+                            "client_secret": app_secret,
+                            "fb_exchange_token": token,
+                        },
+                        timeout=10,
+                    )
+                    d2 = r2.json()
+                    if "access_token" in d2:
+                        nuevo = d2["access_token"]
+                        env_path = BASE / ".env"
+                        env_txt = env_path.read_text(encoding="utf-8")
+                        env_txt = re.sub(r"META_ACCESS_TOKEN=.*", f"META_ACCESS_TOKEN={nuevo}", env_txt)
+                        env_path.write_text(env_txt, encoding="utf-8")
+                        os.environ["META_ACCESS_TOKEN"] = nuevo
+                        print(f"[Meta] Token renovado automaticamente ({d2.get('expires_in',0)//86400} dias)")
+
+            except Exception as e:
+                print(f"[Meta] Error renovacion: {e}")
+
+            _time.sleep(86400)  # revisar cada 24 horas
+
+    threading.Thread(target=_loop, daemon=True).start()
+
+
+# ── EMAIL TRACKING ────────────────────────────────────────────
+# Pixel 1x1 GIF transparente en base64
+_PIXEL_GIF = base64.b64decode(
+    "R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+)
+
+@app.route("/track/open/<token>")
+def track_open(token):
+    """Pixel de seguimiento para detectar apertura de email."""
+    try:
+        decoded = base64.b64decode(token + "==").decode("utf-8")
+        parts   = decoded.split("|")
+        to_email = parts[0] if parts else ""
+        agente   = parts[1] if len(parts) > 1 else ""
+        empresa  = parts[2] if len(parts) > 2 else ""
+        if to_email:
+            conn = get_db()
+            conn.execute(
+                "INSERT INTO email_tracking (to_email, agente, empresa, evento, ip, user_agent) VALUES (?,?,?,?,?,?)",
+                (to_email, agente, empresa, "abierto",
+                 request.remote_addr, request.user_agent.string[:200])
+            )
+            conn.execute(
+                "UPDATE emails_log SET abierto_at=datetime('now') WHERE to_email=? AND abierto_at IS NULL",
+                (to_email,)
+            )
+            conn.commit()
+            conn.close()
+    except Exception:
+        pass
+    resp = make_response(_PIXEL_GIF)
+    resp.headers["Content-Type"]  = "image/gif"
+    resp.headers["Cache-Control"] = "no-store, no-cache, must-revalidate"
+    return resp
+
+@app.route("/track/click/<token>")
+def track_click(token):
+    """Redirect con tracking de click."""
+    url = "https://intelligentmarkets.com.co"
+    try:
+        decoded = base64.b64decode(token + "==").decode("utf-8")
+        parts   = decoded.split("|")
+        to_email = parts[0] if parts else ""
+        url      = parts[3] if len(parts) > 3 else url
+        if to_email:
+            conn = get_db()
+            conn.execute(
+                "INSERT INTO email_tracking (to_email, agente, empresa, evento, ip) VALUES (?,?,?,?,?)",
+                (to_email, parts[1] if len(parts)>1 else "", parts[2] if len(parts)>2 else "", "click", request.remote_addr)
+            )
+            conn.commit()
+            conn.close()
+    except Exception:
+        pass
+    from flask import redirect
+    return redirect(url)
+
+@app.route("/api/tracking/stats")
+def tracking_stats():
+    """Estadísticas de tracking de emails."""
+    conn = get_db()
+    stats = {
+        "aperturas": conn.execute("SELECT COUNT(DISTINCT to_email) FROM email_tracking WHERE evento='abierto'").fetchone()[0],
+        "clicks":    conn.execute("SELECT COUNT(DISTINCT to_email) FROM email_tracking WHERE evento='click'").fetchone()[0],
+        "por_agente": dict(conn.execute(
+            "SELECT agente, COUNT(*) FROM email_tracking WHERE evento='abierto' GROUP BY agente"
+        ).fetchall()),
+        "recientes": [dict(zip(['email','agente','evento','fecha'], r))
+            for r in conn.execute(
+                "SELECT to_email, agente, evento, fecha FROM email_tracking ORDER BY fecha DESC LIMIT 20"
+            ).fetchall()],
+    }
+    conn.close()
+    return jsonify(stats)
+
+@app.route("/api/respuestas")
+def get_respuestas():
+    """Lista de respuestas recibidas a los emails."""
+    conn = get_db()
+    try:
+        rows = conn.execute(
+            "SELECT de_email, de_nombre, empresa, asunto, fecha_recibido, procesado FROM respuestas_recibidas ORDER BY fecha_recibido DESC LIMIT 50"
+        ).fetchall()
+        conn.close()
+        return jsonify([dict(zip(['de_email','de_nombre','empresa','asunto','fecha','procesado'], r)) for r in rows])
+    except Exception as e:
+        conn.close()
+        return jsonify({"error": str(e)}), 500
+
+@app.route("/api/imap/leer", methods=["POST"])
+def imap_leer():
+    """Dispara la lectura de respuestas IMAP."""
+    if not check_rate(request.remote_addr):
+        return jsonify({"ok": False, "error": "Rate limit"}), 429
+    try:
+        sys.path.insert(0, str(BASE / "agent"))
+        from im_agents import leer_respuestas_imap
+        agente = (request.json or {}).get("agente", "mateo")
+        encontradas = leer_respuestas_imap(agente_key=agente, max_emails=20)
+        return jsonify({"ok": True, "encontradas": len(encontradas), "respuestas": encontradas[:5]})
+    except Exception as e:
+        return jsonify({"ok": False, "error": str(e)}), 500
+
+
 if __name__ == "__main__":
     init_db()
-    print(f"\n  IM PLATFORM v3 — http://localhost:5000  [MODO: {MODO}]\n")
-    app.run(host="0.0.0.0", port=5000, debug=False)
+    _meta_token_renewal_daemon()
+    port = int(os.environ.get("PORT", 5000))
+    debug = os.environ.get("FLASK_DEBUG", "false").lower() == "true"
+    print(f"\n  IM PLATFORM v3 — http://0.0.0.0:{port}  [MODO: {MODO}]\n")
+    app.run(host="0.0.0.0", port=port, debug=debug)

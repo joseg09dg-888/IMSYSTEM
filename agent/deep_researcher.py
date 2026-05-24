@@ -1116,7 +1116,7 @@ def _call_claude(prompt, max_tokens=3000):
             headers={"Content-Type":"application/json","x-api-key":api_key,"anthropic-version":"2023-06-01"},
             method="POST"
         )
-        with _req.urlopen(req, timeout=90) as r:
+        with _req.urlopen(req, timeout=300) as r:
             data = json.loads(r.read().decode())
             return data.get("content",[{}])[0].get("text","")
     except Exception as e:
@@ -1523,7 +1523,7 @@ ROAS esperado: [X]:1 en [X] meses
 Inversión mínima: {tamanio_presupuesto}
 Retorno estimado: [basado en sector y datos]"""
 
-        resultado = _call_claude(prompt, max_tokens=7000)
+        resultado = _call_claude(prompt, max_tokens=4000)
         if resultado and not resultado.startswith("[Claude"):
             return resultado
 
@@ -1802,7 +1802,7 @@ def run_deep_investigation(job_id, nombre, url, instagram, ciudad, nicho, tamani
             datos_macro=datos_macro,
         )
         # Mantener insight_claude corto para compatibilidad
-        insight_claude = informe_formateado[:800] if informe_formateado else ""
+        insight_claude = informe_formateado if informe_formateado else ""
         upd("claude", 100)
 
         # 10. GENERAR HTML
@@ -1919,13 +1919,18 @@ def _generar_html_reporte(data):
           <div style="margin-top:10px"><span style="background:{col}22;color:{col};padding:5px 12px;border-radius:6px;font-size:12px;font-weight:600">CTA: {esc(ad.get('cta',''))}</span></div>
         </div>"""
 
-    # Insight Claude
+    # Insight Claude — texto completo con formato preservado
     insight_html = ""
     if insight and not insight.startswith("["):
-        lines = insight.split("\n")
-        insight_html = "".join(f"<p style='margin-bottom:10px'>{esc(l)}</p>" for l in lines if l.strip())
+        insight_escaped = esc(insight)
+        insight_html = (
+            f"<pre style='white-space:pre-wrap;font-family:-apple-system,BlinkMacSystemFont,"
+            f"\"Segoe UI\",sans-serif;font-size:14px;line-height:1.8;background:#f5f5f7;"
+            f"padding:24px;border-radius:12px;overflow-x:auto;color:#1d1d1f'>"
+            f"{insight_escaped}</pre>"
+        )
     else:
-        insight_html = f"<p style='color:#6e6e73'>Activar ANTHROPIC_API_KEY para síntesis IA.</p>"
+        insight_html = "<p style='color:#6e6e73'>Activar ANTHROPIC_API_KEY para sintesis IA completa.</p>"
 
     # Problems list
     prob_html = ""
@@ -2168,8 +2173,23 @@ def _generar_html_reporte(data):
   <div class="footer">
     <p style="font-weight:600">Metodología: Las 7 Maletas de Cualquier Compra — Felipe Vergara</p>
     <p style="margin-top:6px;font-size:13px">IM System · intelligentmarkets.com.co · {fecha}</p>
+    <div style="margin-top:20px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap" class="no-print">
+      <button onclick="window.print()" style="background:#1d1d1f;color:#fff;border:none;padding:12px 28px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer">⬇ Descargar PDF</button>
+      <button onclick="navigator.clipboard.writeText(document.body.innerText).then(()=>alert('Copiado al portapapeles'))" style="background:#f5f5f7;color:#1d1d1f;border:none;padding:12px 28px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer">📋 Copiar texto</button>
+    </div>
   </div>
 </div>
+<style>
+@media print {{
+  .no-print {{ display:none !important; }}
+  body {{ -webkit-print-color-adjust:exact; print-color-adjust:exact; }}
+  .container {{ max-width:100%; padding:0; }}
+  .section {{ break-inside:avoid; page-break-inside:avoid; }}
+  .header {{ page-break-after:avoid; }}
+  pre {{ white-space:pre-wrap !important; page-break-inside:avoid; }}
+  @page {{ margin:15mm; size:A4; }}
+}}
+</style>
 </body>
 </html>"""
 
