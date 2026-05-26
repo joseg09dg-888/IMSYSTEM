@@ -989,5 +989,31 @@ INSTALAR DEPENDENCIAS:
                max_leads=args.max, use_apollo=args.apollo,
                output_file=args.output)
 
+def enriquecer_lead_con_email(lead):
+    try:
+        import sys, os
+        sys.path.insert(0, os.path.dirname(__file__))
+        from email_finder import buscar_email_completo
+        resultado = buscar_email_completo(
+            nombre=lead.get('nombre', ''),
+            empresa=lead.get('empresa', lead.get('nombre_empresa', '')),
+            url=lead.get('url', lead.get('web', '')),
+            ciudad=lead.get('ciudad', 'Colombia')
+        )
+        if resultado.get('email'):
+            lead['email'] = resultado['email']
+            lead['email_verificado'] = resultado.get('email_verificado', False)
+            lead['score_email'] = resultado.get('score_calidad', 0)
+        if resultado.get('telefono'):
+            lead['telefono'] = resultado['telefono']
+            lead['whatsapp'] = resultado['telefono']
+        if resultado.get('linkedin'):
+            lead['linkedin'] = resultado['linkedin']
+        lead['fuentes_email'] = resultado.get('fuentes_consultadas', [])
+    except Exception as e:
+        pass
+    return lead
+
+
 if __name__ == "__main__":
     main()
