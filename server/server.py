@@ -1238,6 +1238,41 @@ try:
             return jsonify({"error": "Job no encontrado"}), 404
         return jsonify(reporte)
 
+    # ── Algoritmo Meta Ads ────────────────────────────────────
+    @app.route("/api/estrategia/algoritmo-ads", methods=["POST"])
+    def estrategia_algoritmo_ads():
+        body   = request.get_json(force=True) or {}
+        nicho  = body.get("nicho", "general").strip()
+        ppto   = int(body.get("presupuesto", 0))
+        job_id = str(__import__("uuid").uuid4())
+        result_path = BASE / "logs" / f"algo_ads_{job_id}.json"
+
+        def _run():
+            try:
+                data = _as._investigar_algoritmo_meta_ads(nicho, ppto)
+                result_path.write_text(
+                    json.dumps(data, ensure_ascii=False), encoding="utf-8"
+                )
+            except Exception as e:
+                result_path.write_text(
+                    json.dumps({"informe": f"Error: {e}", "datos_cuenta": {}}),
+                    encoding="utf-8"
+                )
+
+        threading.Thread(target=_run, daemon=True).start()
+        return jsonify({"job_id": job_id, "estado": "procesando"})
+
+    @app.route("/api/estrategia/algoritmo-ads/<job_id>")
+    def estrategia_algoritmo_ads_estado(job_id):
+        result_path = BASE / "logs" / f"algo_ads_{job_id}.json"
+        if not result_path.exists():
+            return jsonify({"estado": "procesando"})
+        try:
+            data = json.loads(result_path.read_text(encoding="utf-8"))
+            return jsonify({"estado": "listo", **data})
+        except Exception as e:
+            return jsonify({"estado": "error", "informe": str(e)})
+
     # ── Plan de contenido ─────────────────────────────────────
     @app.route("/api/contenido/plan", methods=["POST"])
     def contenido_plan():
@@ -1684,6 +1719,51 @@ def imap_leer():
         return jsonify({"ok": True, "encontradas": len(encontradas), "respuestas": encontradas[:5]})
     except Exception as e:
         return jsonify({"ok": False, "error": str(e)}), 500
+
+
+@app.route("/api/contenido/algoritmos", methods=["POST"])
+def analizar_algoritmos():
+    d = request.json or {}
+    nicho = d.get("nicho", "general")
+    try:
+        sys.path.insert(0, str(BASE / "agent"))
+        from content_planner import _investigar_algoritmos_redes
+        import uuid as _uuid
+        from pathlib import Path as _Path
+
+        job_id = str(_uuid.uuid4())[:8]
+        resultado_container = {}
+
+        def _run():
+            resultado_container["data"] = _investigar_algoritmos_redes(nicho)
+            _Path(BASE / f"logs/algoritmos_{job_id}.json").write_text(
+                json.dumps(resultado_container["data"], ensure_ascii=False, indent=2),
+                encoding="utf-8"
+            )
+
+        t = threading.Thread(target=_run, daemon=True)
+        t.start()
+        t.join(timeout=120)
+
+        if resultado_container.get("data"):
+            return jsonify({
+                "ok": True,
+                "job_id": job_id,
+                "informe": resultado_container["data"].get("informe_completo", ""),
+                "meta_api_insights": resultado_container["data"].get("meta_api_insights", {}),
+            })
+        return jsonify({"ok": False, "error": "Timeout"})
+    except Exception as e:
+        return jsonify({"ok": False, "error": str(e)}), 500
+
+
+@app.route("/api/contenido/algoritmos/<job_id>")
+def get_algoritmos(job_id):
+    from pathlib import Path as _Path
+    f = BASE / f"logs/algoritmos_{job_id}.json"
+    if f.exists():
+        return jsonify(json.loads(f.read_text(encoding="utf-8")))
+    return jsonify({"error": "No encontrado"}), 404
 
 
 if __name__ == "__main__":

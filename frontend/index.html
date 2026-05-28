@@ -372,28 +372,163 @@ tbody tr:last-child td{border-bottom:none;}
 
 <!-- INFORMES -->
 <div class="panel" id="p-informes">
-  <div class="ph">
-    <div><div class="pt">Informes Pre-Reunion</div><div class="ps">Dossiers generados</div></div>
-    <button class="btn btn-g btn-sm" onclick="loadInformes()">&#8635; Recargar</button>
+  <div class="sh">
+    <div class="sh-left">
+      <div class="sh-title">Informes Pre-Reunion</div>
+      <div class="sh-sub">Diagnostico completo del prospecto · Se genera cuando ya agendaron reunion</div>
+    </div>
   </div>
-  <div id="inf-lista"><div class="empty"><div class="ei">&#128203;</div><div class="et">Cargando...</div></div></div>
-</div>
 
+  <!-- FORMULARIO MANUAL: GENERAR NUEVO INFORME -->
+  <div class="card mb-20" style="border:1px solid rgba(52,211,153,.3)">
+    <div class="card-title mb-4">&#128203; Generar Informe Pre-Reunion</div>
+    <div class="card-sub mb-14">
+      Completa los datos del prospecto que ya agendo reunion.
+      El sistema generara un diagnostico completo para llegar preparado.
+    </div>
+    <div class="form-row form-2 mb-12">
+      <div class="fg">
+        <label>Nombre del prospecto *</label>
+        <input id="inf-nombre-prospecto" placeholder="Dr. Carlos Ospina">
+      </div>
+      <div class="fg">
+        <label>Empresa / Negocio *</label>
+        <input id="inf-empresa" placeholder="Clinica Dental Ospina">
+      </div>
+    </div>
+    <div class="form-row form-3 mb-12">
+      <div class="fg">
+        <label>Nicho</label>
+        <select id="inf-nicho">
+          <option value="odontologos">Odontologos</option>
+          <option value="dermatologos">Dermatologo</option>
+          <option value="agencia_viajes">Agencia Viajes</option>
+          <option value="seguros">Seguros</option>
+          <option value="sello_musical">Sello Musical</option>
+          <option value="ecommerce">E-commerce</option>
+          <option value="otro">Otro</option>
+        </select>
+      </div>
+      <div class="fg">
+        <label>Ciudad</label>
+        <input id="inf-ciudad" value="Medellin">
+      </div>
+      <div class="fg">
+        <label>Cargo del prospecto</label>
+        <input id="inf-cargo" placeholder="Gerente, Dueno, Director...">
+      </div>
+    </div>
+    <div class="fg mb-12">
+      <label>Objetivo de la reunion</label>
+      <select id="inf-objetivo">
+        <option value="presentar_servicios">Presentar servicios IM</option>
+        <option value="propuesta_ads">Propuesta campanas Meta Ads</option>
+        <option value="propuesta_contenido">Propuesta plan de contenido</option>
+        <option value="propuesta_completa">Propuesta completa (ADS + Contenido + Investigacion)</option>
+        <option value="seguimiento">Seguimiento / segunda reunion</option>
+      </select>
+    </div>
+    <div class="fg mb-12">
+      <label>Contexto: que dijo, por que agendo, que le interesa</label>
+      <textarea id="inf-contexto" style="height:80px" placeholder="Respondio el correo diciendo que le interesa mejorar sus Meta Ads, tiene presupuesto de $2M/mes, quiere mas pacientes nuevos..."></textarea>
+    </div>
+    <div class="fg mb-16">
+      <label>URL web / Redes del prospecto (opcional)</label>
+      <input id="inf-url" placeholder="https://clinica.com  o  @instagram">
+    </div>
+    <button class="btn btn-w btn-full" id="btn-inf-gen" onclick="generarInforme()">
+      &#128203; Generar Diagnostico Pre-Reunion
+    </button>
+    <div id="inf-gen-resultado" style="display:none;margin-top:16px">
+      <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
+        <button class="btn btn-g btn-sm" onclick="copiar('inf-gen-txt')">&#128203; Copiar</button>
+        <button class="btn btn-g btn-sm" onclick="descargar('inf-gen-txt','informe-pre-reunion.txt')">&#11015; TXT</button>
+        <button class="btn btn-g btn-sm" onclick="verEnHTML(document.getElementById('inf-gen-txt').value,'Informe Pre-Reunion')">&#128196; Ver en HTML</button>
+        <button class="btn btn-g btn-sm" onclick="descargarPDF(document.getElementById('inf-gen-txt').value,'Informe Pre-Reunion')">&#128424; PDF</button>
+      </div>
+      <textarea id="inf-gen-txt" readonly style="height:420px;font-family:monospace;font-size:11px;line-height:1.8;background:#050505;border-color:var(--b1);color:#ccc"></textarea>
+    </div>
+  </div>
+
+  <!-- LISTA DE INFORMES EXISTENTES -->
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+      <div class="card-title">&#128196; Informes generados</div>
+      <button class="btn btn-g btn-sm" onclick="loadInformes()">&#8635; Recargar</button>
+    </div>
+    <div id="inf-lista"><div class="empty"><div class="ei">&#128203;</div><div class="et">Cargando...</div></div></div>
+  </div>
+</div>
 <!-- MERCADOS -->
 <div class="panel" id="p-mercados">
-  <div class="pt mb20">Investigacion de Mercados</div>
+  <div class="sh">
+    <div class="sh-left">
+      <div class="sh-title">Investigacion de Mercados</div>
+      <div class="sh-sub">Detecta oportunidades · Donde y a quien contactar · Analisis de nicho</div>
+    </div>
+  </div>
+
   <div class="g2" style="gap:20px">
     <div class="card">
-      <div style="font-weight:600;margin-bottom:14px">Parametros</div>
-      <div class="fg"><label>Nicho</label><select id="mkt-nicho"><option value="odontologos">Odontologos</option><option value="agencia_viajes">Agencias Viajes</option><option value="seguros">Seguros</option></select></div>
-      <div class="fg"><label>Ciudad</label><input id="mkt-ciudad" value="Medellin"></div>
-      <div class="fg"><label>Sectores</label><input id="mkt-sectores" placeholder="Laureles, El Poblado"></div>
-      <button class="btn btn-w btn-full" onclick="mktIniciar()" id="btn-mkt">Investigar</button>
+      <div class="card-title mb-14">&#127758; Parametros de investigacion</div>
+      <div class="fg mb-12">
+        <label>Nicho / Sector *</label>
+        <select id="mkt-nicho">
+          <option value="odontologos">Odontologos</option>
+          <option value="dermatologos">Dermatologos</option>
+          <option value="agencia_viajes">Agencias de Viajes</option>
+          <option value="seguros">Seguros y Finanzas</option>
+          <option value="sello_musical">Sellos Musicales</option>
+          <option value="artista_independiente">Artistas Independientes</option>
+          <option value="ecommerce">E-commerce</option>
+          <option value="restaurantes">Restaurantes</option>
+          <option value="clinicas">Clinicas y Salud</option>
+          <option value="educacion">Educacion / Academias</option>
+          <option value="construccion">Construccion / Inmobiliaria</option>
+          <option value="otro">Otro (especifica abajo)</option>
+        </select>
+      </div>
+      <div class="fg mb-12">
+        <label>Ciudad principal</label>
+        <input id="mkt-ciudad" value="Medellin" placeholder="Medellin, Bogota, Cali...">
+      </div>
+      <div class="fg mb-12">
+        <label>Sectores o barrios especificos</label>
+        <input id="mkt-sectores" placeholder="Laureles, El Poblado, Envigado...">
+      </div>
+      <div class="fg mb-12">
+        <label>Tamano de empresa objetivo</label>
+        <select id="mkt-tamano">
+          <option value="todas">Todas</option>
+          <option value="micro">Micro (1-5 empleados)</option>
+          <option value="pequena" selected>Pequena (5-20 empleados)</option>
+          <option value="mediana">Mediana (20-100 empleados)</option>
+          <option value="grande">Grande (+100 empleados)</option>
+        </select>
+      </div>
+      <div class="fg mb-16">
+        <label>Contexto adicional (que buscas, oportunidad detectada)</label>
+        <textarea id="mkt-contexto" style="height:70px" placeholder="Busco clinicas dentales que no tengan buena presencia digital, que esten invirtiendo en Google pero no en Meta Ads..."></textarea>
+      </div>
+      <button class="btn btn-w btn-full" onclick="mktIniciar()" id="btn-mkt">&#127758; Investigar mercado</button>
     </div>
-    <div class="card"><div style="font-weight:600;margin-bottom:12px">Resultado</div><div id="mkt-res"><div class="empty"><div class="ei">&#127758;</div><div class="et">Ejecuta una investigacion</div></div></div></div>
+    <div class="card">
+      <div class="card-title mb-12">Resultado</div>
+      <div id="mkt-res">
+        <div class="empty"><div class="ei">&#127758;</div><div class="et">Ejecuta una investigacion</div></div>
+      </div>
+      <div id="mkt-acciones" style="display:none;margin-top:12px">
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn btn-g btn-sm" onclick="copiar('mkt-txt')">&#128203; Copiar</button>
+          <button class="btn btn-g btn-sm" onclick="descargar('mkt-txt','mercado.txt')">&#11015; TXT</button>
+          <button class="btn btn-g btn-sm" onclick="verEnHTML(document.getElementById('mkt-txt').value,'Investigacion de Mercados')">&#128196; Ver en HTML</button>
+          <button class="btn btn-g btn-sm" onclick="descargarPDF(document.getElementById('mkt-txt').value,'Investigacion de Mercados')">&#128424; PDF</button>
+        </div>
+        <textarea id="mkt-txt" style="display:none"></textarea>
+      </div>
+    </div>
   </div>
 </div>
-
 <!-- INVESTIGACION -->
 <div class="panel" id="p-investigacion">
   <div class="pt mb20">Investigacion con 7 Maletas</div>
@@ -430,20 +565,32 @@ tbody tr:last-child td{border-bottom:none;}
       <button class="tbtn" onclick="invTab('guiones',this)">18 Guiones</button>
     </div>
     <div class="tpane active" id="tp-maletas">
-      <div class="row mb12">
-        <button class="btn btn-g btn-sm" onclick="invCopiar('maletas')">Copiar</button>
-        <button class="btn btn-g btn-sm" onclick="invDescargar('maletas')">Descargar</button>
-        <button class="btn btn-gr btn-sm" onclick="invAprobar()">Aprobar</button>
-        <button class="btn btn-r btn-sm" onclick="invRechazar()">Rechazar</button>
+      <div class="row mb12" style="flex-wrap:wrap;gap:6px">
+        <button class="btn btn-g btn-sm" onclick="invCopiar('maletas')">&#128203; Copiar</button>
+        <button class="btn btn-g btn-sm" onclick="invDescargar('maletas')">&#11015; TXT</button>
+        <button class="btn btn-g btn-sm" onclick="verEnHTML(el('inv-txt-maletas').value,'7 Maletas - Investigacion')">&#128196; Ver HTML</button>
+        <button class="btn btn-g btn-sm" onclick="descargarPDF(el('inv-txt-maletas').value,'7 Maletas - Investigacion')">&#128424; PDF</button>
+        <button class="btn btn-gr btn-sm" onclick="invAprobar()">&#10003; Aprobar</button>
+        <button class="btn btn-r btn-sm" onclick="invRechazar()">&#10007; Rechazar</button>
       </div>
       <textarea id="inv-txt-maletas" readonly style="height:380px;font-size:.72rem;font-family:monospace"></textarea>
     </div>
     <div class="tpane" id="tp-ads">
-      <div class="row mb12"><button class="btn btn-g btn-sm" onclick="invCopiar('ads')">Copiar</button><button class="btn btn-g btn-sm" onclick="invDescargar('ads')">Descargar</button></div>
+      <div class="row mb12" style="flex-wrap:wrap;gap:6px">
+        <button class="btn btn-g btn-sm" onclick="invCopiar('ads')">&#128203; Copiar</button>
+        <button class="btn btn-g btn-sm" onclick="invDescargar('ads')">&#11015; TXT</button>
+        <button class="btn btn-g btn-sm" onclick="verEnHTML(el('inv-txt-ads').value,'Estrategia ADS')">&#128196; Ver HTML</button>
+        <button class="btn btn-g btn-sm" onclick="descargarPDF(el('inv-txt-ads').value,'Estrategia ADS')">&#128424; PDF</button>
+      </div>
       <textarea id="inv-txt-ads" readonly style="height:380px;font-size:.72rem;font-family:monospace"></textarea>
     </div>
     <div class="tpane" id="tp-guiones">
-      <div class="row mb12"><button class="btn btn-g btn-sm" onclick="invCopiar('guiones')">Copiar</button><button class="btn btn-g btn-sm" onclick="invDescargar('guiones')">Descargar</button></div>
+      <div class="row mb12" style="flex-wrap:wrap;gap:6px">
+        <button class="btn btn-g btn-sm" onclick="invCopiar('guiones')">&#128203; Copiar</button>
+        <button class="btn btn-g btn-sm" onclick="invDescargar('guiones')">&#11015; TXT</button>
+        <button class="btn btn-g btn-sm" onclick="verEnHTML(el('inv-txt-guiones').value,'18 Guiones - Plan de Contenido')">&#128196; Ver HTML</button>
+        <button class="btn btn-g btn-sm" onclick="descargarPDF(el('inv-txt-guiones').value,'18 Guiones - Plan de Contenido')">&#128424; PDF</button>
+      </div>
       <textarea id="inv-txt-guiones" readonly style="height:380px;font-size:.72rem;font-family:monospace"></textarea>
     </div>
   </div>
@@ -456,45 +603,211 @@ tbody tr:last-child td{border-bottom:none;}
 
 <!-- ESTRATEGIA ADS -->
 <div class="panel" id="p-estrategia">
-  <div class="pt mb8">Estrategia ADS</div>
-  <div class="alert alert-y mb16">Para mejores resultados, completa primero una Investigacion.</div>
-  <div class="g2" style="gap:20px">
-    <div class="card">
-      <div style="font-weight:600;margin-bottom:14px">Auditoria (42 checkpoints)</div>
-      <div class="fg"><label>Nombre / negocio</label><input id="ads-nombre" placeholder="Clinica XYZ"></div>
-      <div class="fr fr2">
-        <div class="fg"><label>Nicho</label><select id="ads-nicho"><option value="odontologos">Odontologos</option><option value="agencia_viajes">Agencias Viajes</option><option value="seguros">Seguros</option></select></div>
-        <div class="fg"><label>Presupuesto/mes COP</label><input id="ads-ppto" type="number" placeholder="2000000"></div>
-      </div>
-      <div class="fg"><label>ROAS actual</label><input id="ads-roas" type="number" step=".1" placeholder="1.8"></div>
-      <button class="btn btn-w btn-full" onclick="adsAuditar()" id="btn-ads">Auditar</button>
+  <div class="sh">
+    <div class="sh-left">
+      <div class="sh-title">Estrategia ADS</div>
+      <div class="sh-sub">Auditoría Meta · 42 checkpoints · Algoritmo de conversiones</div>
     </div>
-    <div class="card"><div style="font-weight:600;margin-bottom:12px">Resultado</div><div id="ads-res"><div class="empty"><div class="ei">&#128202;</div><div class="et">Ejecuta una auditoria</div></div></div></div>
+  </div>
+
+  <!-- BLOQUE 1: ALGORITMO META ADS -->
+  <div class="card mb-20" style="border:1px solid rgba(245,166,35,.3)">
+    <div class="card-title mb-8">&#9889; Descifrar Algoritmo Meta Ads 2026</div>
+    <div class="card-sub mb-14">
+      Cómo funciona el algoritmo para máximas conversiones,
+      alcance extremo y costos mínimos. Basado en Meta oficial
+      + WordStream + HubSpot + datos reales de tu cuenta.
+    </div>
+    <div class="form-row form-2 mb-12">
+      <div class="fg">
+        <label>Nicho</label>
+        <select id="algads-nicho">
+          <option value="odontologos">Odontólogos</option>
+          <option value="dermatologo">Dermatólogos</option>
+          <option value="agencia_viajes">Agencias Viajes</option>
+          <option value="seguros">Seguros</option>
+          <option value="sello_musical">Sello Musical</option>
+          <option value="artista_independiente">Artista</option>
+          <option value="ecommerce">E-commerce</option>
+        </select>
+      </div>
+      <div class="fg">
+        <label>Presupuesto/mes (COP)</label>
+        <input id="algads-presupuesto" type="number" placeholder="2000000">
+      </div>
+    </div>
+    <button class="btn btn-w btn-full" id="btn-algads" onclick="analizarAlgoritmoAds()">
+      &#9889; Analizar Algoritmo Meta Ads — Máximo ROAS
+    </button>
+    <div id="algads-result" style="display:none;margin-top:16px">
+      <div style="display:flex;gap:8px;margin-bottom:10px">
+        <button class="btn btn-g btn-sm" onclick="copiar('algads-txt')">&#128203; Copiar</button>
+        <button class="btn btn-g btn-sm" onclick="descargar('algads-txt','algoritmo-ads.txt')">&#11015; Descargar</button>
+      </div>
+      <textarea id="algads-txt" readonly style="width:100%;height:500px;background:#050505;border:1px solid var(--b1);color:#ccc;font-family:monospace;font-size:11px;padding:16px;border-radius:8px;line-height:1.9"></textarea>
+    </div>
+  </div>
+
+  <!-- BLOQUE 2: AUDITORÍA 42 CHECKPOINTS -->
+  <div class="card mb-20">
+    <div class="card-title mb-16">&#128202; Auditoría de cuenta Meta Ads</div>
+    <div class="form-row form-2 mb-12">
+      <div class="fg"><label>Nombre de la cuenta</label><input id="aud-nombre" placeholder="Clínica Dental Ospina"></div>
+      <div class="fg"><label>Nicho</label>
+        <select id="aud-nicho">
+          <option value="odontologos">Odontólogos</option>
+          <option value="dermatologo">Dermatólogos</option>
+          <option value="agencia_viajes">Agencias Viajes</option>
+          <option value="seguros">Seguros</option>
+          <option value="ecommerce">E-commerce</option>
+          <option value="otro">Otro</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row form-3 mb-12">
+      <div class="fg"><label>Presupuesto/día (COP)</label><input id="aud-presupuesto" placeholder="50000" type="number"></div>
+      <div class="fg"><label>ROAS actual</label><input id="aud-roas" placeholder="1.5" type="number" step="0.1"></div>
+      <div class="fg"><label>Objetivo</label>
+        <select id="aud-objetivo">
+          <option value="ventas">Ventas</option>
+          <option value="leads">Leads</option>
+          <option value="trafico">Tráfico</option>
+          <option value="reconocimiento">Reconocimiento</option>
+        </select>
+      </div>
+    </div>
+    <div class="fg mb-16"><label>Problemas que has notado</label><textarea id="aud-problemas" placeholder="CTR bajo, costo por lead alto..." style="height:70px"></textarea></div>
+    <button class="btn btn-w btn-full" id="btn-aud" onclick="iniciarAuditoria()">
+      &#128202; Auditar cuenta (42 checkpoints)
+    </button>
+  </div>
+
+  <div id="aud-result" style="display:none">
+    <div style="display:flex;align-items:center;gap:20px;background:var(--s1);border:1px solid var(--b1);border-radius:12px;padding:20px;margin-bottom:16px">
+      <div style="text-align:center;flex-shrink:0">
+        <div style="font-size:52px;font-weight:700;color:var(--w);letter-spacing:-2px" id="aud-score">—</div>
+        <div style="font-size:10px;letter-spacing:2px;color:var(--sub);font-family:monospace">SCORE /100</div>
+      </div>
+      <div>
+        <div style="font-size:16px;font-weight:600;color:var(--w);margin-bottom:4px" id="aud-nivel">Calculando...</div>
+        <div style="font-size:13px;color:var(--m)" id="aud-resumen"></div>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;margin-bottom:12px">
+      <button class="btn btn-g btn-sm" onclick="copiar('aud-txt')">&#128203; Copiar</button>
+      <button class="btn btn-g btn-sm" onclick="descargar('aud-txt','auditoria.txt')">&#11015; Descargar</button>
+    </div>
+    <textarea id="aud-txt" readonly style="height:500px;font-family:monospace;font-size:11px;line-height:1.9;color:#ccc;background:#050505;border-color:var(--b1)"></textarea>
   </div>
 </div>
-
 <!-- CONTENIDO -->
 <div class="panel" id="p-contenido">
-  <div class="pt mb20">Plan de Contenido - 18 Guiones</div>
-  <div class="card mb16">
-    <div style="font-weight:600;margin-bottom:14px">Generar guiones</div>
-    <div class="fr fr2" style="align-items:flex-end;gap:12px">
-      <div class="fg" style="margin-bottom:0"><label>Cliente</label><select id="cp-cliente"><option value="">Selecciona un cliente...</option></select></div>
-      <div class="fg" style="margin-bottom:12px">
-        <label>Subir branding (PDF o imagen, opcional)</label>
-        <input type="file" id="cont-branding-file" accept=".pdf,.jpg,.png,.jpeg">
-        <div style="font-size:.68rem;color:var(--muted);margin-top:4px">Manual de marca, paleta de colores, concepto creativo</div>
-      </div>
-      <div class="fg" style="margin-bottom:12px">
-        <label>O describe el concepto de marca</label>
-        <textarea id="cont-branding" style="height:70px" placeholder="Marca minimalista, colores azul y blanco, tono profesional..."></textarea>
-      </div>
-      <button class="btn btn-w" onclick="cpGenerar()" id="btn-cp">Generar 18 guiones</button>
+  <div class="sh">
+    <div class="sh-left">
+      <div class="sh-title">Plan de Contenido</div>
+      <div class="sh-sub">18 guiones · 6 fases × 3 videos · Referentes + Outliers virales · Algoritmos</div>
     </div>
   </div>
-  <div id="cp-res"></div>
-</div>
 
+  <!-- BLOQUE 1: ALGORITMO INSTAGRAM + TIKTOK -->
+  <div class="card mb-20" style="border:1px solid rgba(91,141,239,.3)">
+    <div class="card-title mb-8">&#128269; Algoritmos Instagram + TikTok 2026</div>
+    <div class="card-sub mb-14">
+      Descifra cómo funcionan los algoritmos para viralidad,
+      alcance, SEO, geolocalización y posicionamiento.
+      Fuentes: Hootsuite, Later, HubSpot, Metricool, Meta oficial.
+    </div>
+    <div class="fg mb-12">
+      <label>Nicho a analizar</label>
+      <select id="algo-nicho">
+        <option value="odontologos">Odontólogos</option>
+        <option value="dermatologo">Dermatólogos</option>
+        <option value="agencia_viajes">Agencias Viajes</option>
+        <option value="seguros">Seguros</option>
+        <option value="sello_musical">Sello Musical</option>
+        <option value="artista_independiente">Artista</option>
+        <option value="ecommerce">E-commerce</option>
+      </select>
+    </div>
+    <button class="btn btn-w btn-full" id="btn-algoritmos" onclick="analizarAlgoritmos()">
+      &#129504; Analizar Algoritmos Instagram + TikTok
+    </button>
+    <div id="algo-result" style="display:none;margin-top:16px">
+      <div style="display:flex;gap:8px;margin-bottom:10px">
+        <button class="btn btn-g btn-sm" onclick="copiar('algo-txt')">&#128203; Copiar</button>
+        <button class="btn btn-g btn-sm" onclick="descargar('algo-txt','algoritmos-redes.txt')">&#11015; Descargar</button>
+      </div>
+      <textarea id="algo-txt" readonly style="width:100%;height:500px;background:#050505;border:1px solid var(--b1);color:#ccc;font-family:monospace;font-size:11px;padding:16px;border-radius:8px;line-height:1.9"></textarea>
+    </div>
+  </div>
+
+  <!-- BLOQUE 2: GENERAR GUIONES -->
+  <div class="card mb-20">
+    <div class="card-title mb-16">&#127916; Generar 18 Guiones con IA</div>
+    <div class="card-sub mb-16">
+      Basado en referentes del nicho + outliers virales + 7 Maletas + neurociencia.
+      6 fases × 3 videos = 18 guiones listos para grabar.
+    </div>
+    <div class="form-row form-2 mb-12">
+      <div class="fg">
+        <label>Cliente / Proyecto</label>
+        <select id="cont-cliente">
+          <option value="">Selecciona un cliente...</option>
+        </select>
+      </div>
+      <div class="fg">
+        <label>O nombre del negocio</label>
+        <input id="cont-nombre" placeholder="Clínica Dental XYZ">
+      </div>
+    </div>
+    <div class="form-row form-2 mb-12">
+      <div class="fg">
+        <label>Nicho</label>
+        <select id="cont-nicho">
+          <option value="odontologos">Odontólogos</option>
+          <option value="dermatologo">Dermatólogos</option>
+          <option value="agencia_viajes">Agencias Viajes</option>
+          <option value="seguros">Seguros</option>
+          <option value="sello_musical">Sello Musical</option>
+          <option value="artista_independiente">Artista / Lanzamiento Musical</option>
+          <option value="ecommerce">E-commerce</option>
+          <option value="lanzamiento_marca">Lanzamiento de Marca</option>
+        </select>
+      </div>
+      <div class="fg">
+        <label>Tipo de contenido</label>
+        <select id="cont-tipo">
+          <option value="posicionamiento">Posicionamiento / Reconocimiento</option>
+          <option value="lanzamiento_musical">Lanzamiento Musical</option>
+          <option value="lanzamiento_marca">Lanzamiento de Marca</option>
+          <option value="ventas">Generación de Ventas</option>
+          <option value="comunidad">Construcción de Comunidad</option>
+        </select>
+      </div>
+    </div>
+    <div class="fg mb-12">
+      <label>Subir PDF o imagen de branding (opcional)</label>
+      <input type="file" id="cont-branding-file" accept=".pdf,.jpg,.png,.jpeg" style="padding:7px;color:var(--m)">
+      <div style="font-size:10px;color:var(--sub);margin-top:4px">Manual de marca, concepto creativo, paleta</div>
+    </div>
+    <div class="fg mb-16">
+      <label>O describe el concepto de marca</label>
+      <textarea id="cont-branding" placeholder="Estilo de la marca, colores, tono de voz, arquetipo, diferencial..." style="height:80px"></textarea>
+    </div>
+    <button class="btn btn-w btn-full" id="btn-cont" onclick="generarContenido()">
+      &#127916; Generar 18 Guiones + Referentes + Outliers Virales
+    </button>
+  </div>
+
+  <div id="cont-result" style="display:none">
+    <div style="display:flex;gap:8px;margin-bottom:16px">
+      <button class="btn btn-g btn-sm" onclick="copiar('cont-txt')">&#128203; Copiar todo</button>
+      <button class="btn btn-g btn-sm" onclick="descargar('cont-txt','guiones.txt')">&#11015; Descargar</button>
+    </div>
+    <div id="cont-guiones" style="display:grid;gap:12px"></div>
+    <textarea id="cont-txt" style="display:none"></textarea>
+  </div>
+</div>
 <!-- PROYECTOS -->
 <div class="panel" id="p-proyectos">
   <div class="ph">
@@ -728,25 +1041,61 @@ async function iniciarAnalisis(){var cid=el('intel-cl')?el('intel-cl').value:'';
 /* INFORMES */
 async function loadInformes(){
   var b=el('inf-lista');if(!b)return;
-  try{var r=await fetch(API+'/api/informes',{headers:{Authorization:'Bearer '+tok()}});var d=await r.json();var inf=Array.isArray(d)?d:(d.informes||[]);
-  if(!inf.length){b.innerHTML='<div class="empty"><div class="ei">&#128203;</div><div class="et">Sin informes generados</div></div>';return;}
-  b.innerHTML=inf.map(function(i){return '<div class="card mb8" style="cursor:pointer;display:flex;justify-content:space-between;align-items:center" onclick="verInforme(\''+h(i.nombre||i.id||'')+'\')"><div><div style="font-weight:600;font-size:.88rem">'+h(i.nombre||i.id||'Informe')+'</div><div style="font-size:.72rem;color:var(--muted);margin-top:2px">'+(i.tipo==='7maletas'?'&#129504; Investigacion 7 Maletas':h(i.tipo||''))+' · '+fmt(i.fecha||i.created_at)+' · '+(i.tamanio||'')+'</div></div><span class="badge '+(i.tipo==='7maletas'?'bg':'bb')+'">'+(i.tipo==='7maletas'?'Abrir PDF':'Ver')+'</span></div>';}).join('');}
-  catch(e){if(b)b.innerHTML='<div class="empty"><div class="et">Error</div></div>';}
+  try{
+    var r=await fetch(API+'/api/informes',{headers:{Authorization:'Bearer '+tok()}});
+    var d=await r.json();var inf=Array.isArray(d)?d:(d.informes||[]);
+    if(!inf.length){b.innerHTML='<div class="empty"><div class="ei">&#128203;</div><div class="et">Sin informes generados aun</div></div>';return;}
+    b.innerHTML=inf.map(function(i){
+      var esHTML=i.nombre&&(i.nombre.endsWith('.html')||i.nombre.endsWith('.htm'));
+      var label=i.tipo==='7maletas'?'&#129504; 7 Maletas':i.tipo==='prospecto'?'&#128203; Pre-Reunion':i.tipo==='cliente'?'&#127775; Cliente':h(i.tipo||'');
+      return '<div class="card mb8" style="padding:12px 16px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><div><div style="font-weight:600;font-size:.85rem">'+h(i.nombre||i.id||'Informe')+'</div><div style="font-size:.72rem;color:var(--muted);margin-top:2px">'+label+' &nbsp;·&nbsp; '+fmt(i.fecha||i.created_at)+' &nbsp;·&nbsp; '+(i.tamanio||'')+'</div></div></div><div style="display:flex;gap:6px;flex-wrap:wrap">'+(esHTML?'<button class="btn btn-g btn-sm" onclick="window.open(API+\'/api/informes/\'+encodeURIComponent(\''+h(i.nombre||'')+'\'),\'_blank\')">&#128196; Ver HTML</button>':'')+'<button class="btn btn-g btn-sm" onclick="verInformeYPDF(\''+h(i.nombre||'')+'\')">&#128424; PDF</button></div></div>';
+    }).join('');
+  }catch(e){if(b)b.innerHTML='<div class="empty"><div class="et">Error al cargar</div></div>';}
+}
+async function verInformeYPDF(nombre){
+  var url=API+'/api/informes/'+encodeURIComponent(nombre);
+  var w=window.open(url,'_blank');
+  // Si es HTML, el navegador lo abre; el usuario puede hacer Ctrl+P para PDF
 }
 async function verInforme(nombre){
-  // Abrir directamente el HTML en nueva pestana
   window.open(API+'/api/informes/'+encodeURIComponent(nombre),'_blank');
 }
 
 /* MERCADOS */
 async function mktIniciar(){
-  var btn=el('btn-mkt'),res=el('mkt-res');btn.disabled=true;btn.textContent='Investigando...';res.innerHTML='<div style="color:var(--muted);padding:20px">Analizando mercado...</div>';
-  try{var r=await fetch(API+'/api/mercado/investigar',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+tok()},body:JSON.stringify({nicho:el('mkt-nicho').value,ciudad:el('mkt-ciudad').value,sectores:[el('mkt-sectores').value],limite:30})});var d=await r.json();
-  if(d.job_id)mktPoll(d.job_id,res);else{res.innerHTML='<textarea readonly style="height:280px;font-size:.72rem;font-family:monospace">'+h(JSON.stringify(d,null,2))+'</textarea>';}}
-  catch(e){res.innerHTML='<div style="color:var(--red)">Error: '+h(e.message)+'</div>';}
-  btn.disabled=false;btn.textContent='Investigar';
+  var btn=el('btn-mkt'),res=el('mkt-res'),acc=el('mkt-acciones'),txt=el('mkt-txt');
+  btn.disabled=true;btn.textContent='Investigando...';
+  res.innerHTML='<div style="color:var(--muted);padding:20px">Analizando mercado...</div>';
+  if(acc)acc.style.display='none';
+  var payload={nicho:el('mkt-nicho').value,ciudad:el('mkt-ciudad').value,sectores:[el('mkt-sectores').value],limite:30,tamano:el('mkt-tamano')?el('mkt-tamano').value:'mediana',contexto:el('mkt-contexto')?el('mkt-contexto').value:''};
+  try{
+    var r=await fetch(API+'/api/mercado/investigar',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+tok()},body:JSON.stringify(payload)});
+    var d=await r.json();
+    if(d.job_id){mktPoll(d.job_id,res,acc,txt);}
+    else{
+      var t=d.informe||d.resultado||JSON.stringify(d,null,2);
+      res.innerHTML='<div style="color:var(--muted);font-size:12px">Resultado listo. Usa los botones para ver o descargar.</div>';
+      if(txt)txt.value=t;if(acc)acc.style.display='block';
+    }
+  }catch(e){res.innerHTML='<div style="color:var(--red)">Error: '+h(e.message)+'</div>';}
+  btn.disabled=false;btn.textContent='&#127758; Investigar mercado';
 }
-function mktPoll(jid,res){var iv=setInterval(async function(){try{var r=await fetch(API+'/api/mercado/estado/'+jid);var d=await r.json();if(d.estado==='completado'){clearInterval(iv);var r2=await fetch(API+'/api/mercado/reporte/'+jid);var d2=await r2.json();var t=d2.reporte||d2.informe||JSON.stringify(d2,null,2);res.innerHTML='<textarea readonly style="height:300px;font-size:.72rem;font-family:monospace">'+h(t)+'</textarea>';}else if(d.estado==='error'){clearInterval(iv);res.innerHTML='<div style="color:var(--red)">'+h(d.error||'Error')+'</div>';}}catch(e){clearInterval(iv);}},3000);}
+function mktPoll(jid,res,acc,txt){
+  var iv=setInterval(async function(){
+    try{
+      var r=await fetch(API+'/api/mercado/estado/'+jid);var d=await r.json();
+      if(d.estado==='completado'){
+        clearInterval(iv);
+        var r2=await fetch(API+'/api/mercado/reporte/'+jid);var d2=await r2.json();
+        var t=d2.reporte||d2.informe||JSON.stringify(d2,null,2);
+        res.innerHTML='<div style="color:var(--muted);font-size:12px">Resultado listo.</div>';
+        if(txt)txt.value=t;if(acc)acc.style.display='block';
+      }else if(d.estado==='error'){
+        clearInterval(iv);res.innerHTML='<div style="color:var(--red)">'+h(d.error||'Error')+'</div>';
+      }
+    }catch(e){clearInterval(iv);}
+  },3000);
+}
 
 /* INVESTIGACION */
 var _invJob=null,_invIv=null;
@@ -805,9 +1154,53 @@ async function adsAuditar(){
   catch(e){res.innerHTML='<div style="color:var(--red)">Error: '+h(e.message)+'</div>';btn.disabled=false;btn.textContent='Auditar';}
 }
 function adsPoll(jid,btn,res){var iv=setInterval(async function(){try{var r=await fetch(API+'/api/estrategia/ads/estado/'+jid,{headers:{Authorization:'Bearer '+tok()}});var d=await r.json();if(d.estado==='completado'){clearInterval(iv);var r2=await fetch(API+'/api/estrategia/ads/reporte/'+jid,{headers:{Authorization:'Bearer '+tok()}});var d2=await r2.json();var t=d2.reporte||d2.resultado||JSON.stringify(d2,null,2);res.innerHTML='<textarea readonly style="height:340px;font-size:.72rem;font-family:monospace">'+h(t)+'</textarea>';btn.disabled=false;btn.textContent='Auditar';}else if(d.estado==='error'){clearInterval(iv);res.innerHTML='<div style="color:var(--red)">'+h(d.error||'Error')+'</div>';btn.disabled=false;btn.textContent='Auditar';}}catch(e){clearInterval(iv);}},3000);}
+async function analizarAlgoritmoAds(){
+  var nicho=el('algads-nicho')?el('algads-nicho').value:'general';
+  var ppto=el('algads-presupuesto')?el('algads-presupuesto').value||0:0;
+  var btn=el('btn-algads'),resBox=el('algads-result'),txt=el('algads-txt');
+  if(btn){btn.disabled=true;btn.textContent='Investigando (2-3 min)...';}
+  if(resBox)resBox.style.display='none';
+  try{
+    var r=await fetch(API+'/api/estrategia/algoritmo-ads',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+tok()},body:JSON.stringify({nicho:nicho,presupuesto:ppto})});
+    var d=await r.json();
+    if(d.job_id){
+      var jid=d.job_id;
+      var iv=setInterval(async function(){
+        try{
+          var r2=await fetch(API+'/api/estrategia/algoritmo-ads/'+jid,{headers:{Authorization:'Bearer '+tok()}});
+          var d2=await r2.json();
+          if(d2.estado==='listo'){
+            clearInterval(iv);
+            var t=d2.informe||JSON.stringify(d2,null,2);
+            if(txt)txt.value=t;
+            if(resBox)resBox.style.display='block';
+            if(btn){btn.disabled=false;btn.textContent='&#9889; Analizar Algoritmo Meta Ads — Máximo ROAS';}
+          }else if(d2.estado==='error'){
+            clearInterval(iv);
+            if(txt)txt.value='Error: '+(d2.informe||'Sin datos');
+            if(resBox)resBox.style.display='block';
+            if(btn){btn.disabled=false;btn.textContent='&#9889; Analizar Algoritmo Meta Ads — Máximo ROAS';}
+          }
+        }catch(e){clearInterval(iv);}
+      },5000);
+    }
+  }catch(e){
+    if(txt)txt.value='Error: '+e.message;
+    if(resBox)resBox.style.display='block';
+    if(btn){btn.disabled=false;btn.textContent='&#9889; Analizar Algoritmo Meta Ads — Máximo ROAS';}
+  }
+}
 
 /* CONTENIDO */
-async function cpLoadCl(){try{var r=await fetch(API+'/api/clientes',{headers:{Authorization:'Bearer '+tok()}});var d=await r.json();var cl=Array.isArray(d)?d:(d.clientes||[]);var s=el('cp-cliente');if(s)s.innerHTML='<option value="">Selecciona un cliente...</option>'+cl.map(function(c){return '<option value="'+c.id+'">'+h(c.nombre_negocio||c.nombre||'')+'</option>';}).join('');}catch(e){}}
+async function cpLoadCl(){
+  try{
+    var r=await fetch(API+'/api/clientes',{headers:{Authorization:'Bearer '+tok()}});
+    var d=await r.json();var cl=Array.isArray(d)?d:(d.clientes||[]);
+    var opts='<option value="">Selecciona un cliente...</option>'+cl.map(function(c){return '<option value="'+c.id+'">'+h(c.nombre_negocio||c.nombre||'')+'</option>';}).join('');
+    var s=el('cp-cliente');if(s)s.innerHTML=opts;
+    var s2=el('cont-cliente');if(s2)s2.innerHTML=opts;
+  }catch(e){}
+}
 async function cpGenerar(){
   var cid=el('cp-cliente')?el('cp-cliente').value:'';if(!cid){alert('Selecciona un cliente');return;}
   var btn=el('btn-cp'),res=el('cp-res');btn.disabled=true;btn.textContent='Generando...';res.innerHTML='<div style="color:var(--muted);padding:20px">Generando 18 guiones...</div>';
@@ -862,29 +1255,59 @@ function boot(){loadOps();updateClock();setInterval(updateClock,30000);setInterv
 
 /* Funciones adicionales */
 async function generarContenido() {
-  var cid = el('cp-cliente') ? el('cp-cliente').value : '';
-  if (!cid) { alert('Selecciona un cliente'); return; }
-  var btn = el('btn-cp'), res = el('cp-res');
-  if (btn) { btn.disabled = true; btn.textContent = 'Generando...'; }
-  if (res) res.innerHTML = '<div style="color:var(--muted);padding:20px">Generando 18 guiones...</div>';
+  var cid = el('cont-cliente') ? el('cont-cliente').value : '';
+  var nom = el('cont-nombre') ? el('cont-nombre').value.trim() : '';
+  var nicho = el('cont-nicho') ? el('cont-nicho').value : 'general';
+  var tipo = el('cont-tipo') ? el('cont-tipo').value : 'posicionamiento';
+  var branding = el('cont-branding') ? el('cont-branding').value.trim() : '';
+  if (!cid && !nom) { alert('Selecciona un cliente o ingresa el nombre del negocio'); return; }
+  var btn = el('btn-cont'), resBox = el('cont-result'), txt = el('cont-txt'), grid = el('cont-guiones');
+  if (btn) { btn.disabled = true; btn.textContent = 'Generando 18 guiones...'; }
+  if (resBox) resBox.style.display = 'none';
   try {
+    var payload = {nicho: nicho, tipo_contenido: tipo, branding: branding};
+    if (cid) payload.cliente_id = cid;
+    if (nom) payload.nombre = nom;
     var r = await fetch(API + '/api/contenido/plan', {
       method: 'POST',
       headers: {'Content-Type': 'application/json', Authorization: 'Bearer ' + tok()},
-      body: JSON.stringify({cliente_id: cid})
+      body: JSON.stringify(payload)
     });
     var d = await r.json();
     if (d.job_id) {
-      cpPoll(d.job_id, btn, res);
+      contPoll(d.job_id, btn, resBox, txt, grid);
     } else {
       var t = d.plan || d.resultado || JSON.stringify(d, null, 2);
-      if (res) res.innerHTML = '<textarea readonly style="height:360px;font-size:.72rem;font-family:monospace">' + h(t) + '</textarea>';
-      if (btn) { btn.disabled = false; btn.textContent = 'Generar 18 guiones'; }
+      if (txt) txt.value = t;
+      if (resBox) resBox.style.display = 'block';
+      if (btn) { btn.disabled = false; btn.textContent = '&#127916; Generar 18 Guiones + Referentes + Outliers Virales'; }
     }
   } catch(e) {
-    if (res) res.innerHTML = '<div style="color:var(--red)">Error: ' + h(e.message) + '</div>';
-    if (btn) { btn.disabled = false; btn.textContent = 'Generar 18 guiones'; }
+    alert('Error: ' + e.message);
+    if (btn) { btn.disabled = false; btn.textContent = '&#127916; Generar 18 Guiones + Referentes + Outliers Virales'; }
   }
+}
+function contPoll(jid, btn, resBox, txt, grid) {
+  var iv = setInterval(async function(){
+    try {
+      var r = await fetch(API + '/api/contenido/estado/' + jid, {headers: {Authorization: 'Bearer ' + tok()}});
+      var d = await r.json();
+      if (d.estado === 'completado') {
+        clearInterval(iv);
+        var r2 = await fetch(API + '/api/contenido/reporte/' + jid, {headers: {Authorization: 'Bearer ' + tok()}});
+        var d2 = await r2.json();
+        var t = d2.plan || d2.reporte || d2.guiones || JSON.stringify(d2, null, 2);
+        if (txt) txt.value = t;
+        if (resBox) resBox.style.display = 'block';
+        if (btn) { btn.disabled = false; btn.textContent = '&#127916; Generar 18 Guiones + Referentes + Outliers Virales'; }
+      } else if (d.estado === 'error') {
+        clearInterval(iv);
+        if (txt) txt.value = 'Error: ' + (d.error || 'Sin datos');
+        if (resBox) resBox.style.display = 'block';
+        if (btn) { btn.disabled = false; btn.textContent = '&#127916; Generar 18 Guiones + Referentes + Outliers Virales'; }
+      }
+    } catch(e) { clearInterval(iv); }
+  }, 4000);
 }
 
 async function iniciarAgente(nombre, activo) {
@@ -910,9 +1333,176 @@ async function testTelegram() {
 }
 
 async function iniciarAuditoria() {
-  var nombre = el('ads-nombre') ? el('ads-nombre').value.trim() : '';
-  if (!nombre) { alert('Ingresa el nombre'); return; }
-  adsAuditar();
+  var nombre = el('aud-nombre') ? el('aud-nombre').value.trim() : '';
+  if (!nombre) { alert('Ingresa el nombre de la cuenta'); return; }
+  var nicho = el('aud-nicho') ? el('aud-nicho').value : 'general';
+  var ppto = el('aud-presupuesto') ? el('aud-presupuesto').value : '';
+  var roas = el('aud-roas') ? el('aud-roas').value : '';
+  var btn = el('btn-aud'), resBox = el('aud-result'), txt = el('aud-txt');
+  if (btn) { btn.disabled = true; btn.textContent = 'Auditando (42 checkpoints)...'; }
+  if (resBox) resBox.style.display = 'none';
+  try {
+    var r = await fetch(API + '/api/estrategia/ads', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json', Authorization: 'Bearer ' + tok()},
+      body: JSON.stringify({nombre: nombre, nicho: nicho, presupuesto: ppto, roas_actual: roas})
+    });
+    var d = await r.json();
+    if (d.job_id) {
+      audPoll(d.job_id, btn, resBox, txt);
+    } else {
+      var t = d.resultado || d.reporte || JSON.stringify(d, null, 2);
+      if (txt) txt.value = t;
+      if (resBox) resBox.style.display = 'block';
+      if (btn) { btn.disabled = false; btn.textContent = '&#128202; Auditar cuenta (42 checkpoints)'; }
+    }
+  } catch(e) {
+    alert('Error: ' + e.message);
+    if (btn) { btn.disabled = false; btn.textContent = '&#128202; Auditar cuenta (42 checkpoints)'; }
+  }
+}
+function audPoll(jid, btn, resBox, txt) {
+  var iv = setInterval(async function(){
+    try {
+      var r = await fetch(API + '/api/estrategia/ads/estado/' + jid, {headers: {Authorization: 'Bearer ' + tok()}});
+      var d = await r.json();
+      if (d.estado === 'completado') {
+        clearInterval(iv);
+        var r2 = await fetch(API + '/api/estrategia/ads/reporte/' + jid, {headers: {Authorization: 'Bearer ' + tok()}});
+        var d2 = await r2.json();
+        var t = d2.reporte || d2.resultado || JSON.stringify(d2, null, 2);
+        if (txt) txt.value = t;
+        if (resBox) resBox.style.display = 'block';
+        if (btn) { btn.disabled = false; btn.textContent = '&#128202; Auditar cuenta (42 checkpoints)'; }
+      } else if (d.estado === 'error') {
+        clearInterval(iv);
+        if (txt) txt.value = 'Error: ' + (d.error || 'Sin datos');
+        if (resBox) resBox.style.display = 'block';
+        if (btn) { btn.disabled = false; btn.textContent = '&#128202; Auditar cuenta (42 checkpoints)'; }
+      }
+    } catch(e) { clearInterval(iv); }
+  }, 3000);
+}
+
+async function analizarAlgoritmos() {
+  var nicho = el('algo-nicho') ? el('algo-nicho').value : 'general';
+  var btn = el('btn-algoritmos');
+  var res = el('algo-result');
+  var txt = el('algo-txt');
+  if (btn) { btn.disabled = true; btn.textContent = 'Analizando (2-3 min)...'; }
+  try {
+    var r = await fetch(API + '/api/contenido/algoritmos', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({nicho: nicho})
+    });
+    var d = await r.json();
+    if (d.ok && d.informe) {
+      if (res) res.style.display = 'block';
+      if (txt) txt.value = d.informe;
+    } else {
+      alert('Error: ' + (d.error || 'Sin datos. Verifica ANTHROPIC_API_KEY en .env'));
+    }
+  } catch(e) {
+    alert('Error: ' + e.message);
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = '&#129504; Analizar Algoritmos Instagram + TikTok (2-3 min)'; }
+  }
+}
+
+/* HELPERS */
+function copiar(id){
+  var t=el(id);
+  if(!t||!t.value){alert('Sin contenido para copiar');return;}
+  navigator.clipboard.writeText(t.value).then(function(){alert('Copiado al portapapeles');}).catch(function(){
+    t.select();document.execCommand('copy');alert('Copiado');
+  });
+}
+function descargar(id,nombre){
+  var t=el(id);
+  if(!t||!t.value){alert('Sin contenido para descargar');return;}
+  var a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([t.value],{type:'text/plain;charset=utf-8'}));
+  a.download=nombre||'informe.txt';a.click();
+}
+
+/* VER EN HTML — abre ventana con informe formateado */
+function verEnHTML(texto, titulo){
+  if(!texto||!texto.trim()){alert('Sin contenido para mostrar');return;}
+  var lineas=texto.split('\n');
+  var html='';
+  lineas.forEach(function(l){
+    var lt=l.trim();
+    if(!lt){html+='<div style="height:8px"></div>';return;}
+    if(lt.match(/^[═━=]{4,}/)){html+='<hr style="border-color:rgba(255,255,255,.1);margin:16px 0">';return;}
+    if(lt.match(/^(INFORME|DIAGNOSTICO|ANALISIS|ESTRATEGIA|PLAN)/i)&&lt.length<120){
+      html+='<h1 style="font-size:18px;font-weight:700;color:#fff;letter-spacing:.5px;margin:0 0 4px">'+h(lt)+'</h1>';return;}
+    if(lt.match(/^(MALETA\s+\d|FASE\s+\d|SECCIÓN|SECCION)\s+[—–-]/i)){
+      html+='<h2 style="font-size:14px;font-weight:700;color:#f5a623;margin:20px 0 6px;padding:8px 12px;background:rgba(245,166,35,.1);border-left:3px solid #f5a623;border-radius:4px">'+h(lt)+'</h2>';return;}
+    if(lt.match(/^\d{1,2}\.\s+[A-ZÁÉÍÓÚ]/)){
+      html+='<h2 style="font-size:14px;font-weight:700;color:#5b8def;margin:20px 0 6px">'+h(lt)+'</h2>';return;}
+    if(lt.match(/^(VIDEO\s+\d|HOOK|ESCENA|DESARROLLO|CTA|PRINCIPIO)/i)){
+      html+='<h3 style="font-size:12px;font-weight:600;color:#34d399;margin:14px 0 4px;text-transform:uppercase;letter-spacing:1px">'+h(lt)+'</h3>';return;}
+    if(lt.startsWith('✓')||lt.startsWith('•')||lt.startsWith('-')){
+      html+='<div style="padding:3px 0 3px 16px;color:#a0aec0;font-size:12px;line-height:1.7">'+h(lt)+'</div>';return;}
+    if(lt.match(/^(FUENTE|DATO|NOTA|IMPORTANTE):/i)){
+      html+='<div style="background:rgba(91,141,239,.1);border-left:2px solid #5b8def;padding:8px 12px;margin:8px 0;font-size:12px;color:#a0aec0">'+h(lt)+'</div>';return;}
+    html+='<p style="margin:4px 0;font-size:12px;color:#a0aec0;line-height:1.7">'+h(lt)+'</p>';
+  });
+  var w=window.open('','_blank','width=900,height=700,scrollbars=yes');
+  w.document.write('<!DOCTYPE html><html><head><meta charset="utf-8"><title>'+h(titulo||'Informe')+'</title><style>*{box-sizing:border-box}body{background:#0a0a0a;color:#a0aec0;font-family:-apple-system,BlinkMacSystemFont,sans-serif;padding:40px;max-width:860px;margin:0 auto}@media print{.no-print{display:none}body{background:#fff;color:#111;padding:20px}h1,h2,h3{color:#000}p,div{color:#333}hr{border-color:#ddd}}</style></head><body><div class="no-print" style="display:flex;gap:12px;margin-bottom:32px;padding-bottom:16px;border-bottom:1px solid rgba(255,255,255,.1)"><button onclick="window.print()" style="background:#5b8def;color:#fff;border:none;padding:10px 20px;border-radius:6px;cursor:pointer;font-size:13px;font-weight:600">&#128424; Imprimir / Guardar PDF</button><button onclick="window.close()" style="background:rgba(255,255,255,.1);color:#fff;border:none;padding:10px 20px;border-radius:6px;cursor:pointer;font-size:13px">Cerrar</button></div>'+html+'</body></html>');
+  w.document.close();
+}
+
+/* DESCARGAR PDF — imprime como PDF en nueva ventana */
+function descargarPDF(texto, titulo){
+  if(!texto||!texto.trim()){alert('Sin contenido para descargar');return;}
+  verEnHTML(texto, titulo);
+  // El usuario usa Ctrl+P o el botón en la ventana abierta
+}
+
+/* INFORMES PRE-REUNION — generar desde formulario manual */
+async function generarInforme(){
+  var empresa=el('inf-empresa')?el('inf-empresa').value.trim():'';
+  var nombre=el('inf-nombre-prospecto')?el('inf-nombre-prospecto').value.trim():'';
+  if(!empresa||!nombre){alert('Completa nombre del prospecto y empresa');return;}
+  var btn=el('btn-inf-gen'),resBox=el('inf-gen-resultado'),txt=el('inf-gen-txt');
+  if(btn){btn.disabled=true;btn.textContent='Generando diagnostico...';}
+  if(resBox)resBox.style.display='none';
+  var contexto=[
+    'Prospecto: '+nombre,
+    'Cargo: '+(el('inf-cargo')?el('inf-cargo').value:''),
+    'Objetivo reunion: '+(el('inf-objetivo')?el('inf-objetivo').options[el('inf-objetivo').selectedIndex].text:''),
+    'Contexto: '+(el('inf-contexto')?el('inf-contexto').value:''),
+    'URL/Redes: '+(el('inf-url')?el('inf-url').value:''),
+  ].join('\n');
+  try{
+    var r=await fetch(API+'/api/informes/generar',{
+      method:'POST',
+      headers:{'Content-Type':'application/json',Authorization:'Bearer '+tok()},
+      body:JSON.stringify({
+        empresa:empresa,
+        nicho:el('inf-nicho')?el('inf-nicho').value:'otro',
+        ciudad:el('inf-ciudad')?el('inf-ciudad').value:'Medellin',
+        objetivo:el('inf-objetivo')?el('inf-objetivo').value:'presentar_servicios',
+        descripcion:contexto
+      })
+    });
+    var d=await r.json();
+    if(d.ok){
+      if(txt)txt.value='Informe en generacion para: '+empresa+'\n\nEl sistema esta procesando el diagnostico completo.\nEsto puede tomar 2-3 minutos.\n\nRevisa la lista de informes generados en unos momentos.';
+      if(resBox)resBox.style.display='block';
+      setTimeout(loadInformes,5000);
+    }else{
+      if(txt)txt.value='Error: '+(d.error||'No se pudo generar');
+      if(resBox)resBox.style.display='block';
+    }
+  }catch(e){
+    if(txt)txt.value='Error de conexion: '+e.message;
+    if(resBox)resBox.style.display='block';
+  }finally{
+    if(btn){btn.disabled=false;btn.textContent='&#128203; Generar Diagnostico Pre-Reunion';}
+  }
 }
 
 </script>

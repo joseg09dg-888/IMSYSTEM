@@ -6,8 +6,8 @@ sys.stdout.reconfigure(encoding="utf-8") if hasattr(sys.stdout, "reconfigure") e
 
 DB_PATH = os.path.join(os.path.dirname(__file__), "..", "data", "jobs.db")
 
-CLAUDE_API_KEY = os.environ.get("CLAUDE_API_KEY", "")
-CLAUDE_MODEL   = "claude-opus-4-5"
+CLAUDE_API_KEY = os.environ.get("ANTHROPIC_API_KEY", os.environ.get("CLAUDE_API_KEY", ""))
+CLAUDE_MODEL   = "claude-sonnet-4-5"
 
 # ──────────────────────────────────────────────────────────────
 # DB helpers
@@ -864,6 +864,160 @@ def lista_jobs(limit=20):
     ).fetchall()
     conn.close()
     return [dict(r) for r in rows]
+
+
+def _investigar_algoritmo_meta_ads(nicho='general', presupuesto_cop=0):
+    import requests, time
+    import datetime
+
+    try:
+        from bs4 import BeautifulSoup
+        import anthropic
+    except ImportError:
+        return {'informe': 'Faltan dependencias: beautifulsoup4, anthropic', 'datos_cuenta': {}}
+
+    anio_actual = datetime.datetime.now().year
+    headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'}
+
+    datos_crudos = {}
+    queries = {
+        'meta_oficial': [
+            f'meta ads delivery system algorithm how it works {anio_actual}',
+            f'facebook ads auction algorithm {anio_actual} official',
+        ],
+        'conversiones_ventas': [
+            f'meta ads lowest cost conversions algorithm {anio_actual}',
+            f'meta ads cost per result reduce {anio_actual} strategy',
+        ],
+        'alcance_bajo_costo': [
+            f'facebook ads reduce cpm cost {anio_actual} strategy',
+            f'meta advantage+ audience algorithm {anio_actual}',
+        ],
+        'blogs_especializados': [
+            f'wordstream meta ads algorithm {anio_actual} guide',
+            f'hubspot facebook ads algorithm {anio_actual}',
+        ],
+        'errores_que_danan': [
+            f'facebook ads what kills performance {anio_actual}',
+            f'meta ads learning phase disruption {anio_actual}',
+        ]
+    }
+
+    for categoria, qs in queries.items():
+        datos_crudos[categoria] = []
+        for q in qs[:2]:
+            try:
+                url = 'https://www.google.com/search?q=' + requests.utils.quote(q) + '&hl=es&num=5'
+                r = requests.get(url, headers=headers, timeout=10)
+                soup = BeautifulSoup(r.text, 'html.parser')
+                snippets = [d.get_text(strip=True) for d in
+                           soup.find_all(['div', 'span'], class_=['BNeawe', 'VwiC3b'])]
+                datos_crudos[categoria].extend([s[:200] for s in snippets[:3] if len(s) > 40])
+                time.sleep(2)
+            except Exception:
+                pass
+
+    token = os.environ.get('META_ACCESS_TOKEN', '')
+    account = os.environ.get('META_AD_ACCOUNT_ID', '')
+    datos_cuenta_real = {}
+
+    if token and account:
+        try:
+            r = requests.get(
+                'https://graph.facebook.com/v19.0/' + account + '/insights',
+                params={
+                    'access_token': token,
+                    'fields': 'impressions,reach,frequency,spend,ctr,cpm',
+                    'date_preset': 'last_30d',
+                    'level': 'account'
+                }, timeout=10
+            )
+            insights = r.json().get('data', [{}])
+            if insights:
+                ins = insights[0]
+                datos_cuenta_real = {
+                    'cpm_actual': float(ins.get('cpm', 0)),
+                    'ctr_actual': float(ins.get('ctr', 0)),
+                    'gasto_30d': float(ins.get('spend', 0)),
+                    'alcance_30d': int(ins.get('reach', 0)),
+                    'frecuencia': float(ins.get('frequency', 0)),
+                }
+            rc = requests.get(
+                'https://graph.facebook.com/v19.0/' + account + '/campaigns',
+                params={
+                    'access_token': token,
+                    'fields': 'name,status,objective,daily_budget',
+                    'effective_status': ['ACTIVE'],
+                    'limit': 10
+                }, timeout=10
+            )
+            campanas = rc.json().get('data', [])
+            datos_cuenta_real['campanas_activas'] = len(campanas)
+        except Exception as e:
+            datos_cuenta_real['error'] = str(e)
+
+    api_key = os.environ.get('ANTHROPIC_API_KEY', '')
+    informe = ''
+
+    if api_key:
+        client = anthropic.Anthropic(api_key=api_key)
+
+        lineas_meta = '\n'.join(datos_crudos.get('meta_oficial', [])[:3])
+        lineas_conv = '\n'.join(datos_crudos.get('conversiones_ventas', [])[:3])
+        lineas_alcance = '\n'.join(datos_crudos.get('alcance_bajo_costo', [])[:3])
+        lineas_blogs = '\n'.join(datos_crudos.get('blogs_especializados', [])[:3])
+        lineas_errores = '\n'.join(datos_crudos.get('errores_que_danan', [])[:3])
+
+        prompt = (
+            "Eres el estratega de Meta Ads de Intelligent Markets.\n"
+            "Datos de fuentes oficiales Meta, blogs especializados y cuenta real:\n\n"
+            "FUENTES OFICIALES META:\n" + lineas_meta + "\n\n"
+            "CONVERSIONES Y VENTAS:\n" + lineas_conv + "\n\n"
+            "ALCANCE Y BAJO COSTO:\n" + lineas_alcance + "\n\n"
+            "BLOGS (WordStream, HubSpot, AdEspresso):\n" + lineas_blogs + "\n\n"
+            "ERRORES QUE DANAN:\n" + lineas_errores + "\n\n"
+            "DATOS REALES CUENTA IM:\n"
+            "CPM actual: $" + str(datos_cuenta_real.get('cpm_actual', 'N/A')) + " USD\n"
+            "CTR actual: " + str(datos_cuenta_real.get('ctr_actual', 'N/A')) + "%\n"
+            "Alcance 30 dias: " + str(datos_cuenta_real.get('alcance_30d', 'N/A')) + "\n"
+            "Frecuencia: " + str(datos_cuenta_real.get('frecuencia', 'N/A')) + "\n"
+            "Campanas activas: " + str(datos_cuenta_real.get('campanas_activas', 0)) + "\n\n"
+            "NICHO: " + nicho + " | PRESUPUESTO: $" + str(presupuesto_cop) + " COP/mes | ANNO: " + str(anio_actual) + "\n\n"
+            "Genera informe COMPLETO y ACCIONABLE:\n\n"
+            "=" * 50 + "\n"
+            "INFORME: ALGORITMO META ADS - MAXIMO RENDIMIENTO " + str(anio_actual) + "\n"
+            "Nicho: " + nicho + " | Presupuesto: $" + str(presupuesto_cop) + " COP\n"
+            "Intelligent Markets - Confidencial\n"
+            "=" * 50 + "\n\n"
+            "1. COMO FUNCIONA EL ALGORITMO DE SUBASTA DE META " + str(anio_actual) + "\n"
+            "2. COMO LOGRAR MAS ALCANCE CON MENOS DINERO\n"
+            "3. COMO MAXIMIZAR CONVERSIONES Y VENTAS REALES\n"
+            "4. ESTRUCTURA DE CAMPANA OPTIMA " + str(anio_actual) + "\n"
+            "5. CREATIVOS QUE EL ALGORITMO PREMIA\n"
+            "6. COSTOS EXTREMADAMENTE BAJOS - ESTRATEGIAS AVANZADAS\n"
+            "   (CPM promedio Colombia " + str(anio_actual) + " por nicho, costo por lead optimo para " + nicho + ")\n"
+            "7. QUE DANA O DESTRUYE EL RENDIMIENTO - EVITAR\n"
+            "8. ESTRATEGIA ESPECIFICA PARA NICHO: " + nicho + "\n"
+            "9. DIAGNOSTICO DE LA CUENTA ACTUAL\n"
+            "10. PLAN DE ACCION INMEDIATA - semana 1, mes 2-3\n\n"
+            "Sin JSON. Texto formateado. Numeros especificos."
+        )
+
+        try:
+            msg = client.messages.create(
+                model='claude-sonnet-4-5',
+                max_tokens=8000,
+                messages=[{'role': 'user', 'content': prompt}]
+            )
+            informe = msg.content[0].text
+        except Exception as e:
+            informe = 'Error: ' + str(e)
+
+    return {
+        'informe': informe,
+        'datos_cuenta': datos_cuenta_real,
+        'fuentes_consultadas': list(queries.keys())
+    }
 
 
 # ──────────────────────────────────────────────────────────────

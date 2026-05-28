@@ -1,16 +1,15 @@
 
-import os, requests, time
+import os, requests, time, re
 from dotenv import load_dotenv
 load_dotenv(override=True)
 
 # ═══════════════════════════════════
 # CONFIGURACIÓN DE APIS
 # ═══════════════════════════════════
-APOLLO_KEY   = os.environ.get('APOLLO_API_KEY', '')
-HUNTER_KEY   = os.environ.get('HUNTER_API_KEY', '')
-SKRAPP_KEY   = os.environ.get('SKRAPP_API_KEY', '')
-SNOV_ID      = os.environ.get('SNOV_CLIENT_ID', '')
-SNOV_SECRET  = os.environ.get('SNOV_CLIENT_SECRET', '')
+APOLLO_KEY  = os.environ.get('APOLLO_API_KEY', '')
+HUNTER_KEY  = os.environ.get('HUNTER_API_KEY', '')
+SNOV_ID     = os.environ.get('SNOV_CLIENT_ID', '')
+SNOV_SECRET = os.environ.get('SNOV_CLIENT_SECRET', '')
 
 
 def buscar_email_hunter(nombre, dominio):
@@ -51,29 +50,72 @@ def verificar_email_hunter(email):
     except: return None
 
 
-def buscar_email_skrapp(nombre, empresa):
-    if not SKRAPP_KEY: return None
-    try:
-        partes = nombre.split()
-        r = requests.post(
-            'https://api.skrapp.io/api/v2/find',
-            json={
-                'firstName': partes[0] if partes else '',
-                'lastName': partes[-1] if len(partes) > 1 else '',
-                'linkedInUrl': '',
-                'company': empresa
-            },
-            headers={
-                'X-Access-Key': SKRAPP_KEY,
-                'Content-Type': 'application/json'
-            }, timeout=10
-        )
-        d = r.json()
-        email = d.get('email', '')
-        if email:
-            return {'email': email, 'fuente': 'skrapp'}
-    except: pass
+def buscar_email_google_directo(nombre, empresa, dominio=''):
+    """Busca emails scrapeando resultados de Google — gratis, sin API key."""
+    from bs4 import BeautifulSoup
+    headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'}
+    emails_encontrados = []
+
+    queries = [
+        f'"{nombre}" "{empresa}" email',
+        f'"{nombre}" "{empresa}" contacto correo',
+        f'site:{dominio} email contacto' if dominio else f'"{empresa}" email contacto Colombia',
+    ]
+
+    for query in queries[:2]:
+        try:
+            url = f'https://www.google.com/search?q={requests.utils.quote(query)}&hl=es'
+            r = requests.get(url, headers=headers, timeout=10)
+            emails = re.findall(
+                r'[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}',
+                r.text
+            )
+            for email in emails:
+                if not any(x in email for x in ['google', 'facebook', 'twitter', 'example', 'schema']):
+                    if (dominio and dominio in email) or empresa.lower()[:4] in email.lower():
+                        if email not in emails_encontrados:
+                            emails_encontrados.append(email)
+            time.sleep(2)
+        except: pass
+
+    if emails_encontrados:
+        return {'email': emails_encontrados[0], 'fuente': 'google_directo'}
     return None
+
+
+def buscar_clearbit_dominio(empresa):
+    """Clearbit Autocomplete API — gratuita sin autenticación."""
+    try:
+        r = requests.get(
+            f'https://autocomplete.clearbit.com/v1/companies/suggest?query={requests.utils.quote(empresa)}',
+            timeout=10
+        )
+        companies = r.json()
+        if companies:
+            comp = companies[0]
+            return comp.get('domain', '')
+    except: pass
+    return ''
+
+
+def construir_patrones_email(nombre, dominio):
+    """Genera los patrones más comunes de email corporativo."""
+    if not nombre or not dominio: return []
+    partes = nombre.lower().strip().split()
+    if not partes: return []
+    primer = partes[0]
+    apellido = partes[-1] if len(partes) > 1 else ''
+    if apellido:
+        return [
+            f'{primer}.{apellido}@{dominio}',
+            f'{primer[0]}{apellido}@{dominio}',
+            f'{primer}@{dominio}',
+            f'{apellido}.{primer}@{dominio}',
+            f'{primer[0]}.{apellido}@{dominio}',
+            f'contacto@{dominio}',
+            f'info@{dominio}',
+        ]
+    return [f'{primer}@{dominio}', f'contacto@{dominio}', f'info@{dominio}']
 
 
 def get_snov_token():
@@ -177,19 +219,20 @@ def buscar_telefono_whatsapp(nombre, empresa, pais='CO'):
 
 
 def buscar_dominio_empresa(empresa, ciudad=''):
-    if not HUNTER_KEY: return None
-    try:
-        r = requests.get(
-            'https://api.hunter.io/v2/domain-search',
-            params={
-                'company': empresa,
-                'api_key': HUNTER_KEY,
-                'limit': 3
-            }, timeout=10
-        )
-        d = r.json().get('data', {})
-        return d.get('domain', '')
-    except: return None
+    # Primero intentar Hunter (si disponible)
+    if HUNTER_KEY:
+        try:
+            r = requests.get(
+                'https://api.hunter.io/v2/domain-search',
+                params={'company': empresa, 'api_key': HUNTER_KEY, 'limit': 3},
+                timeout=10
+            )
+            d = r.json().get('data', {})
+            dom = d.get('domain', '')
+            if dom: return dom
+        except: pass
+    # Fallback: Clearbit gratis
+    return buscar_clearbit_dominio(empresa)
 
 
 def buscar_email_completo(nombre, empresa, url='', ciudad='Colombia'):
@@ -207,13 +250,12 @@ def buscar_email_completo(nombre, empresa, url='', ciudad='Colombia'):
     # Extraer dominio de URL si existe
     dominio = ''
     if url:
-        import re
         m = re.search(r'(?:https?://)?(?:www\.)?([^/]+)', url)
         if m:
             dominio = m.group(1)
 
-    # Si no hay dominio, buscarlo con Hunter
-    if not dominio and HUNTER_KEY:
+    # Si no hay dominio, buscarlo
+    if not dominio:
         dominio = buscar_dominio_empresa(empresa) or ''
 
     # FUENTE 1: Apollo (emails + teléfonos)
@@ -240,21 +282,27 @@ def buscar_email_completo(nombre, empresa, url='', ciudad='Colombia'):
             resultado['fuentes_consultadas'].append('hunter')
             resultado['score_calidad'] = hunter.get('score', 0)
 
-    # FUENTE 3: Skrapp (si no encontró email)
-    if not resultado['email'] and SKRAPP_KEY:
-        skrapp = buscar_email_skrapp(nombre, empresa)
-        if skrapp and skrapp.get('email'):
-            resultado['email'] = skrapp['email']
-            resultado['fuentes_consultadas'].append('skrapp')
-            resultado['score_calidad'] = 60
-
-    # FUENTE 4: Snov (último recurso)
+    # FUENTE 3: Snov.io
     if not resultado['email'] and dominio and SNOV_ID:
         snov = buscar_email_snov(nombre, dominio)
         if snov and snov.get('email'):
             resultado['email'] = snov['email']
             resultado['fuentes_consultadas'].append('snov')
+            resultado['score_calidad'] = 60
+
+    # FUENTE 4: Búsqueda directa en Google (gratis)
+    if not resultado['email']:
+        google = buscar_email_google_directo(nombre, empresa, dominio)
+        if google and google.get('email'):
+            resultado['email'] = google['email']
+            resultado['fuentes_consultadas'].append('google_directo')
             resultado['score_calidad'] = 55
+
+    # FUENTE 5: Patrones comunes (sugerencias si nada más funcionó)
+    if not resultado['email'] and dominio:
+        patrones = construir_patrones_email(nombre, dominio)
+        resultado['patrones_sugeridos'] = patrones[:3]
+        resultado['fuentes_consultadas'].append('patrones_generados')
 
     # Buscar teléfono WhatsApp si no tiene
     if not resultado['telefono'] and APOLLO_KEY:

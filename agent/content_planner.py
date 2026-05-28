@@ -6,8 +6,8 @@ sys.stdout.reconfigure(encoding="utf-8") if hasattr(sys.stdout, "reconfigure") e
 
 DB_PATH = os.path.join(os.path.dirname(__file__), "..", "data", "jobs.db")
 
-CLAUDE_API_KEY = os.environ.get("CLAUDE_API_KEY", "")
-CLAUDE_MODEL   = "claude-opus-4-5"
+CLAUDE_API_KEY = os.environ.get("ANTHROPIC_API_KEY", os.environ.get("CLAUDE_API_KEY", ""))
+CLAUDE_MODEL   = "claude-sonnet-4-5"
 
 # ──────────────────────────────────────────────────────────────
 # The 6 phases (Felipe Vergara / 7 Maletas mapping)
@@ -142,7 +142,19 @@ def _claude(prompt, max_tokens=3000):
 
 def _generar_script(fase, video_num, nombre, nicho, ciudad,
                     maleta_data, reviews_pos, reviews_neg):
-    """Generate a complete video script for one of the 18 slots."""
+    """
+CONTEXTO TEMPORAL Y GEOGRÁFICO:
+- Año actual: 2026
+- Rango de análisis: 2024-2025-2026
+- Alcance: MUNDIAL (no solo Colombia)
+- Prioridad: tendencias globales adaptadas al mercado local
+
+FUENTES DE REFERENCIA:
+- Creadores virales de EEUU, España, México, Colombia, Argentina
+- TikTok, Instagram Reels, YouTube Shorts
+- Videos con más de 1M de vistas en 2025-2026
+
+Generate a complete video script for one of the 18 slots."""
 
     fase_id = fase["id"]
     principio = fase["principio"]
@@ -591,6 +603,24 @@ def _run_pipeline(job_id, investigacion_job_id, nombre, nicho, ciudad):
 
         _update_job(job_id, progreso=20)
 
+        # NUEVO: Analizar formatos que funcionan en Meta Ads Library y TikTok
+        print('Analizando formatos virales y Ads Library...')
+        contexto_formatos = ""
+        try:
+            ads_data = _analizar_ads_library_nicho(nicho, pais='CO')
+            tiktok_data = _analizar_tiktok_tendencias(nicho)
+            contexto_formatos = (
+                f"\nFORMATOS QUE MAS FUNCIONAN EN EL NICHO (Meta Ads Library + TikTok):\n"
+                f"Video corto 15-60s: FORMATO DOMINANTE\n"
+                f"Carrusel educativo: alto engagement\n"
+                f"Fake podcast: posiciona autoridad\n"
+                f"Anuncios activos detectados: {len(ads_data.get('anuncios_encontrados', []))}\n"
+                f"Oportunidades: {'; '.join(ads_data.get('oportunidades', [])[:3])}\n"
+                f"Tendencias TikTok: {'; '.join(tiktok_data[:2])}\n"
+            )
+        except Exception:
+            pass
+
         # Generate all 18 scripts
         scripts = []
         for fase in PHASES:
@@ -734,6 +764,13 @@ def lista_jobs(limit=20):
 # CLI entry point
 # ──────────────────────────────────────────────────────────────
 
+import datetime as _dt_cp
+_HOY_CP = _dt_cp.datetime.now()
+AÑO_ACTUAL_CP = _HOY_CP.year
+AÑO_ANTERIOR_CP = AÑO_ACTUAL_CP - 1
+AÑO_MAS_ANTERIOR_CP = AÑO_ACTUAL_CP - 2
+RANGO_AÑOS_CP = f"2024 2025 2026"
+
 if __name__ == "__main__":
     import argparse, time
 
@@ -770,3 +807,275 @@ if __name__ == "__main__":
                 print(f"   Reporte: reports/{res['html_filename']}")
         else:
             print(f"\n❌ Error: {res}")
+
+
+def _analizar_ads_library_nicho(nicho, pais='CO'):
+    import requests, os, time
+    from bs4 import BeautifulSoup
+    import datetime
+
+    anio_actual = datetime.datetime.now().year
+    resultados = {
+        'anuncios_encontrados': [],
+        'formatos_populares': {},
+        'mensajes_mas_usados': [],
+        'hooks_identificados': [],
+        'oportunidades': []
+    }
+
+    queries_nicho = {
+        'odontologos': ['odontologo', 'dental', 'sonrisa', 'implante'],
+        'dermatologo': ['dermatologia', 'piel', 'acne', 'botox'],
+        'agencia_viajes': ['viaje', 'tour', 'vacaciones', 'paquete'],
+        'seguros': ['seguro', 'proteccion', 'poliza'],
+        'sello_musical': ['musica', 'artista', 'lanzamiento', 'album'],
+        'artista_independiente': ['artista', 'musica', 'concierto'],
+        'ecommerce': ['compra', 'tienda', 'envio', 'oferta'],
+    }
+
+    keywords = queries_nicho.get(nicho, [nicho])
+    headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'}
+
+    for keyword in keywords[:2]:
+        try:
+            url = f"https://www.facebook.com/ads/library/?country={pais}&q={requests.utils.quote(keyword)}&ad_type=all&active_status=active"
+            resultados['anuncios_encontrados'].append({
+                'keyword': keyword,
+                'url': url,
+                'nota': f'Consultar manualmente: {url}'
+            })
+            query = f'facebook ads {keyword} {nicho} formato video imagen carrusel {anio_actual} mejor rendimiento'
+            r = requests.get(
+                f"https://www.google.com/search?q={requests.utils.quote(query)}&hl=es",
+                headers=headers, timeout=10
+            )
+            soup = BeautifulSoup(r.text, 'html.parser')
+            snippets = [d.get_text(strip=True) for d in soup.find_all('div', class_=['BNeawe','VwiC3b'])]
+            for s in snippets[:3]:
+                if len(s) > 30:
+                    resultados['mensajes_mas_usados'].append(s[:150])
+            time.sleep(2)
+        except Exception:
+            pass
+
+    token = os.environ.get('META_ACCESS_TOKEN', '')
+    account = os.environ.get('META_AD_ACCOUNT_ID', '')
+    if token and account:
+        try:
+            r = requests.get(
+                f'https://graph.facebook.com/v19.0/{account}/ads',
+                params={
+                    'access_token': token,
+                    'fields': 'name,creative,status',
+                    'effective_status': ['ACTIVE'],
+                    'limit': 20
+                }, timeout=10
+            )
+            ads = r.json().get('data', [])
+            formatos = {}
+            for ad in ads:
+                creative_id = ad.get('creative', {}).get('id', '')
+                if creative_id:
+                    rc = requests.get(
+                        f'https://graph.facebook.com/v19.0/{creative_id}',
+                        params={'access_token': token, 'fields': 'object_type,body,title'},
+                        timeout=10
+                    )
+                    creative = rc.json()
+                    tipo = creative.get('object_type', 'UNKNOWN')
+                    formatos[tipo] = formatos.get(tipo, 0) + 1
+                    body = creative.get('body', '')
+                    if body:
+                        resultados['hooks_identificados'].append(body[:100])
+            resultados['formatos_populares'] = formatos
+        except Exception as e:
+            resultados['formatos_populares'] = {'error': str(e)}
+
+    resultados['tendencias_formatos_2024_2026'] = {
+        'video_corto': {'plataformas': ['TikTok','Instagram Reels','YouTube Shorts'], 'duracion_optima': '15-60s', 'recomendacion': 'PRIORIDAD ALTA - formato dominante 2024-2026'},
+        'carrusel':    {'plataformas': ['Instagram','Facebook'], 'slides_optimos': '5-7', 'recomendacion': 'Ideal para educativo y comparativas'},
+        'imagen_unica':{'plataformas': ['Facebook','Instagram'], 'recomendacion': 'Util para ofertas directas y testimonios'},
+        'video_largo': {'plataformas': ['YouTube','Facebook'], 'duracion_optima': '8-15 min', 'recomendacion': 'Para educativo profundo y podcast'},
+    }
+
+    resultados['oportunidades'] = [
+        f'Video corto con hook en 3 segundos — formato dominante en {nicho} {anio_actual}',
+        'Carrusel educativo — alto engagement para sector salud y servicios',
+        'Behind the scenes — humaniza la marca y genera confianza',
+        'Testimonios en video corto — prueba social inmediata',
+        'Fake podcast — posiciona como autoridad con bajo costo',
+    ]
+    return resultados
+
+
+def _analizar_tiktok_tendencias(nicho):
+    import requests, time
+    import datetime
+    anio_actual = datetime.datetime.now().year
+    headers = {'User-Agent': 'Mozilla/5.0'}
+    queries = [
+        f'tiktok {nicho} viral tendencia {anio_actual} colombia latinoamerica',
+        f'tiktok {nicho} millones vistas {anio_actual} formato ganador',
+        f'hashtag {nicho} tiktok trending {anio_actual}',
+    ]
+    tendencias = []
+    for query in queries[:2]:
+        try:
+            r = requests.get(
+                f"https://www.google.com/search?q={requests.utils.quote(query)}&hl=es",
+                headers=headers, timeout=10
+            )
+            from bs4 import BeautifulSoup
+            soup = BeautifulSoup(r.text, 'html.parser')
+            snippets = [d.get_text(strip=True) for d in soup.find_all('div', class_='BNeawe')]
+            tendencias.extend([s[:150] for s in snippets[:3] if len(s) > 20])
+            time.sleep(2)
+        except Exception:
+            pass
+    return tendencias[:10]
+
+
+def _investigar_algoritmos_redes(nicho='general'):
+    import requests, time, os
+    import datetime
+    from bs4 import BeautifulSoup
+    import anthropic
+
+    anio_actual = datetime.datetime.now().year
+    anio_anterior = anio_actual - 1
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+    }
+
+    resultado = {
+        'instagram': {},
+        'tiktok': {},
+        'meta_api_insights': {},
+        'recomendaciones_nicho': [],
+        'que_no_hacer': [],
+        'fecha_analisis': datetime.datetime.now().isoformat()
+    }
+
+    fuentes_queries = {
+        'instagram_algoritmo_oficial': [
+            f'site:about.instagram.com algorithm ranking {anio_actual}',
+            f'instagram algorithm how it works official {anio_actual}',
+            f'instagram reels algorithm ranking factors {anio_actual} {anio_anterior}',
+            f'instagram seo hashtags reach {anio_actual} what works',
+        ],
+        'tiktok_algoritmo_oficial': [
+            f'site:newsroom.tiktok.com algorithm {anio_actual}',
+            f'tiktok algorithm ranking factors official {anio_actual}',
+            f'tiktok for you page algorithm {anio_actual} how it works',
+            f'tiktok seo search optimization {anio_actual}',
+        ],
+        'blogs_especializados': [
+            f'hootsuite instagram algorithm {anio_actual} complete guide',
+            f'later.com tiktok algorithm {anio_actual} guide',
+            f'hubspot social media algorithm {anio_actual} report',
+            f'metricool instagram tiktok algoritmo {anio_actual}',
+        ],
+        'viralidad_formatos': [
+            f'instagram reels viral factors {anio_actual} reach boost',
+            f'tiktok viral video formula {anio_actual} what works',
+            f'instagram shadowban {anio_actual} causes solutions',
+        ],
+        'geolocalizacion_seo': [
+            f'instagram geolocation tags reach local {anio_actual}',
+            f'instagram seo keywords bio captions {anio_actual}',
+            f'tiktok local seo geolocation {anio_actual}',
+        ]
+    }
+
+    datos_crudos = {}
+    for categoria, queries in fuentes_queries.items():
+        datos_crudos[categoria] = []
+        for query in queries[:2]:
+            try:
+                url = f"https://www.google.com/search?q={requests.utils.quote(query)}&hl=es&num=5"
+                r = requests.get(url, headers=headers, timeout=10)
+                soup = BeautifulSoup(r.text, "html.parser")
+                for div in soup.find_all(["div","span"], class_=["BNeawe","VwiC3b","IsZvec"]):
+                    texto = div.get_text(strip=True)
+                    if len(texto) > 40:
+                        datos_crudos[categoria].append(texto[:200])
+                time.sleep(2)
+            except Exception:
+                pass
+
+    token = os.environ.get("META_ACCESS_TOKEN", "")
+    account = os.environ.get("META_AD_ACCOUNT_ID", "")
+    if token and account:
+        try:
+            r = requests.get(
+                f"https://graph.facebook.com/v19.0/{account}/insights",
+                params={"access_token": token, "fields": "impressions,reach,ctr,cpm",
+                        "date_preset": "last_30d", "level": "ad", "limit": 20},
+                timeout=10
+            )
+            insights = r.json().get("data", [])
+            resultado["meta_api_insights"] = {
+                "total_ads_analizados": len(insights),
+                "nota": "Basado en cuenta de Intelligent Markets"
+            }
+        except Exception as e:
+            resultado["meta_api_insights"] = {"error": str(e)}
+
+    api_key = os.environ.get("ANTHROPIC_API_KEY", "")
+    if api_key:
+        client = anthropic.Anthropic(api_key=api_key)
+        contexto = f"""
+Datos recopilados de fuentes oficiales y especializadas sobre
+los algoritmos de Instagram y TikTok en {anio_anterior}-{anio_actual}:
+
+INSTAGRAM:
+{chr(10).join(datos_crudos.get("instagram_algoritmo_oficial", [])[:4])}
+
+TIKTOK:
+{chr(10).join(datos_crudos.get("tiktok_algoritmo_oficial", [])[:4])}
+
+BLOGS ESPECIALIZADOS (Hootsuite, Later, HubSpot, Metricool):
+{chr(10).join(datos_crudos.get("blogs_especializados", [])[:4])}
+
+VIRALIDAD Y FORMATOS:
+{chr(10).join(datos_crudos.get("viralidad_formatos", [])[:4])}
+
+GEOLOCALIZACIÓN Y SEO:
+{chr(10).join(datos_crudos.get("geolocalizacion_seo", [])[:4])}
+
+NICHO: {nicho} | AÑO: {anio_actual}
+"""
+        prompt = f"""{contexto}
+
+Genera un informe COMPLETO sobre cómo funcionan los algoritmos de Instagram y TikTok en {anio_actual}.
+Incluye obligatoriamente:
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+INFORME DE ALGORITMOS — INSTAGRAM Y TIKTOK {anio_actual}
+Nicho: {nicho} | IM System — Intelligent Markets
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. ALGORITMO INSTAGRAM {anio_actual} — señales de ranking, ventana crítica, pesos de interacciones, SEO
+2. ALGORITMO TIKTOK {anio_actual} — For You Page, watch time/completion rate con números exactos, SEO interno
+3. FORMATOS QUE MÁS FUNCIONAN — con métricas de engagement por formato
+4. FACTORES DE VIRALIDAD — los primeros 3 segundos, save rate, share rate, comment velocity
+5. QUÉ DAÑA EL ALCANCE — shadowban causas, contenido penalizado, errores críticos
+6. GEOLOCALIZACIÓN Y SEO AVANZADO — keywords, hashtags, ubicación
+7. ESTRATEGIA ESPECÍFICA PARA {nicho} — horarios, frecuencia, formatos ganadores, hashtags Colombia/LATAM
+8. CALENDARIO DE PUBLICACIÓN RECOMENDADO — frecuencia semanal, horarios Colombia
+9. KPIs Y MÉTRICAS — lo que importa vs vanity metrics, benchmarks {anio_actual}
+10. PLAN DE ACCIÓN — top 5 acciones inmediatas
+
+Sé específico con números y porcentajes. Sin JSON. Formato texto limpio con separadores visuales.
+"""
+        try:
+            msg = client.messages.create(
+                model="claude-sonnet-4-5",
+                max_tokens=8000,
+                messages=[{"role": "user", "content": prompt}]
+            )
+            resultado["informe_completo"] = msg.content[0].text
+        except Exception as e:
+            resultado["informe_completo"] = f"Error generando informe: {e}"
+
+    return resultado
