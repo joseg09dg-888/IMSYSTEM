@@ -183,9 +183,55 @@ Cada guión DEBE tener:
 7. SIEMPRE verificar que el servidor corre después de reiniciar
 8. El modelo correcto es: claude-sonnet-4-5
 
+## REGLAS ANTI-BAN META ADS API — OBLIGATORIAS
+Fuente: políticas oficiales Meta + video Felipe Vergara (368JQmfakVg)
+
+### SISTEMA DE PUNTUACIÓN META (más importante):
+- Score máximo: 60 puntos cada 300 segundos (5 minutos)
+- Llamada de LECTURA (ver datos) = 1 punto
+- Llamada de ESCRITURA (crear/editar) = 3 puntos
+- Superar 60 → error throttling → si persiste → BANEO
+- Crear 3 campañas + 3 adsets + 5 anuncios = 102 llamadas → BANEO INMEDIATO
+
+### LÍMITES IMPLEMENTADOS EN meta_ads_mcp.py:
+- delay_entre_llamadas: 3 segundos mínimo
+- max_campanas_por_dia: 5 (límite voluntario IM)
+- max_cambios_presupuesto_hora: 4 por ad set (límite oficial Meta)
+- delay_entre_campanas: 60 segundos
+
+### NUNCA hacer sin aprobación humana explícita:
+- Crear campañas nuevas
+- Cambiar presupuestos
+- Pausar o activar campañas
+- Cualquier llamada de ESCRITURA a Meta API
+
+### MODO CORRECTO DE ANÁLISIS:
+- Un fetch masivo (1 sola llamada con todos los campos)
+- Guardar respuesta en archivo local
+- Analizar el archivo local (sin más llamadas)
+- Secuencial: una campaña a la vez, nunca toda la cuenta
+
+### TOKEN SEGURO (setup correcto):
+- Usar Business Manager de RESPALDO (no el BM principal)
+- Crear System User (no token personal)
+- Token sin expiración con permisos: ads_read + business_management SOLAMENTE
+- NUNCA ads_management (permite crear campañas → riesgo de baneo)
+
+### CONTENIDO PROHIBIDO EN ANUNCIOS:
+garantizado, garantia, gratis, gana dinero, ingresos pasivos,
+antes y despues, cura, elimina, urgente, ultima oportunidad
+
+### SI HAY RESTRICCIÓN:
+1. DETENER todo de inmediato
+2. Notificar por Telegram
+3. NO crear cuentas alternativas
+4. Ir a facebook.com/help/contact/adsreview
+5. Ver logs/guia_anti_ban_meta.txt para protocolo completo
+
 ## COMANDOS ÚTILES
 Iniciar servidor: start /min pythonw server\server.py
 Detener servidor: taskkill /F /IM pythonw.exe 2>nul
 Verificar: curl -s http://localhost:5000/api/dashboard
 Subir GitHub: git add . && git commit -m "update" && git push origin main
 Ver logs: type logs\platform.log | tail -50
+Guia anti-ban: type logs\guia_anti_ban_meta.txt

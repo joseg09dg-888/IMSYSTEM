@@ -1729,41 +1729,38 @@ def analizar_algoritmos():
         sys.path.insert(0, str(BASE / "agent"))
         from content_planner import _investigar_algoritmos_redes
         import uuid as _uuid
-        from pathlib import Path as _Path
 
         job_id = str(_uuid.uuid4())[:8]
-        resultado_container = {}
+        result_path = BASE / f"logs/algoritmos_{job_id}.json"
 
         def _run():
-            resultado_container["data"] = _investigar_algoritmos_redes(nicho)
-            _Path(BASE / f"logs/algoritmos_{job_id}.json").write_text(
-                json.dumps(resultado_container["data"], ensure_ascii=False, indent=2),
-                encoding="utf-8"
-            )
+            try:
+                data = _investigar_algoritmos_redes(nicho)
+                result_path.write_text(
+                    json.dumps({"estado": "listo", **data}, ensure_ascii=False, indent=2),
+                    encoding="utf-8"
+                )
+            except Exception as ex:
+                result_path.write_text(
+                    json.dumps({"estado": "error", "error": str(ex)}),
+                    encoding="utf-8"
+                )
 
-        t = threading.Thread(target=_run, daemon=True)
-        t.start()
-        t.join(timeout=120)
-
-        if resultado_container.get("data"):
-            return jsonify({
-                "ok": True,
-                "job_id": job_id,
-                "informe": resultado_container["data"].get("informe_completo", ""),
-                "meta_api_insights": resultado_container["data"].get("meta_api_insights", {}),
-            })
-        return jsonify({"ok": False, "error": "Timeout"})
+        threading.Thread(target=_run, daemon=True).start()
+        return jsonify({"ok": True, "job_id": job_id, "estado": "procesando"})
     except Exception as e:
         return jsonify({"ok": False, "error": str(e)}), 500
 
 
 @app.route("/api/contenido/algoritmos/<job_id>")
 def get_algoritmos(job_id):
-    from pathlib import Path as _Path
     f = BASE / f"logs/algoritmos_{job_id}.json"
-    if f.exists():
+    if not f.exists():
+        return jsonify({"estado": "procesando"})
+    try:
         return jsonify(json.loads(f.read_text(encoding="utf-8")))
-    return jsonify({"error": "No encontrado"}), 404
+    except Exception as e:
+        return jsonify({"estado": "error", "error": str(e)})
 
 
 if __name__ == "__main__":

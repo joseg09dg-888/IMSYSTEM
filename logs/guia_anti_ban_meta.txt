@@ -1,0 +1,277 @@
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+GUÍA ANTI-BAN — META ADS API + CLAUDE CODE
+Intelligent Markets — Uso interno
+Basado en: Video Felipe Vergara + Políticas oficiales Meta
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. POR QUÉ BANEAN CUENTAS — CAUSAS EXACTAS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+CAUSA #1 — Superar el límite de llamadas API (LA MÁS COMÚN)
+- Meta da una puntuación máxima de 60 cada 300 segundos (5 min)
+- Llamada de LECTURA (ver campañas) = 1 punto
+- Llamada de ESCRITURA (crear/editar) = 3 puntos
+- Ejemplo: crear 3 campañas + 3 ad sets + 5 anuncios = 102 llamadas → BANEO
+- Si se supera y se sigue intentando, el baneo es permanente
+
+CAUSA #2 — Cambiar presupuesto demasiadas veces
+- Meta limita cambios de presupuesto a nivel conjunto de anuncios
+- Máximo 4 cambios por hora por ad set
+- Si Claude modifica presupuesto 50 veces/hora = cuenta bloqueada
+
+CAUSA #3 — Crear campañas sin revisión humana
+- "Generar y publicar creativos directamente a través del API sin revisión
+  humana viola las políticas de publicidad de Meta" (Meta oficial)
+- "Simplemente no dejes que escriba en tu cuenta de anuncios, solo lectura.
+  Lo aprendí a la mala." (caso real reportado)
+
+CAUSA #4 — Usar token personal de Facebook
+- Token generado con perfil personal puede comprometer TODA la cuenta
+- Si detectan actividad sospechosa, pueden bloquear el perfil personal
+- Eso afecta todas las cuentas de anuncios vinculadas
+
+CAUSA #5 — Conectar al Business Manager principal
+- Usar el mismo BM donde creas campañas para la API es alerta roja
+- Meta espera que las conexiones API usen un BM separado (de respaldo)
+
+CAUSA #6 — Múltiples agentes simultáneos
+- Tener dos IAs/bots revisando la misma cuenta simultáneamente = alerta
+- Meta detecta actividad de bot y bloquea
+
+CAUSA #7 — Incumplir políticas de publicidad generales
+- Contenido prohibido: garantías, antes/después, lenguaje engañoso
+- Aplica igual sea manual o vía API
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2. REGLAS DE ORO PARA NO SER BANEADO
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+REGLA 1 — Solo lectura, nunca escritura automática
+→ El agente IM puede VER campañas, métricas, reportes
+→ NUNCA crear, pausar, activar, editar sin aprobación humana
+→ "Human in the loop": IA analiza, humano ejecuta
+
+REGLA 2 — Un fetch masivo en vez de múltiples llamadas
+→ Solicitar TODAS las métricas en UNA sola llamada (batch fetch)
+→ Guardar los datos localmente (en archivo) y analizarlos allí
+→ No hacer varias llamadas pequeñas para cada métrica
+
+REGLA 3 — Análisis secuencial, nunca paralelo
+→ Analizar UNA campaña a la vez
+→ Esperar resultado antes de pedir el siguiente
+→ Nunca "analiza toda la cuenta de una sola vez"
+
+REGLA 4 — Intervalo mínimo entre llamadas
+→ Mínimo 3 segundos entre cada llamada a la API
+→ Implementar delay en código para cumplir esto siempre
+
+REGLA 5 — Business Manager separado para API
+→ Crear BM de respaldo solo para conexiones API
+→ No mezclar con el BM que se usa para crear anuncios
+→ Dar acceso de "ver rendimiento" solamente
+
+REGLA 6 — Token de sistema, nunca personal
+→ Crear usuario del sistema (System User) en el BM
+→ Generar token sin expiración con permisos mínimos:
+   - ads_read (ver anuncios)
+   - business_management (ver cuentas)
+→ NUNCA ads_management (crear/editar campañas)
+
+REGLA 7 — Un solo agente a la vez
+→ Preguntar siempre: ¿hay otro bot/IA activo en esta cuenta?
+→ Si sí → detener antes de continuar
+
+REGLA 8 — Credenciales en .env, nunca en código
+→ TOKEN, APP_ID, APP_SECRET en variables de entorno
+→ Nunca hardcoded en el código
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+3. LÍMITES EXACTOS QUE NO SE DEBEN SUPERAR
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+RATE LIMIT — SISTEMA DE PUNTUACIÓN META:
+- Puntuación máxima: 60 puntos cada 300 segundos
+- Lectura (GET): 1 punto por llamada
+- Escritura (POST/PUT): 3 puntos por llamada
+- Al alcanzar 60: error de throttling 5 minutos
+- Si persiste el mismo día: baneo de cuenta
+
+LÍMITE DE PRESUPUESTO:
+- Máximo 4 cambios de presupuesto por hora por ad set
+- Aplica también a nivel campaña (política no documentada pero real)
+- Si automatizas cambios de presupuesto sin límite = bloqueo
+
+NUESTRA IMPLEMENTACIÓN (IM System):
+- max_llamadas_por_hora: 200 (equivale a ~17 por 5min, muy por debajo del límite)
+- max_campanas_por_dia: 5 (límite voluntario, nunca crear más en un día)
+- delay_entre_llamadas: 3 segundos (regla de Felipe Vergara)
+- delay_entre_campanas: 60 segundos
+- max_cambios_presupuesto_por_hora: 4 por ad set (límite oficial Meta)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+4. CONTENIDO PROHIBIDO EN ANUNCIOS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+PALABRAS/FRASES PROHIBIDAS:
+- "garantizado", "garantía de resultados"
+- "gratis", "sin costo", "0 pesos"
+- "gana dinero", "ingresos pasivos"
+- "antes y después" (especialmente en salud/belleza)
+- "cura", "elimina", "tratamiento definitivo"
+- "urgente", "última oportunidad", "solo hoy"
+- "clickbait" — títulos que prometen sin cumplir
+- Precio tachado falso
+
+PRÁCTICAS PROHIBIDAS:
+- Afirmaciones de salud no verificadas
+- Discriminación por edad, género, raza en targeting
+- Anuncios de armas, drogas, contenido adulto
+- Clickbait que no corresponde al landing page
+- Estadísticas fabricadas ("el 99% de los clientes...")
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+5. SEÑALES DE ALERTA TEMPRANA
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+SEÑALES EN META ADS MANAGER:
+- "Cuenta limitada" o "Cuenta en revisión"
+- Anuncios rechazados más de 3 veces en la misma semana
+- Error 200 en API (throttling temporal)
+- Error 613 en API (rate limit excedido)
+- Notificaciones de actividad inusual en el BM
+- Reducción repentina del alcance sin cambios en campaña
+
+SEÑALES EN EL AGENTE IM:
+- Error 400 en llamadas API → revisar token
+- Error 17 (rate limit) → reducir frecuencia de llamadas
+- Error 190 (token inválido) → renovar token
+- Error 80004 (límite de objetos) → pausar creación
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+6. QUÉ HACER SI TE RESTRINGEN
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+PASO 1 — DETENER TODO DE INMEDIATO
+→ El agente IM DEBE parar todas las llamadas API
+→ No intentar otra llamada hasta resolver
+
+PASO 2 — NOTIFICAR POR TELEGRAM
+→ Enviar alerta inmediata al usuario con detalles
+→ Incluir: tipo de error, última acción realizada, timestamp
+
+PASO 3 — ESPERAR REVISIÓN DE META
+→ Restricción temporal (5 min): esperar automáticamente
+→ Restricción de cuenta: ir a facebook.com/help/contact/adsreview
+→ NO crear cuentas alternativas (agrava el problema)
+
+PASO 4 — PREPARAR APELACIÓN
+→ Documentar qué se estaba haciendo
+→ Mostrar que es uso legítimo con token de sistema
+→ Meta Business Support → "Solicitar revisión"
+
+PASO 5 — PREVENIR REINCIDENCIA
+→ Revisar logs de IM para identificar qué causó el bloqueo
+→ Ajustar límites en POLITICAS_META del agente
+→ Documentar el incidente en CLAUDE.md
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+7. CONFIGURACIÓN DEL AGENTE IM — CUMPLIMIENTO
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+DELAYS ENTRE LLAMADAS:
+- Entre cualquier llamada API: mínimo 3 segundos
+- Entre crear campañas: mínimo 60 segundos
+- Después de un error 17 (rate limit): esperar 300 segundos
+
+VERIFICACIONES ANTES DE EJECUTAR:
+1. ¿El token es válido? (verificar antes de cada sesión)
+2. ¿La cuenta tiene restricciones activas?
+3. ¿Estamos dentro del límite de puntuación?
+4. ¿El contenido cumple políticas de publicidad?
+5. ¿Ya hay otro agente activo en esta cuenta?
+6. ¿La acción requiere aprobación humana?
+
+APROBACIÓN HUMANA REQUERIDA PARA:
+- Crear cualquier campaña nueva
+- Cambiar presupuesto de campaña o ad set
+- Pausar campañas activas
+- Activar campañas pausadas
+- Cualquier acción de escritura en Meta
+
+LOGS DE AUDITORÍA OBLIGATORIOS:
+- Cada llamada API debe quedar registrada en logs/meta_audit.log
+- Incluir: timestamp, acción, resultado, puntos consumidos
+- Revisar logs antes de cada sesión nueva
+
+ESTRATEGIA DE FETCH MASIVO:
+- Para analizar una campaña: 1 sola llamada con todos los campos
+- Guardar respuesta en archivo local
+- Analizar el archivo local (no hacer más llamadas)
+- Métricas por objetivo de campaña:
+  * Ventas: spend, impressions, reach, frequency, cpm, link_clicks,
+            purchases, add_to_cart, checkout_initiated, purchase_roas
+  * Leads: spend, impressions, lead_count, cost_per_lead, ctr, cpc
+  * Tráfico: spend, impressions, link_clicks, ctr, cpc, landing_page_views
+  * Reconocimiento: spend, impressions, reach, frequency, cpm, video_views
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+8. CHECKLIST ANTES DE CADA ACCIÓN ADS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+ANTES DE ANALIZAR (lectura):
+[ ] Token válido y no expirado
+[ ] Cuenta sin restricciones activas
+[ ] Ningún otro agente activo en la cuenta
+[ ] Usar fetch masivo (1 llamada, no múltiples)
+[ ] Delay 3s configurado entre llamadas
+
+ANTES DE CREAR CAMPAÑA (escritura):
+[ ] Aprobación explícita del usuario
+[ ] Contenido revisado contra lista de prohibidos
+[ ] Máximo 5 campañas creadas hoy
+[ ] Delay 60s después de la última campaña
+[ ] Puntuación API disponible (< 40 puntos usados)
+
+ANTES DE CAMBIAR PRESUPUESTO:
+[ ] Aprobación explícita del usuario
+[ ] Verificar que no se han hecho 4+ cambios esta hora
+[ ] Confirmar el nuevo monto con el usuario
+
+DESPUÉS DE CUALQUIER ACCIÓN:
+[ ] Registrar en logs/meta_audit.log
+[ ] Verificar que no hay errores de rate limit
+[ ] Informar resultado al usuario por Telegram
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+9. SETUP SEGURO — PASO A PASO (Felipe Vergara)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. Crear app en Meta for Developers:
+   - Caso de uso: "Medir datos de rendimiento" (ads_read SOLAMENTE)
+   - NO seleccionar "Crear y administrar anuncios"
+
+2. Crear Business Manager de RESPALDO:
+   - Diferente al BM principal donde se crean anuncios
+   - Conectar como socio con permiso "ver rendimiento"
+
+3. Crear System User en el BM:
+   - Rol: empleado (no admin)
+   - Asignar app + cuentas publicitarias con "ver rendimiento"
+
+4. Generar token:
+   - Caducidad: NUNCA
+   - Permisos: ads_read + business_management SOLAMENTE
+   - Guardar en .env como META_ACCESS_TOKEN
+
+5. Meta CLI (nuevo — Meta lo acaba de lanzar):
+   - Meta lanzó CLI oficial de anuncios para conexión segura con IA
+   - Permite crear y analizar campañas de forma oficial
+   - Documentación: Meta for Developers → Marketing API CLI
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+FUENTES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+- Video: Felipe Vergara "Claude CODE en Meta Ads" — youtube.com/watch?v=368JQmfakVg
+- Meta Marketing API Rate Limiting: developers.facebook.com/docs/marketing-api/overview/rate-limiting
+- Meta Advertising Policies: facebook.com/policies/ads
+- Meta CLI de Anuncios (nuevo 2025): Meta for Developers

@@ -1397,17 +1397,35 @@ async function analizarAlgoritmos() {
       body: JSON.stringify({nicho: nicho})
     });
     var d = await r.json();
-    if (d.ok && d.informe) {
-      if (res) res.style.display = 'block';
-      if (txt) txt.value = d.informe;
-    } else {
-      alert('Error: ' + (d.error || 'Sin datos. Verifica ANTHROPIC_API_KEY en .env'));
+    if (!d.job_id) {
+      alert('Error: ' + (d.error || 'Sin job_id. Verifica ANTHROPIC_API_KEY en .env'));
+      return;
     }
+    algosPoll(d.job_id, btn, res, txt);
   } catch(e) {
+    if (btn) { btn.disabled = false; btn.textContent = '&#129504; Analizar Algoritmos Instagram + TikTok'; }
     alert('Error: ' + e.message);
-  } finally {
-    if (btn) { btn.disabled = false; btn.textContent = '&#129504; Analizar Algoritmos Instagram + TikTok (2-3 min)'; }
   }
+}
+
+function algosPoll(jid, btn, res, txt) {
+  var t = setInterval(async function() {
+    try {
+      var r = await fetch(API + '/api/contenido/algoritmos/' + jid);
+      var d = await r.json();
+      if (d.estado === 'listo') {
+        clearInterval(t);
+        var informe = d.informe_completo || d.informe || JSON.stringify(d, null, 2);
+        if (res) res.style.display = 'block';
+        if (txt) txt.value = informe;
+        if (btn) { btn.disabled = false; btn.textContent = '&#129504; Analizar Algoritmos Instagram + TikTok'; }
+      } else if (d.estado === 'error') {
+        clearInterval(t);
+        if (btn) { btn.disabled = false; btn.textContent = '&#129504; Analizar Algoritmos Instagram + TikTok'; }
+        alert('Error en análisis: ' + (d.error || 'desconocido'));
+      }
+    } catch(e) { clearInterval(t); if (btn) btn.disabled = false; }
+  }, 4000);
 }
 
 /* HELPERS */

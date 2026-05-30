@@ -39,8 +39,38 @@ if not _meta_log.handlers:
     _handler.setFormatter(_logging.Formatter("%(asctime)s %(message)s"))
     _meta_log.addHandler(_handler)
 
-_LLAMADAS_META: list = []
-_MAX_LLAMADAS_POR_MINUTO = 10
+# ═══════════════════════════════════════════════════
+# REGLAS ANTI-BAN META ADS API
+# Fuente: políticas oficiales Meta + Felipe Vergara
+# Score máximo: 60 puntos / 300 segundos
+# Lectura = 1 punto | Escritura = 3 puntos
+# ═══════════════════════════════════════════════════
+
+POLITICAS_META = {
+    "score_maximo_por_ventana": 60,       # Meta: 60 pts / 5 min
+    "ventana_segundos": 300,              # 5 minutos = 300 segundos
+    "puntos_lectura": 1,                  # GET call = 1 punto
+    "puntos_escritura": 3,                # POST/PUT call = 3 puntos
+    "delay_entre_llamadas": 3.0,          # mínimo 3s entre llamadas (Felipe Vergara)
+    "delay_entre_campanas": 60,           # 60s entre crear campañas
+    "max_campanas_por_dia": 5,            # límite voluntario IM
+    "max_cambios_presupuesto_hora": 4,    # límite oficial Meta por ad set
+    "requiere_aprobacion_humana": {
+        "crear_campana", "cambiar_presupuesto",
+        "pausar_campana", "activar_campana",
+    },
+    "contenido_prohibido": [
+        "garantizado", "garantia", "gratis", "sin costo",
+        "gana dinero", "ingresos pasivos", "antes y despues",
+        "cura", "elimina", "urgente", "ultima oportunidad",
+        "solo hoy", "clickbait", "resultados garantizados",
+    ],
+}
+
+_LLAMADAS_META: list = []       # [(timestamp, puntos)]
+_CAMBIOS_PRESUPUESTO: dict = {} # {ad_set_id: [timestamps]}
+_CAMPANAS_HOY: int = 0
+_ULTIMO_TIMESTAMP = 0.0
 
 _ACCIONES_PERMITIDAS = {
     "get_campaigns", "get_metrics", "get_insights", "get_account_info",
@@ -57,16 +87,58 @@ _META_ERRORES = {
 }
 
 
-def _verificar_rate_limit():
-    """Máximo 10 llamadas a Meta API por minuto."""
-    global _LLAMADAS_META
+def _verificar_rate_limit(es_escritura: bool = False):
+    """Sistema de score Meta: 60 puntos cada 300 segundos. Lectura=1pt, Escritura=3pts."""
+    global _LLAMADAS_META, _ULTIMO_TIMESTAMP
     ahora = time.time()
-    _LLAMADAS_META = [t for t in _LLAMADAS_META if ahora - t < 60]
-    if len(_LLAMADAS_META) >= _MAX_LLAMADAS_POR_MINUTO:
-        espera = 60 - (ahora - _LLAMADAS_META[0])
-        _meta_log.warning(f"Rate limit: esperando {espera:.0f}s")
-        time.sleep(max(espera, 1))
-    _LLAMADAS_META.append(time.time())
+    ventana = POLITICAS_META["ventana_segundos"]
+    puntos = POLITICAS_META["puntos_escritura"] if es_escritura else POLITICAS_META["puntos_lectura"]
+
+    # Limpiar entradas fuera de la ventana
+    _LLAMADAS_META = [(t, p) for (t, p) in _LLAMADAS_META if ahora - t < ventana]
+
+    # Calcular score actual
+    score_actual = sum(p for _, p in _LLAMADAS_META)
+    score_nuevo = score_actual + puntos
+
+    if score_nuevo > POLITICAS_META["score_maximo_por_ventana"]:
+        mas_antigua = _LLAMADAS_META[0][0] if _LLAMADAS_META else ahora
+        espera = ventana - (ahora - mas_antigua) + 5
+        _meta_log.warning(f"RATE_LIMIT score={score_actual}/{POLITICAS_META['score_maximo_por_ventana']} — esperando {espera:.0f}s")
+        time.sleep(max(espera, 5))
+        _LLAMADAS_META = []
+
+    # Delay mínimo entre llamadas (3s según Felipe Vergara y políticas Meta)
+    delay_min = POLITICAS_META["delay_entre_llamadas"]
+    transcurrido = ahora - _ULTIMO_TIMESTAMP
+    if transcurrido < delay_min:
+        time.sleep(delay_min - transcurrido)
+
+    _LLAMADAS_META.append((time.time(), puntos))
+    _ULTIMO_TIMESTAMP = time.time()
+    _meta_log.info(f"API_CALL tipo={'escritura' if es_escritura else 'lectura'} puntos={puntos} score_total={score_actual + puntos}")
+
+
+def _verificar_cambio_presupuesto(entity_id: str):
+    """Máximo 4 cambios de presupuesto por hora por entidad (ad set o campaña)."""
+    global _CAMBIOS_PRESUPUESTO
+    ahora = time.time()
+    if entity_id not in _CAMBIOS_PRESUPUESTO:
+        _CAMBIOS_PRESUPUESTO[entity_id] = []
+    _CAMBIOS_PRESUPUESTO[entity_id] = [t for t in _CAMBIOS_PRESUPUESTO[entity_id] if ahora - t < 3600]
+    if len(_CAMBIOS_PRESUPUESTO[entity_id]) >= POLITICAS_META["max_cambios_presupuesto_hora"]:
+        raise MetaAdsError(f"Límite de cambios de presupuesto alcanzado para {entity_id}: máximo {POLITICAS_META['max_cambios_presupuesto_hora']} por hora. Intenta en la próxima hora.")
+    _CAMBIOS_PRESUPUESTO[entity_id].append(ahora)
+
+
+def _verificar_contenido(texto: str):
+    """Verifica que el contenido no infrinja políticas de publicidad de Meta."""
+    if not texto:
+        return
+    texto_lower = texto.lower()
+    for palabra in POLITICAS_META["contenido_prohibido"]:
+        if palabra in texto_lower:
+            raise MetaAdsError(f"Contenido prohibido detectado: '{palabra}'. Meta puede banear la cuenta. Revisa las políticas de publicidad.")
 
 
 def _log_accion(accion: str, campana: str, resultado: str):
@@ -423,6 +495,7 @@ class MetaAdsMCP:
             camp_id = c["id"]
             nombre_log = c.get("name", nombre_o_id)
 
+        _verificar_rate_limit(es_escritura=True)
         self._post(camp_id, {"status": "PAUSED"})
         _log_accion("pause_campaign", nombre_log, "OK")
         return f"✅ Campaña pausada correctamente."
@@ -441,6 +514,7 @@ class MetaAdsMCP:
             camp_id = c["id"]
             nombre_log = c.get("name", nombre_o_id)
 
+        _verificar_rate_limit(es_escritura=True)
         self._post(camp_id, {"status": "ACTIVE"})
         _log_accion("activate_campaign", nombre_log, "OK")
         return f"✅ Campaña activada correctamente."
@@ -449,12 +523,16 @@ class MetaAdsMCP:
         """
         Cambia el presupuesto diario de una campaña.
         monto_cop: valor en COP (se convierte a centavos para Meta)
+        Límite Meta: máximo 4 cambios por hora por entidad.
         """
         _verificar_politicas("set_budget")
         c = self.get_campaign_by_name(nombre)
         if not c:
             _log_accion("set_budget", nombre, "ERROR: no encontrada")
             return f"No encontré campaña '{nombre}'"
+
+        # Verificar límite de cambios de presupuesto (4 por hora por entidad)
+        _verificar_cambio_presupuesto(c["id"])
 
         try:
             monto = float(str(monto_cop).replace(".", "").replace(",", "").replace("$", "").strip())
@@ -463,6 +541,7 @@ class MetaAdsMCP:
 
         # Meta usa centavos de la moneda de la cuenta
         centavos = int(monto * 100)
+        _verificar_rate_limit(es_escritura=True)
         self._post(c["id"], {"daily_budget": centavos})
         _log_accion("set_budget", c.get("name", nombre), f"OK monto={_fmt_cop(monto)}")
         return f"✅ Presupuesto actualizado a {_fmt_cop(monto)}/día"
@@ -481,6 +560,12 @@ class MetaAdsMCP:
             "ventas": "CONVERSIONS",
         }
         _verificar_politicas("create_campaign")
+        # Verificar contenido del nombre
+        _verificar_contenido(nombre)
+        # Verificar límite de campañas creadas hoy
+        global _CAMPANAS_HOY
+        if _CAMPANAS_HOY >= POLITICAS_META["max_campanas_por_dia"]:
+            raise MetaAdsError(f"Límite diario alcanzado: máximo {POLITICAS_META['max_campanas_por_dia']} campañas por día. Inténtalo mañana.")
         obj = OBJETIVOS_VALIDOS.get(str(objetivo).lower(), objetivo.upper())
 
         try:
@@ -489,6 +574,9 @@ class MetaAdsMCP:
             presupuesto = 50000
 
         centavos = int(presupuesto * 100)
+        _verificar_rate_limit(es_escritura=True)
+        # Delay adicional entre creación de campañas
+        time.sleep(POLITICAS_META["delay_entre_campanas"])
         result = self._post(
             f"{self.account}/campaigns",
             {
@@ -500,13 +588,15 @@ class MetaAdsMCP:
             }
         )
         camp_id = result.get("id", "")
-        _log_accion("create_campaign", nombre, f"OK id={camp_id} obj={obj}")
+        _CAMPANAS_HOY += 1
+        _log_accion("create_campaign", nombre, f"OK id={camp_id} obj={obj} campanas_hoy={_CAMPANAS_HOY}")
         return (
             f"✅ Campaña creada en estado PAUSADA\n"
             f"Nombre: {nombre}\n"
             f"Objetivo: {obj}\n"
             f"Presupuesto/día: {_fmt_cop(presupuesto)}\n"
             f"ID: {camp_id}\n\n"
+            f"Campañas creadas hoy: {_CAMPANAS_HOY}/{POLITICAS_META['max_campanas_por_dia']}\n"
             f"Ahora crea los conjuntos de anuncios en Meta Ads Manager."
         )
 
