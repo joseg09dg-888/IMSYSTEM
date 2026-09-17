@@ -46,6 +46,7 @@ APOLLO_KEY     = os.environ.get("APOLLO_API_KEY", "")
 GMAPS_KEY      = os.environ.get("GOOGLE_MAPS_API_KEY", "")
 SPOTIFY_CLIENT_ID     = os.environ.get("SPOTIFY_CLIENT_ID", "")
 SPOTIFY_CLIENT_SECRET = os.environ.get("SPOTIFY_CLIENT_SECRET", "")
+LASTFM_API_KEY        = os.environ.get("LASTFM_API_KEY", "")
 # El scraping directo de HTML de Google/Bing/DuckDuckGo/Spotify está roto desde
 # que esos sitios exigen JavaScript o bloquean bots (verificado 2026-09-17).
 # Se deja apagado por defecto para no perder tiempo. GOOGLE_MAPS_API_KEY y
@@ -564,6 +565,96 @@ def scrape_spotify_artists(query, country="CO", max_results=20):
     return leads
 
 # ════════════════════════════════════════════════════════════════
+# LAST.FM — LEADS DE ARTISTAS CALIFICADOS (gratis, reemplaza a Spotify)
+# ════════════════════════════════════════════════════════════════
+# Filtra por banda de oyentes globales reales (no el conteo geo-sesgado de
+# geo.gettopartists): suficiente tracción/plata para pagar, pero sin la
+# maquinaria de un sello grande detrás (esos no necesitan tus servicios).
+# Calibrado 2026-09-17: Bad Bunny ~2.7M oyentes (sello grande, no califica),
+# Ryan Castro ~412K, Blessd ~288K, Dei V ~141K (independientes con tracción real).
+
+LASTFM_TAGS_URBANO = [
+    "reggaeton", "trap latino", "urbano", "reggaeton colombiano",
+    "colombian hip hop", "musica urbana",
+]
+
+LASTFM_QUALIFY_MIN = 8000       # menos que esto = casi seguro sin presupuesto real
+LASTFM_QUALIFY_MAX = 350000     # más que esto = ya tiene sello/equipo grande detrás
+
+def _lastfm_get(method, **params):
+    if not LASTFM_API_KEY:
+        return {}
+    try:
+        r = requests.get(
+            "https://ws.audioscrobbler.com/2.0/",
+            params={"method": method, "api_key": LASTFM_API_KEY, "format": "json", **params},
+            timeout=15,
+        )
+        return r.json()
+    except Exception:
+        return {}
+
+def search_lastfm_artists(nicho_key, city, country, max_results=20, tags=None):
+    """Descubre artistas con tracción real vía Last.fm (gratis, sin tarjeta).
+    Recorre charts de género y filtra por oyentes globales reales para
+    quedarse con el punto dulce: tiene plata, no tiene sello grande."""
+    if not LASTFM_API_KEY:
+        return []
+
+    tags = tags or LASTFM_TAGS_URBANO
+    candidatos = {}  # nombre -> None (dedup, preserva orden de aparición)
+    for tag in tags:
+        data = _lastfm_get("tag.gettopartists", tag=tag, limit=200)
+        for a in data.get("topartists", {}).get("artist", []):
+            name = a.get("name", "")
+            if name:
+                candidatos.setdefault(name, None)
+
+    leads = []
+    for name in candidatos:
+        if len(leads) >= max_results:
+            break
+        info = _lastfm_get("artist.getinfo", artist=name)
+        art = info.get("artist")
+        if not art:
+            continue
+        stats = art.get("stats", {})
+        try:
+            listeners = int(stats.get("listeners", 0))
+            playcount = int(stats.get("playcount", 0))
+        except (TypeError, ValueError):
+            continue
+        if not (LASTFM_QUALIFY_MIN <= listeners <= LASTFM_QUALIFY_MAX):
+            continue
+
+        generos = ", ".join(t.get("name", "") for t in art.get("tags", {}).get("tag", [])[:3])
+        engagement = round(playcount / listeners, 1) if listeners else 0
+
+        leads.append({
+            "nombre":      "",
+            "empresa":     f"Artista Independiente — {name}",
+            "email":       "",
+            "telefono":    "",
+            "instagram":   "",
+            "linkedin":    "",
+            "ciudad":      city,
+            "pais":        country,
+            "nicho":       nicho_key,
+            "vertical":    "music",
+            "url":         art.get("url", ""),
+            "fuente":      "lastfm",
+            "oyentes":     listeners,
+            "reproducciones": playcount,
+            "engagement_por_oyente": engagement,
+            "generos":     generos,
+            "fecha":       datetime.now().strftime("%Y-%m-%d"),
+            "status":      "pendiente",
+        })
+
+    leads.sort(key=lambda l: -l["oyentes"])
+    return leads
+
+# ════════════════════════════════════════════════════════════════
 # APOLLO.IO API — ENRIQUECIMIENTO OPCIONAL
 # ════════════════════════════════════════════════════════════════
 
@@ -619,6 +710,127 @@ def apollo_search(nicho_key, city, country, max_results=50):
         return leads, f"Apollo: {len(leads)} leads encontrados"
     except Exception as e:
         return [], f"Error Apollo: {e}"
+
+# ════════════════════════════════════════════════════════════════
+# OPENSTREETMAP — GRATIS, SIN API KEY, SIN TARJETA
+# ════════════════════════════════════════════════════════════════
+# Fuente de respaldo cuando no hay GOOGLE_MAPS_API_KEY. Cobertura menor
+# que Google Maps pero 100% gratis y sin registro. Verificado 2026-09-17.
+
+OSM_TAGS = {
+    "odontologos":     [("amenity", "dentist")],
+    "dermatologo":     [("healthcare", "dermatologist"), ("amenity", "clinic")],
+    "psicologo":       [("healthcare", "psychotherapist"), ("healthcare", "psychologist")],
+    "fisioterapeuta":  [("healthcare", "physiotherapist")],
+    "agencia_viajes":  [("shop", "travel_agency")],
+    "seguros":         [("office", "insurance")],
+    "autos_alta_gama": [("shop", "car")],
+}
+
+_osm_bbox_cache = {}
+
+def _osm_geocode_bbox(city, country):
+    """Geocodifica una ciudad a bounding box vía Nominatim (gratis, sin key)."""
+    cache_key = f"{city}|{country}"
+    if cache_key in _osm_bbox_cache:
+        return _osm_bbox_cache[cache_key]
+    try:
+        r = requests.get(
+            "https://nominatim.openstreetmap.org/search",
+            params={"q": f"{city}, {country}", "format": "json", "limit": 1},
+            headers={"User-Agent": "IMSystem-LeadFinder/1.0"},
+            timeout=20,
+        )
+        data = r.json()
+        if not data:
+            return None
+        bb = data[0]["boundingbox"]  # [south, north, west, east]
+        bbox = f"{bb[0]},{bb[2]},{bb[1]},{bb[3]}"
+        _osm_bbox_cache[cache_key] = bbox
+        return bbox
+    except Exception:
+        return None
+
+def search_openstreetmap(nicho_key, city, country, max_results=30):
+    """Busca negocios en OpenStreetMap (Overpass API) — gratis, sin key."""
+    tags = OSM_TAGS.get(nicho_key)
+    if not tags:
+        return []
+
+    bbox = _osm_geocode_bbox(city, country)
+    if not bbox:
+        return []
+
+    nicho_data = NICHOS.get(nicho_key, {})
+    clauses = "".join(
+        f'node["{k}"="{v}"]({bbox});way["{k}"="{v}"]({bbox});'
+        for k, v in tags
+    )
+    query = f'[out:json][timeout:25];({clauses});out center {max_results};'
+
+    # overpass-api.de se cae seguido (servidor comunitario sobrecargado) —
+    # reintenta con mirrors alternos antes de rendirse.
+    mirrors = [
+        "https://overpass-api.de/api/interpreter",
+        "https://overpass.kumi.systems/api/interpreter",
+        "https://overpass.openstreetmap.ru/api/interpreter",
+    ]
+    elements = None
+    last_err = None
+    for attempt in range(2):  # 2 rondas completas por si el servidor está saturado (504)
+        for mirror in mirrors:
+            try:
+                r = requests.post(
+                    mirror,
+                    data={"data": query},
+                    headers={"User-Agent": "IMSystem-LeadFinder/1.0"},
+                    timeout=35,
+                )
+                if r.status_code == 200:
+                    elements = r.json().get("elements", [])
+                    break
+                last_err = f"{mirror} -> HTTP {r.status_code}"
+            except Exception as e:
+                last_err = f"{mirror} -> {e}"
+                continue
+        if elements is not None:
+            break
+        if attempt == 0:
+            time.sleep(8)  # da tiempo al servidor sobrecargado a liberarse
+    if elements is None:
+        print(f"  ⚠️  OpenStreetMap: servidor gratis saturado, no respondió. Último error: {last_err}")
+        return []
+
+    leads = []
+    seen = set()
+    for el in elements:
+        t = el.get("tags", {})
+        name = t.get("name", "")
+        if not name or name in seen:
+            continue
+        seen.add(name)
+        addr_parts = [t.get(f"addr:{p}") for p in ("street", "housenumber", "city")]
+        leads.append({
+            "nombre":    "",
+            "empresa":   name,
+            "email":     t.get("contact:email") or t.get("email", ""),
+            "telefono":  t.get("contact:phone") or t.get("phone", ""),
+            "instagram": "",
+            "linkedin":  "",
+            "ciudad":    city,
+            "pais":      country,
+            "nicho":     nicho_key,
+            "vertical":  nicho_data.get("vertical", "empresas"),
+            "url":       t.get("contact:website") or t.get("website", ""),
+            "fuente":    "openstreetmap",
+            "direccion": ", ".join(p for p in addr_parts if p),
+            "fecha":     datetime.now().strftime("%Y-%m-%d"),
+            "status":    "pendiente",
+        })
+        if len(leads) >= max_results:
+            break
+
+    return leads
 
 # ════════════════════════════════════════════════════════════════
 # MOTOR PRINCIPAL DE BÚSQUEDA
@@ -844,8 +1056,11 @@ def find_leads(nicho_key, city, country, max_leads=50,
 
         human_delay(2, 5)
 
-    # 2b. Doctoralia (nichos de salud)
-    if nicho_key in ["odontologos", "dermatologo", "psicologo", "fisioterapeuta"] and len(all_leads) < max_leads:
+    # 2b. Doctoralia (nichos de salud) — APAGADO: Doctoralia se fusionó con
+    # Docplanner y cambió toda su estructura de URLs (verificado 2026-09-17),
+    # el dominio viejo ya no resuelve. Activar con ENABLE_LEGACY_SCRAPING=true
+    # si algún día se actualiza la lógica de scraping a las nuevas URLs.
+    if ENABLE_LEGACY_SCRAPING and nicho_key in ["odontologos", "dermatologo", "psicologo", "fisioterapeuta"] and len(all_leads) < max_leads:
         print(f"\n  📋 Buscando en Doctoralia...")
         ct = "es" if country.lower() in ["españa", "spain", "es"] else "co"
         doc_leads = scrape_doctoralia(nicho_key, city_slug, country=ct)
@@ -860,23 +1075,22 @@ def find_leads(nicho_key, city, country, max_leads=50,
                 if verbose:
                     print(f"     👤 {lead['nombre']}")
 
-    # 2c. Spotify para artistas independientes
+    # 2c. Last.fm para artistas independientes (Spotify requiere Premium
+    # en la cuenta dueña de la app — bloqueado desde 2026-09-17, ver notas)
     if nicho_key == "artista_independiente" and len(all_leads) < max_leads:
-        print(f"\n  🎵 Buscando en Spotify...")
-        sp_queries = nicho.get("spotify_searches", [])
-        for sp_q in sp_queries:
-            q = sp_q.replace("{country}", country).replace("{city}", city)
-            sp_leads = scrape_spotify_artists(q, country=country[:2].upper())
-            for lead in sp_leads:
-                key = lead.get("nombre", "").lower()
+        if LASTFM_API_KEY:
+            print(f"\n  🎵 Buscando artistas calificados en Last.fm...")
+            lf_leads = search_lastfm_artists(nicho_key, city, country, max_results=max_leads)
+            for lead in lf_leads:
+                key = lead.get("empresa", "").lower()
                 if key and key not in seen_names and len(all_leads) < max_leads:
                     seen_names.add(key)
-                    lead["vertical"] = "music"
-                    lead["fecha"] = datetime.now().strftime("%Y-%m-%d")
-                    lead["status"] = "pendiente"
                     all_leads.append(lead)
                     if verbose:
-                        print(f"     🎤 {lead['nombre']} ({lead.get('followers', 0):,} seguidores)")
+                        print(f"     🎤 {lead['empresa']} — {lead['oyentes']:,} oyentes, "
+                              f"{lead['engagement_por_oyente']} plays/oyente — {lead['generos']}")
+        else:
+            print("  ⚠️  LASTFM_API_KEY no configurada — saltando búsqueda de artistas.")
 
     # ── FASE EXTRA: Google Maps Places API ──────────────────────
     if GMAPS_KEY:
@@ -903,6 +1117,31 @@ def find_leads(nicho_key, city, country, max_leads=50,
 
         all_leads.extend(maps_nuevos)
 
+    # ── FASE EXTRA: OpenStreetMap (gratis, sin key) ──────────────
+    # Se usa cuando no hay GOOGLE_MAPS_API_KEY configurada.
+    elif nicho_key in OSM_TAGS:
+        if verbose:
+            print(f"\n  🗺️  Buscando en OpenStreetMap (gratis, sin API key)...")
+        osm_leads = search_openstreetmap(nicho_key, city, country, max_results=max_leads)
+        osm_nuevos = []
+        for lead in osm_leads:
+            dedup_key = lead.get("empresa")
+            if dedup_key and dedup_key not in seen_emails and dedup_key not in seen_names:
+                seen_emails.add(dedup_key)
+                osm_nuevos.append(lead)
+                if verbose:
+                    print(f"     🗺️  [OSM] {lead.get('empresa','?')} — {lead.get('telefono') or 'sin tel'}")
+
+        if osm_nuevos and verbose:
+            with_web = [l for l in osm_nuevos if l.get("url")]
+            print(f"\n  📧 Enriqueciendo emails ({len(with_web)} leads con web)...")
+        for lead in osm_nuevos:
+            if lead.get("url") and not lead.get("email"):
+                enrich_email_from_web(lead, verbose=verbose)
+                human_delay(1.0, 2.0)
+
+        all_leads.extend(osm_nuevos)
+
     # ── GUARDAR CSV ──────────────────────────────────────────────
     if output_file is None:
         out_dir = Path(__file__).parent.parent / "data"
@@ -914,6 +1153,7 @@ def find_leads(nicho_key, city, country, max_leads=50,
         fieldnames = [
             "nombre", "empresa", "email", "telefono", "instagram", "linkedin",
             "ciudad", "pais", "nicho", "vertical", "url", "fuente", "fecha", "status",
+            "oyentes", "reproducciones", "engagement_por_oyente", "generos",
         ]
         with open(output_file, "w", newline="", encoding="utf-8") as f:
             writer = csv.DictWriter(f, fieldnames=fieldnames, extrasaction="ignore")

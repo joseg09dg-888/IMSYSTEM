@@ -68,7 +68,7 @@ AGENTES = {
         "rol":             "Gerente de Marketing",
         "empresa":         "Intelligent Markets",
         "firma":           "Mateo Galvis\nGerente de Marketing — Intelligent Markets",
-        "email":           os.environ.get("IM_EMAIL", "intelligentsmarkets@gmail.com"),
+        "email":           os.environ.get("IM_EMAIL", "intelligentmarkets@gmail.com"),
         "vertical":        "empresas",
         "cal_link":        os.environ.get("CAL_EMPRESAS", "https://cal.com/intelligent-markets-agencia/30min"),
         "brochure":        "brochures/deck_im_empresas.pdf",
@@ -127,7 +127,7 @@ PROHIBIDO:
         "rol":             "Director — IM Music",
         "empresa":         "IM Music | Intelligent Markets",
         "firma":           "José Galvis\nDirector — IM Music | Intelligent Markets",
-        "email":           os.environ.get("IM_EMAIL", "intelligentsmarkets@gmail.com"),
+        "email":           os.environ.get("IM_EMAIL_MUSIC", "immusicsello@gmail.com"),
         "vertical":        "music",
         "cal_link":        os.environ.get("CAL_MUSIC", "https://cal.com/intelligent-markets-agencia/sello-30min"),
         "brochure":        "brochures/im_music_2026.pdf",
@@ -1218,7 +1218,13 @@ body{{background:#060606;color:#e8e8e8;font-family:'DM Sans',sans-serif;padding:
 
 def enviar_email(agente_key, to_email, asunto, cuerpo, adjuntar=False):
     agente = AGENTES[agente_key]
-    pwd = os.environ.get("IM_EMAIL_PASSWORD", "")
+    # Cada agente manda desde su propio correo — Mateo (Intelligent Markets)
+    # usa IM_EMAIL_PASSWORD, José (IM Music) usa IM_EMAIL_MUSIC_PASSWORD.
+    pwd = (
+        os.environ.get("IM_EMAIL_MUSIC_PASSWORD", "")
+        if agente_key == "jose"
+        else os.environ.get("IM_EMAIL_PASSWORD", "")
+    )
     if not pwd:
         print(f"    ⚠️  Sin contraseña — simulando envío a {to_email}")
         return True
