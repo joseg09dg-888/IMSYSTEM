@@ -44,13 +44,6 @@ _load_env()
 
 APOLLO_KEY     = os.environ.get("APOLLO_API_KEY", "")
 GMAPS_KEY      = os.environ.get("GOOGLE_MAPS_API_KEY", "")
-SPOTIFY_CLIENT_ID     = os.environ.get("SPOTIFY_CLIENT_ID", "")
-SPOTIFY_CLIENT_SECRET = os.environ.get("SPOTIFY_CLIENT_SECRET", "")
-# El scraping directo de HTML de Google/Bing/DuckDuckGo/Spotify está roto desde
-# que esos sitios exigen JavaScript o bloquean bots (verificado 2026-09-17).
-# Se deja apagado por defecto para no perder tiempo. GOOGLE_MAPS_API_KEY y
-# SPOTIFY_CLIENT_ID/SECRET son las fuentes reales y confiables ahora mismo.
-ENABLE_LEGACY_SCRAPING = os.environ.get("ENABLE_LEGACY_SCRAPING", "false").lower() == "true"
 
 # ════════════════════════════════════════════════════════════════
 # CONFIGURACIÓN DE NICHOS
@@ -500,67 +493,35 @@ def scrape_doctoralia(nicho_slug, city_slug, country="co"):
             })
     return leads
 
-_spotify_token_cache = {"token": None, "expires": 0}
-
-def _spotify_get_token():
-    """Client Credentials flow — requiere SPOTIFY_CLIENT_ID/SECRET (gratis en developer.spotify.com)"""
-    if not SPOTIFY_CLIENT_ID or not SPOTIFY_CLIENT_SECRET:
-        return None
-    now = time.time()
-    if _spotify_token_cache["token"] and now < _spotify_token_cache["expires"]:
-        return _spotify_token_cache["token"]
-    try:
-        r = requests.post(
-            "https://accounts.spotify.com/api/token",
-            data={"grant_type": "client_credentials"},
-            auth=(SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET),
-            timeout=10,
-        )
-        data = r.json()
-        token = data.get("access_token")
-        if token:
-            _spotify_token_cache["token"] = token
-            _spotify_token_cache["expires"] = now + data.get("expires_in", 3600) - 60
-            return token
-    except Exception:
-        pass
-    return None
-
 def scrape_spotify_artists(query, country="CO", max_results=20):
-    """Busca artistas vía Spotify Web API oficial (Client Credentials).
-    No da email/contacto (Spotify no lo expone) — sí da nombre, género,
-    popularidad y seguidores reales para priorizar a quién contactar."""
-    token = _spotify_get_token()
-    if not token:
-        return []
-
+    """Busca artistas en Spotify API pública (sin auth) — solo búsqueda pública"""
     leads = []
-    try:
-        r = requests.get(
-            "https://api.spotify.com/v1/search",
-            headers={"Authorization": f"Bearer {token}"},
-            params={"q": query, "type": "artist", "market": country[:2].upper(), "limit": min(max_results, 50)},
-            timeout=10,
-        )
-        data = r.json()
-        items = data.get("artists", {}).get("items", [])
-        for item in items[:max_results]:
-            followers = item.get("followers", {}).get("total", 0)
-            leads.append({
-                "nombre": item.get("name", ""),
-                "empresa": f"Artista Independiente — {item.get('name', '')}",
-                "email": "",
-                "spotify_url": item.get("external_urls", {}).get("spotify", ""),
-                "followers": followers,
-                "popularity": item.get("popularity", 0),
-                "generos": ", ".join(item.get("genres", [])[:3]),
-                "ciudad": "",
-                "pais": country,
-                "nicho": "artista_independiente",
-                "fuente": "spotify_api",
-            })
-    except Exception as e:
-        print(f"  ⚠️  Spotify API error: {e}")
+    # Usar endpoint de búsqueda de Spotify embed (no requiere auth)
+    search_url = f"https://open.spotify.com/search/{quote_plus(query)}/artists"
+    html = fetch(search_url)
+    if html:
+        soup = BeautifulSoup(html, "html.parser")
+        # Extraer artistas del JSON embebido
+        scripts = soup.find_all("script", id="session")
+        for s in scripts:
+            try:
+                data = json.loads(s.string or "{}")
+                # Navegar estructura Spotify
+                items = data.get("artists", {}).get("items", [])
+                for item in items[:max_results]:
+                    leads.append({
+                        "nombre": item.get("name", ""),
+                        "empresa": f"Artista Independiente — {item.get('name', '')}",
+                        "email": "",
+                        "spotify_url": f"https://open.spotify.com/artist/{item.get('id', '')}",
+                        "followers": item.get("followers", {}).get("total", 0),
+                        "ciudad": "",
+                        "pais": country,
+                        "nicho": "artista_independiente",
+                        "fuente": "spotify",
+                    })
+            except Exception:
+                pass
     return leads
 
 # ════════════════════════════════════════════════════════════════
@@ -790,11 +751,8 @@ def find_leads(nicho_key, city, country, max_leads=50,
     city_enc = quote_plus(city)
     country_tag = country.lower()[:2]
 
-    # 2a. Queries de búsqueda web (Google/Bing/DDG) — APAGADO por defecto:
-    # estos motores bloquean scraping o exigen JS (verificado 2026-09-17),
-    # así que solo desperdician tiempo. Activar con ENABLE_LEGACY_SCRAPING=true
-    # en .env si algún día vuelve a funcionar.
-    queries = nicho.get("queries_google", []) if ENABLE_LEGACY_SCRAPING else []
+    # 2a. Queries de búsqueda web
+    queries = nicho.get("queries_google", [])
     for q_template in queries:
         if len(all_leads) >= max_leads:
             break
