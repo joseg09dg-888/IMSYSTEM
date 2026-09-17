@@ -25,6 +25,7 @@ from pathlib import Path
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.base import MIMEBase
+from email.mime.image import MIMEImage
 from email import encoders
 from urllib.parse import urljoin, urlparse
 
@@ -1216,6 +1217,12 @@ body{{background:#060606;color:#e8e8e8;font-family:'DM Sans',sans-serif;padding:
 # ENVÍO DE EMAIL
 # ════════════════════════════════════════════════════════════════
 
+# Firma en imagen por agente — cae en None si el archivo no existe (no rompe el envío)
+FIRMAS_IMG = {
+    "jose":  Path(__file__).parent / "assets" / "firma_jose.png",
+    "mateo": Path(__file__).parent / "assets" / "firma_mateo.png",
+}
+
 def enviar_email(agente_key, to_email, asunto, cuerpo, adjuntar=False):
     agente = AGENTES[agente_key]
     # Cada agente manda desde su propio correo — Mateo (Intelligent Markets)
@@ -1229,11 +1236,43 @@ def enviar_email(agente_key, to_email, asunto, cuerpo, adjuntar=False):
         print(f"    ⚠️  Sin contraseña — simulando envío a {to_email}")
         return True
     try:
-        msg = MIMEMultipart()
+        # Pixel de tracking — se calcula antes para poder incluirlo en el HTML
+        ngrok_url = os.environ.get("NGROK_URL", "http://localhost:5000")
+        pixel_url = ""
+        if ngrok_url and to_email:
+            import base64 as _b64
+            token_data = f"{to_email}|{agente.get('nombre_completo','')[:20]}|{asunto[:20]}"
+            token = _b64.b64encode(token_data.encode()).decode().rstrip('=')
+            pixel_url = f"{ngrok_url}/track/open/{token}"
+
+        firma_path = FIRMAS_IMG.get(agente_key)
+        tiene_firma = bool(firma_path and firma_path.exists())
+
+        cuerpo_html = cuerpo.replace("\n", "<br>")
+        firma_html = '<br><img src="cid:firma_agente" alt="firma" style="max-width:420px;">' if tiene_firma else ""
+        pixel_html = f'<img src="{pixel_url}" width="1" height="1" style="display:none;">' if pixel_url else ""
+        html_body = f'<div style="font-family:Arial,sans-serif;font-size:14px;color:#111;">{cuerpo_html}{firma_html}{pixel_html}</div>'
+
+        msg = MIMEMultipart("mixed")
         msg["From"] = f"{agente['nombre_completo']} <{agente['email']}>"
         msg["To"]   = to_email
         msg["Subject"] = asunto
-        msg.attach(MIMEText(cuerpo, "plain", "utf-8"))
+
+        related = MIMEMultipart("related")
+        alt = MIMEMultipart("alternative")
+        alt.attach(MIMEText(cuerpo, "plain", "utf-8"))
+        alt.attach(MIMEText(html_body, "html", "utf-8"))
+        related.attach(alt)
+
+        if tiene_firma:
+            with open(firma_path, "rb") as f:
+                img = MIMEImage(f.read())
+            img.add_header("Content-ID", "<firma_agente>")
+            img.add_header("Content-Disposition", "inline", filename=firma_path.name)
+            related.attach(img)
+
+        msg.attach(related)
+
         if adjuntar:
             bp = Path(__file__).parent.parent / agente["brochure"]
             MAX_ATTACH_BYTES = 20 * 1024 * 1024  # 20 MB — Gmail límite real ~25MB
@@ -1249,28 +1288,11 @@ def enviar_email(agente_key, to_email, asunto, cuerpo, adjuntar=False):
                 drive_key = "BROCHURE_LINK_" + agente.get("vertical","empresas").upper()
                 drive_url = os.environ.get(drive_key, "")
                 if drive_url:
-                    cuerpo_actual = msg.get_payload(0)
-                    if hasattr(cuerpo_actual, 'get_payload'):
-                        texto = cuerpo_actual.get_payload(decode=True).decode('utf-8', errors='ignore')
-                        texto += f"\n\n[Descarga el brochure aquí: {drive_url}]"
-                        msg.get_payload()[0] = MIMEText(texto, "plain", "utf-8")
+                    alt.get_payload()[0].set_payload(cuerpo + f"\n\n[Descarga el brochure aquí: {drive_url}]")
                     print(f"    Brochure grande — link Drive incluido en cuerpo")
                 else:
                     print(f"    Brochure {bp.name} ({bp.stat().st_size//1024//1024}MB) grande — agrega BROCHURE_LINK_EMPRESAS al .env para incluir link")
-        # Agregar pixel de tracking al cuerpo
-        ngrok_url = os.environ.get("NGROK_URL", "http://localhost:5000")
-        if ngrok_url and to_email:
-            import base64 as _b64
-            token_data = f"{to_email}|{agente.get('nombre_completo','')[:20]}|{asunto[:20]}"
-            token = _b64.b64encode(token_data.encode()).decode().rstrip('=')
-            pixel_url = f"{ngrok_url}/track/open/{token}"
-            # Adjuntar pixel al final del mensaje
-            payload = msg.get_payload()
-            if isinstance(payload, list) and payload:
-                texto_actual = payload[0].get_payload(decode=True)
-                if texto_actual:
-                    texto_nuevo = texto_actual.decode('utf-8', errors='ignore') + "\n\n[image: " + pixel_url + "]"
-                    msg.get_payload()[0] = MIMEText(texto_nuevo, "plain", "utf-8")
+
         with smtplib.SMTP("smtp.gmail.com", 587) as s:
             s.starttls()
             s.login(agente["email"], pwd)

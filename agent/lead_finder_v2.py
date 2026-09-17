@@ -579,7 +579,9 @@ LASTFM_TAGS_URBANO = [
 ]
 
 LASTFM_QUALIFY_MIN = 8000       # menos que esto = casi seguro sin presupuesto real
-LASTFM_QUALIFY_MAX = 350000     # más que esto = ya tiene sello/equipo grande detrás
+LASTFM_QUALIFY_MAX = 120000     # más que esto = ya tiene sello/equipo grande detrás
+                                 # (bajado de 350k — verificado 2026-09-17: Jowell&Randy con
+                                 # 274k ya tenía booking agency profesional y Latin Grammy noms)
 
 def _lastfm_get(method, **params):
     if not LASTFM_API_KEY:

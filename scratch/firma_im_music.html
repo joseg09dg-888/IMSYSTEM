@@ -1,0 +1,200 @@
+<title>Firma IM Music</title>
+<style>
+  :root{
+    --violet:#5E17EB;
+    --violet-dim:#4a11bd;
+    --ink:#0B0B0C;
+    --cream:#F2EDE5;
+    --paper:#FFFFFF;
+    --line:#E4DFD6;
+    --muted:#6b6560;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --paper:#141216;
+      --ink:#F2EDE5;
+      --line:#2a2530;
+      --muted:#a89fb0;
+      --cream:#1c1820;
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#141216;
+    --ink:#F2EDE5;
+    --line:#2a2530;
+    --muted:#a89fb0;
+    --cream:#1c1820;
+  }
+
+  * { box-sizing: border-box; }
+  body{
+    margin:0;
+    background:var(--cream);
+    color:var(--ink);
+    font-family: 'Barlow', system-ui, sans-serif;
+    padding-inline: 20px;
+  }
+  .wrap{
+    max-width: 720px;
+    margin: 0 auto;
+    padding-block: 48px 64px;
+    display:flex;
+    flex-direction:column;
+    gap:40px;
+  }
+  h1{
+    font-family:'Anton', system-ui, sans-serif;
+    font-weight:400;
+    letter-spacing: 0.01em;
+    font-size: clamp(28px, 5vw, 40px);
+    margin:0 0 4px 0;
+    text-wrap: balance;
+  }
+  .sub{
+    color: var(--muted);
+    font-size: 15px;
+    margin: 0;
+  }
+  section{
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 28px clamp(20px,4vw,36px);
+  }
+  .eyebrow{
+    font-family:'Anton', system-ui, sans-serif;
+    font-weight:400;
+    font-size:12px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color: var(--violet);
+    margin: 0 0 18px 0;
+  }
+
+  /* ---- signature preview (matches the copy block exactly) ---- */
+  .sig{
+    display:flex;
+    align-items:center;
+    gap:20px;
+    flex-wrap:wrap;
+  }
+  .sig img{ display:block; width:64px; height:auto; flex-shrink:0; }
+  .sig .rule{
+    width:2px;
+    align-self:stretch;
+    background: var(--violet);
+    flex-shrink:0;
+  }
+  .sig .name{
+    font-family:'Anton', system-ui, sans-serif;
+    font-weight:400;
+    font-size:20px;
+    letter-spacing:0.01em;
+    color: var(--ink);
+    margin:0 0 2px 0;
+  }
+  .sig .role{
+    font-size:13.5px;
+    color: var(--violet);
+    margin:0 0 10px 0;
+    font-weight:600;
+  }
+  .sig .meta{
+    font-size:13px;
+    color: var(--muted);
+    line-height:1.7;
+    margin:0;
+  }
+  .sig .meta a{ color: var(--muted); text-decoration: none; border-bottom:1px solid var(--line); }
+  .sig .meta b{ color: var(--ink); }
+
+  .copybox{
+    margin-top:20px;
+    border-top:1px dashed var(--line);
+    padding-top:20px;
+  }
+  .copybox p{
+    font-size: 13px;
+    color: var(--muted);
+    margin: 0 0 12px 0;
+  }
+  .steps{
+    font-size: 14px;
+    line-height: 1.8;
+    color: var(--ink);
+    padding-left: 20px;
+    margin: 0;
+  }
+  .steps li::marker{ color: var(--violet); font-weight:700; }
+  code{
+    background: var(--cream);
+    border: 1px solid var(--line);
+    border-radius: 3px;
+    padding: 1px 6px;
+    font-size: 12.5px;
+  }
+  .swatches{
+    display:flex;
+    gap:12px;
+    flex-wrap:wrap;
+  }
+  .swatch{
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+    align-items:flex-start;
+  }
+  .swatch .chip{
+    width:56px; height:56px;
+    border-radius:3px;
+    border:1px solid var(--line);
+  }
+  .swatch span{
+    font-size:11px;
+    color:var(--muted);
+    font-variant-numeric: tabular-nums;
+  }
+</style>
+
+<div class="wrap">
+  <div>
+    <h1>Firma para José — IM Music</h1>
+    <p class="sub">Lista para copiar y pegar en Gmail. Usa la paleta real de la marca (violeta #5E17EB, tinta, crema).</p>
+  </div>
+
+  <section>
+    <p class="eyebrow">Vista previa</p>
+    <div class="sig" id="signature-copy">
+      <img src="logo.png" alt="IM Music">
+      <div class="rule"></div>
+      <div>
+        <p class="name">José Galvis</p>
+        <p class="role">Director — IM Music | Intelligent Markets</p>
+        <p class="meta">
+          <b>Sello y agencia musical</b> · Medellín, Colombia<br>
+          <a href="mailto:immusicsello@gmail.com">immusicsello@gmail.com</a> · +57 310 4037140
+        </p>
+      </div>
+    </div>
+
+    <div class="copybox">
+      <p>Cómo ponerla en Gmail:</p>
+      <ol class="steps">
+        <li>Selecciona con el mouse todo el bloque de arriba (desde el logo hasta el teléfono) y cópialo — <code>Ctrl+C</code>.</li>
+        <li>En Gmail: <code>⚙️ Configuración → Ver toda la configuración → General → Firma</code>.</li>
+        <li>Crea una firma nueva, haz clic dentro del cuadro y pega — <code>Ctrl+V</code>.</li>
+        <li>Guarda cambios al final de la página.</li>
+      </ol>
+    </div>
+  </section>
+
+  <section>
+    <p class="eyebrow">Paleta de marca (assets reales de IM Music)</p>
+    <div class="swatches">
+      <div class="swatch"><div class="chip" style="background:#5E17EB"></div><span>Violeta<br>#5E17EB</span></div>
+      <div class="swatch"><div class="chip" style="background:#000000"></div><span>Negro<br>#000000</span></div>
+      <div class="swatch"><div class="chip" style="background:#F2EDE5;border-color:#ccc"></div><span>Crema<br>#F2EDE5</span></div>
+      <div class="swatch"><div class="chip" style="background:#FFFFFF;border-color:#ccc"></div><span>Blanco<br>#FFFFFF</span></div>
+    </div>
+  </section>
+</div>
