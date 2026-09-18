@@ -174,7 +174,7 @@ NICHOS = {
 
     # ── MÚSICA ──────────────────────────────────────────────────
     "sello_musical": {
-        "label": "🎵 Sellos Musicales",
+        "label": "🎵 Sello discográfico independiente música urbana",
         "vertical": "music",
         "template": "music_sello",
         "queries_google": [
@@ -192,7 +192,7 @@ NICHOS = {
         "apollo_industry": "Entertainment",
     },
     "manager_musical": {
-        "label": "🎤 Managers / Booking",
+        "label": "🎤 Management artístico y booking de artistas musicales",
         "vertical": "music",
         "template": "music_manager",
         "queries_google": [
@@ -237,7 +237,7 @@ NICHOS = {
         ],
     },
     "estudio_grabacion": {
-        "label": "🎚️ Estudios de Grabación",
+        "label": "🎚️ Estudio de grabación y producción musical",
         "vertical": "music",
         "template": "music_sello",
         "queries_google": [

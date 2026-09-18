@@ -208,6 +208,36 @@ def paso_buscar_artistas():
     return nuevos
 
 
+CIUDADES_MUSICA = [
+    ("Medellin", "Colombia"), ("Bogota", "Colombia"), ("Cali", "Colombia"),
+    ("Miami", "United States"), ("Ciudad de Mexico", "Mexico"), ("Los Angeles", "United States"),
+    ("Buenos Aires", "Argentina"), ("Madrid", "Spain"), ("Santiago", "Chile"),
+    ("Lima", "Peru"), ("San Juan", "Puerto Rico"), ("Panama", "Panama"),
+]
+NICHOS_MUSICA = ["sello_musical", "manager_musical", "estudio_grabacion"]
+ROTACION_MUSICA = [(n, c, p) for n in NICHOS_MUSICA for c, p in CIUDADES_MUSICA]
+MAESTRO_MUSICA = DATA_DIR / "MAESTRO_leads_musica.csv"
+ROTACION_MUSICA_STATE = LOGS_DIR / "rotacion_musica.json"
+
+
+def paso_buscar_musica(n_combos: int = 6):
+    """Sellos, managers y estudios (empresas con web y correo): se envian solos con José."""
+    estado = {"indice": 0}
+    if ROTACION_MUSICA_STATE.exists():
+        estado = json.loads(ROTACION_MUSICA_STATE.read_text(encoding="utf-8"))
+    total = 0
+    for _ in range(n_combos):
+        idx = estado["indice"] % len(ROTACION_MUSICA)
+        nicho, ciudad, pais = ROTACION_MUSICA[idx]
+        print(f"[pipeline] Musica: {nicho} en {ciudad}, {pais}")
+        leads = find_leads(nicho, ciudad, pais, max_leads=LEADS_POR_COMBO, verbose=True)
+        total += _append_csv(leads, MAESTRO_MUSICA)
+        estado["indice"] = idx + 1
+        ROTACION_MUSICA_STATE.write_text(json.dumps(estado), encoding="utf-8")
+    print(f"[pipeline] {total} leads de musica nuevos (sellos/managers/estudios)")
+    return total
+
+
 def paso_enviar(agente: str, csv_path: Path, max_por_sesion: int = 40):
     """Manda UNA tanda (no loop infinito) respetando horario, via im_agents.py."""
     if not csv_path.exists():
@@ -241,6 +271,9 @@ def main():
             paso_enviar("mateo", MAESTRO_EMPRESAS)
 
     if args.linea in ("jose", "ambas"):
+        paso_buscar_musica(n_combos=6)
+        if not args.solo_buscar:
+            paso_enviar("jose", MAESTRO_MUSICA, max_por_sesion=20)
         paso_buscar_artistas()
         # Jose no se auto-envia: los artistas nuevos no tienen contacto todavia,
         # necesitan revision de Instagram primero (a proposito, ver notas de sesion).
