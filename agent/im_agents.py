@@ -71,7 +71,7 @@ AGENTES = {
         "firma":           "Mateo Galvis\nGerente de Marketing — Intelligent Markets",
         "email":           os.environ.get("IM_EMAIL", "intelligentsmarkets@gmail.com"),
         "vertical":        "empresas",
-        "cal_link":        os.environ.get("CAL_EMPRESAS", "https://cal.com/intelligent-markets-agencia/30min"),
+        "cal_link":        os.environ.get("CAL_EMPRESAS") or "https://cal.com/intelligent-markets-agencia/30min",
         "brochure":        "brochures/deck_im_empresas.pdf",
 
         "personalidad": """
@@ -130,7 +130,7 @@ PROHIBIDO:
         "firma":           "José Galvis\nDirector — IM Music | Intelligent Markets",
         "email":           os.environ.get("IM_EMAIL_MUSIC", "immusicsello@gmail.com"),
         "vertical":        "music",
-        "cal_link":        os.environ.get("CAL_MUSIC", "https://cal.com/intelligent-markets-agencia/sello-30min"),
+        "cal_link":        os.environ.get("CAL_MUSIC") or "https://cal.com/intelligent-markets-agencia/sello-30min",
         "brochure":        "brochures/im_music_2026.pdf",
 
         "personalidad": """
@@ -836,7 +836,7 @@ TIPO 3+: propón reunión: {cal_link} y menciona que adjuntas el brochure de IM"
     prompt = f"""
 {agente["personalidad"]}
 
-REGLAS ESTRICTAS: NO inventes resultados, porcentajes, cifras, casos de éxito ni clientes (solo puedes decir que trabajas con negocios/artistas como ellos, sin números). NO inventes enlaces: el único link permitido es {agente["cal_link"]}.
+REGLAS ESTRICTAS: NO inventes resultados, porcentajes, cifras, casos de éxito ni clientes. NO digas que ya lograste algo para otros ("logramos", "hemos ayudado a", "con otro artista/oficina conseguimos"): habla solo de lo que puedes hacer por ellos. NO digas que adjuntas ningún archivo. NO inventes enlaces: el único link permitido es {agente["cal_link"]}.
 
 TIPO DE MENSAJE: {tipos_desc.get(tipo, "Primer contacto")}
 
@@ -908,6 +908,7 @@ Devuelve SOLO este JSON limpio (sin markdown, sin texto extra):
                     cuerpo_g = resultado.get("cuerpo", "")
                     cuerpo_g = re.sub(r"\[\s*(enlace|link|url|calendario|agenda)[^\]]*\]", agente["cal_link"], cuerpo_g, flags=re.I)
                     cuerpo_g = re.sub(r"https?://\S+", lambda m: m.group(0) if "cal.com/intelligent-markets-agencia" in m.group(0) else agente["cal_link"], cuerpo_g)
+                    cuerpo_g = "\n".join(l for l in cuerpo_g.split("\n") if not re.search(r"\badjunt", l, re.I))
                     if agente["cal_link"] not in cuerpo_g:
                         cuerpo_g += f"\n\n{agente['cal_link']}"
                     resultado["cuerpo"] = cuerpo_g
