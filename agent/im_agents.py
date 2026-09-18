@@ -836,6 +836,8 @@ TIPO 3+: propón reunión: {cal_link} y menciona que adjuntas el brochure de IM"
     prompt = f"""
 {agente["personalidad"]}
 
+REGLAS ESTRICTAS: NO inventes resultados, porcentajes, cifras, casos de éxito ni clientes (solo puedes decir que trabajas con negocios/artistas como ellos, sin números). NO inventes enlaces: el único link permitido es {agente["cal_link"]}.
+
 TIPO DE MENSAJE: {tipos_desc.get(tipo, "Primer contacto")}
 
 DATOS DEL PROSPECTO:
@@ -848,9 +850,9 @@ SEÑALES DE LA INVESTIGACIÓN TÉCNICA:
 - Argumento de apertura detectado: {argumento or "No disponible"}
 - Dolor principal del nicho: {dolor or "No disponible"}
 - Tiene ads activos: No verificable (Facebook Ads Library bloquea el scraping) — NO afirmes en el copy si tiene o no campañas activas, es información que no tenemos
-- Tiene pixel instalado: {"Sí" if web.get("ads_signals",{}).get("facebook_pixel") else "No"}
+{"" if nicho in ("artista_independiente","sello_musical","manager_musical","estudio_grabacion") else '- Tiene pixel instalado: ' + ("Sí" if web.get("ads_signals",{}).get("facebook_pixel") else "No")}
 - Redes detectadas: {", ".join(informe.get("redes_sociales",{}).keys()) or "No detectadas"}
-- Puntos de mejora: {", ".join([m["problema"] for m in mejoras[:3]]) or "No detectados"}
+{"- NO hables de pixel, tracking ni web: es un artista/proyecto musical, habla de su música, su audiencia y su crecimiento." if nicho in ("artista_independiente","sello_musical","manager_musical","estudio_grabacion") else '- Puntos de mejora: ' + (", ".join([m["problema"] for m in mejoras[:3]]) or "No detectados")}
 {bloque_7m}
 {reglas_vertical}
 
@@ -884,6 +886,37 @@ Devuelve SOLO este JSON limpio (sin markdown, sin texto extra):
                 if k.strip() and not os.environ.get(k.strip()):
                     os.environ[k.strip()] = v.strip()
 
+    # 1) Gemini (plan gratuito, sin costo) — se usa primero si hay clave
+    gem_key = os.environ.get("GEMINI_API_KEY", "")
+    if gem_key:
+        for modelo in ("gemini-3.5-flash", "gemini-3.1-flash-lite", "gemini-3.5-flash-lite",
+                       "gemini-flash-lite-latest", "gemini-flash-latest"):
+            try:
+                g = requests.post(
+                    f"https://generativelanguage.googleapis.com/v1beta/models/{modelo}:generateContent",
+                    headers={"x-goog-api-key": gem_key, "Content-Type": "application/json"},
+                    json={"contents": [{"parts": [{"text": prompt}]}],
+                          "generationConfig": {"responseMimeType": "application/json",
+                                               "temperature": 0.8}},
+                    timeout=60,
+                )
+                gd = g.json()
+                if "candidates" in gd:
+                    texto = gd["candidates"][0]["content"]["parts"][0]["text"]
+                    texto = re.sub(r"```json|```", "", texto).strip()
+                    resultado = json.loads(texto)
+                    cuerpo_g = resultado.get("cuerpo", "")
+                    cuerpo_g = re.sub(r"\[\s*(enlace|link|url|calendario|agenda)[^\]]*\]", agente["cal_link"], cuerpo_g, flags=re.I)
+                    cuerpo_g = re.sub(r"https?://\S+", lambda m: m.group(0) if "cal.com/intelligent-markets-agencia" in m.group(0) else agente["cal_link"], cuerpo_g)
+                    if agente["cal_link"] not in cuerpo_g:
+                        cuerpo_g += f"\n\n{agente['cal_link']}"
+                    resultado["cuerpo"] = cuerpo_g
+                    return resultado
+                print(f"    ⚠️  Gemini ({modelo}): {str(gd.get('error', gd))[:90]}")
+            except Exception as e:
+                print(f"    ⚠️  Gemini error ({modelo}): {str(e)[:90]}")
+
+    # 2) Claude API (de pago) — respaldo
     api_key = os.environ.get("ANTHROPIC_API_KEY", "")
     if not api_key:
         return _fallback_copy(agente, lead, informe, tipo)
