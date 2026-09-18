@@ -812,11 +812,13 @@ def search_openstreetmap(nicho_key, city, country, max_results=30):
             continue
         seen.add(name)
         addr_parts = [t.get(f"addr:{p}") for p in ("street", "housenumber", "city")]
+        _tel = t.get("contact:phone") or t.get("phone", "")
         leads.append({
             "nombre":    "",
             "empresa":   name,
             "email":     t.get("contact:email") or t.get("email", ""),
-            "telefono":  t.get("contact:phone") or t.get("phone", ""),
+            "telefono":  _tel,
+            "whatsapp":  telefono_a_whatsapp(_tel, country),
             "instagram": "",
             "linkedin":  "",
             "ciudad":    city,
@@ -840,6 +842,32 @@ def search_openstreetmap(nicho_key, city, country, max_results=30):
 # GOOGLE MAPS PLACES API
 # ════════════════════════════════════════════════════════════════
 
+# Tope diario de llamadas a Google Places — protege el crédito gratis de
+# Google ($200 USD/mes). Cada Text Search cuesta ~$0.032 USD; 150/día en
+# días hábiles se queda muy por debajo del límite gratis todo el mes.
+GMAPS_DAILY_CALL_LIMIT = 150
+
+def _gmaps_calls_hoy():
+    """Lee/actualiza el contador de llamadas a Places API del día de hoy."""
+    contador_file = Path(__file__).parent.parent / "logs" / "gmaps_calls.json"
+    contador_file.parent.mkdir(exist_ok=True)
+    hoy = datetime.now().strftime("%Y-%m-%d")
+    data = {}
+    if contador_file.exists():
+        try:
+            data = json.loads(contador_file.read_text(encoding="utf-8"))
+        except Exception:
+            data = {}
+    if data.get("fecha") != hoy:
+        data = {"fecha": hoy, "llamadas": 0}
+    return data, contador_file
+
+def _gmaps_registrar_llamada():
+    data, contador_file = _gmaps_calls_hoy()
+    data["llamadas"] += 1
+    contador_file.write_text(json.dumps(data), encoding="utf-8")
+    return data["llamadas"]
+
 def search_google_maps(nicho_key, city, country, max_results=30):
     """
     Busca negocios usando Places API (New) — Text Search.
@@ -849,6 +877,11 @@ def search_google_maps(nicho_key, city, country, max_results=30):
     if not GMAPS_KEY:
         return []
     if not SCRAPING_OK:
+        return []
+
+    data, _ = _gmaps_calls_hoy()
+    if data["llamadas"] >= GMAPS_DAILY_CALL_LIMIT:
+        print(f"  ⚠️  Tope diario de Google Places alcanzado ({GMAPS_DAILY_CALL_LIMIT}/día) — saltando para proteger el crédito gratis.")
         return []
 
     nicho_data = NICHOS.get(nicho_key, {})
@@ -873,6 +906,7 @@ def search_google_maps(nicho_key, city, country, max_results=30):
                 body["pageToken"] = page_token
 
             r = requests.post(url, headers=headers, json=body, timeout=10)
+            _gmaps_registrar_llamada()
             data = r.json()
 
             if "error" in data:
@@ -895,6 +929,22 @@ def search_google_maps(nicho_key, city, country, max_results=30):
     return results
 
 
+def telefono_a_whatsapp(telefono, country="Colombia"):
+    """Convierte un teléfono a link directo de WhatsApp (wa.me) — solo si
+    es celular (en Colombia: 10 dígitos, empieza en 3). Los fijos (604, 601...)
+    no tienen WhatsApp, se dejan vacíos."""
+    if not telefono:
+        return ""
+    digitos = re.sub(r"\D", "", telefono)
+    if country.lower() in ("colombia", "co"):
+        if len(digitos) == 10 and digitos.startswith("3"):
+            return f"https://wa.me/57{digitos}"
+        return ""  # fijo — sin WhatsApp
+    # Otros países: asume que ya viene completo si tiene 11+ dígitos
+    if len(digitos) >= 11:
+        return f"https://wa.me/{digitos}"
+    return ""
+
 def _gmaps_place_to_lead_new(place, nicho_key, city, country):
     """Convierte resultado de Places API (New) a formato lead."""
     nicho_data = NICHOS.get(nicho_key, {})
@@ -908,6 +958,7 @@ def _gmaps_place_to_lead_new(place, nicho_key, city, country):
         "empresa":   empresa,
         "email":     "",
         "telefono":  telefono,
+        "whatsapp":  telefono_a_whatsapp(telefono, country),
         "instagram": "",
         "linkedin":  "",
         "ciudad":    city,
@@ -1153,7 +1204,7 @@ def find_leads(nicho_key, city, country, max_leads=50,
 
     if all_leads:
         fieldnames = [
-            "nombre", "empresa", "email", "telefono", "instagram", "linkedin",
+            "nombre", "empresa", "email", "telefono", "whatsapp", "instagram", "linkedin",
             "ciudad", "pais", "nicho", "vertical", "url", "fuente", "fecha", "status",
             "oyentes", "reproducciones", "engagement_por_oyente", "generos",
         ]
