@@ -1034,7 +1034,8 @@ Si tiene sentido conversar 30 minutos, aquí está el link:
         "cuerpo": cuerpo,
         "asunto_alt_1": alts[0],
         "asunto_alt_2": alts[1],
-        "por_que_funciona": "Específico y basado en investigación real"
+        "por_que_funciona": "Específico y basado en investigación real",
+        "fallback": True,
     }
 
 
@@ -1445,6 +1446,12 @@ def procesar_leads(csv_path, agente_key, tipo=1, dry_run=False,
 
         asunto = copy.get("asunto","")
         cuerpo = copy.get("cuerpo","")
+
+        # La plantilla de emergencia (sin Claude API) es genérica y a veces
+        # absurda (ej. "pixel de Meta" a un cantante): nunca se envía de verdad.
+        if copy.get("fallback") and not dry_run:
+            print(f"    ⛔ Sin copy personalizado (Claude API no disponible) — NO se envía a {email}. Recarga saldo de API.\n")
+            continue
 
         if dry_run:
             print(f"    ── EMAIL ────────────────────────────────────")
