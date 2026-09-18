@@ -517,17 +517,16 @@ def investigacion_profunda(lead: dict) -> dict:
         })
 
     # ── 3. ADS ACTIVOS ───────────────────────────────────────────
+    # NOTA: Facebook Ads Library bloquea scraping sin login (403 / bot
+    # challenge, verificado 2026-09-18 incluso contra marcas con cientos de
+    # anuncios activos como Coca-Cola) — check_facebook_ads() NUNCA logra
+    # confirmar nada real, así que "tiene_ads_activos" siempre sale False
+    # por defecto. Afirmar "sin campañas activas" con eso es inventado, no
+    # verificado — se elimina esa afirmación del informe/copy. La señal
+    # real y verificable (pixel instalado o no, detectado directo en la
+    # web del prospecto) ya se captura arriba en ads_signals.
     if empresa:
-        print(f"      📢 Verificando ads activos...")
-        ads_data = check_facebook_ads(empresa)
-        informe["ads"] = ads_data
-        if not ads_data.get("tiene_ads_activos"):
-            informe["puntos_mejora"].append({
-                "area": "Publicidad Pagada",
-                "problema": "Sin campañas de paid media activas detectadas",
-                "impacto": "Dependen 100% del orgánico — crecimiento muy limitado",
-                "solucion_im": "Campañas de Meta Ads + Google Ads con segmentación de neurociencia",
-            })
+        informe["ads"] = {"nota": "Facebook Ads Library no es accesible sin login — no se afirma nada sobre campañas activas sin evidencia verificada"}
 
     # ── 4. MENCIONES GOOGLE ──────────────────────────────────────
     if empresa and ciudad:
@@ -582,14 +581,14 @@ def investigacion_profunda(lead: dict) -> dict:
     num_mejoras = len(informe["puntos_mejora"])
     tiene_web = bool(web_info)
     tiene_redes = len(informe["redes_sociales"]) > 0
-    tiene_ads = informe["ads"].get("tiene_ads_activos", False)
+    tiene_ads = informe["ads"].get("tiene_ads_activos")  # None = no verificado (ver nota en investigacion_profunda)
 
     informe["resumen_ejecutivo"] = f"""
 PROSPECTO: {empresa} | {nombre} | {nicho} | {ciudad}
 ─────────────────────────────────────────────────
 WEB:    {"✅ Sí" if tiene_web else "❌ No detectada"} | Plataforma: {web_info.get("plataforma_web","—")}
 REDES:  {"✅ " + ", ".join(informe["redes_sociales"].keys()) if tiene_redes else "❌ Sin presencia detectada"}
-ADS:    {"✅ Campañas activas" if tiene_ads else "❌ Sin campañas activas"}
+ADS:    {"✅ Campañas activas" if tiene_ads else ("❓ No verificado (FB Ads Library bloquea scraping)" if tiene_ads is None else "❌ Sin campañas activas")}
 PIXEL:  {"✅ Instalado" if web_info.get("ads_signals",{}).get("facebook_pixel") else "❌ Sin pixel"}
 BLOG:   {"✅ Sí" if web_info.get("tiene_blog") else "❌ No"}
 ─────────────────────────────────────────────────
@@ -637,8 +636,11 @@ def generar_argumento_apertura(informe, nicho, empresa, nombre):
     mejoras = informe.get("puntos_mejora", [])
     ads = informe.get("ads", {})
 
-    if not ads.get("tiene_ads_activos") and mejoras:
-        return f"Revisé {empresa} y vi que no están corriendo campañas de paid media — están dejando pacientes/clientes que buscan activamente sin poder llegar a ellos."
+    # NOTA: ya NO se afirma "no tienen campañas activas" — Facebook Ads
+    # Library bloquea el scraping sin login (403 siempre), así que eso nunca
+    # se puede verificar de verdad. Se usa en su lugar la señal real: si el
+    # pixel de Meta está instalado o no en su propia web (eso sí se puede
+    # comprobar directamente).
     if web and not web.get("ads_signals", {}).get("facebook_pixel"):
         return f"Revisé el sitio de {empresa} — no tienen el pixel instalado, lo que significa que no pueden retargear a nadie que los haya visitado."
     if not informe.get("redes_sociales"):
@@ -845,7 +847,7 @@ DATOS DEL PROSPECTO:
 SEÑALES DE LA INVESTIGACIÓN TÉCNICA:
 - Argumento de apertura detectado: {argumento or "No disponible"}
 - Dolor principal del nicho: {dolor or "No disponible"}
-- Tiene ads activos: {"Sí" if ads.get("tiene_ads_activos") else "No"}
+- Tiene ads activos: No verificable (Facebook Ads Library bloquea el scraping) — NO afirmes en el copy si tiene o no campañas activas, es información que no tenemos
 - Tiene pixel instalado: {"Sí" if web.get("ads_signals",{}).get("facebook_pixel") else "No"}
 - Redes detectadas: {", ".join(informe.get("redes_sociales",{}).keys()) or "No detectadas"}
 - Puntos de mejora: {", ".join([m["problema"] for m in mejoras[:3]]) or "No detectados"}
@@ -989,13 +991,14 @@ def _fallback_copy(agente, lead, informe, tipo):
     n       = agente["nombre"]
     firma   = agente["firma"]
 
+    web_fb = informe.get("web", {})
     if tipo == 1:
-        if not ads.get("tiene_ads_activos"):
+        if not web_fb.get("ads_signals", {}).get("facebook_pixel"):
             cuerpo = f"""{"Hola " + nombre + "," if nombre else ""}
 
 Revisé {empresa or "su negocio"} antes de escribirte.
 
-Una cosa que noté: no tienen campañas de publicidad digital activas. En {nicho.replace("_"," ")} en {ciudad}, eso significa que probablemente están dejando pasar clientes que los están buscando activamente en Google e Instagram.
+Una cosa que noté: no tienen el pixel de Meta instalado en su web. En {nicho.replace("_"," ")} en {ciudad}, eso significa que no pueden medir ni recuperar a nadie que los haya visitado sin convertir.
 
 ¿Cómo están consiguiendo clientes nuevos hoy?
 
@@ -1140,7 +1143,7 @@ body{{background:#060606;color:#e8e8e8;font-family:'DM Sans',sans-serif;padding:
     <div class="grid3">
       <div class="metric"><div class="mv {'ok' if web else 'no'}">{chk(web)}</div><div class="ml">Sitio Web</div></div>
       <div class="metric"><div class="mv {'ok' if redes else 'no'}">{chk(redes)}</div><div class="ml">Redes Sociales</div></div>
-      <div class="metric"><div class="mv {'ok' if ads.get('tiene_ads_activos') else 'no'}">{chk(ads.get('tiene_ads_activos'))}</div><div class="ml">Ads Activos</div></div>
+      <div class="metric"><div class="mv">❓</div><div class="ml">Ads Activos (no verificable)</div></div>
       <div class="metric"><div class="mv {'ok' if adss.get('facebook_pixel') else 'no'}">{chk(adss.get('facebook_pixel'))}</div><div class="ml">Facebook Pixel</div></div>
       <div class="metric"><div class="mv {'ok' if adss.get('google_ads') else 'no'}">{chk(adss.get('google_ads'))}</div><div class="ml">Google Analytics</div></div>
       <div class="metric"><div class="mv {'ok' if web.get('tiene_blog') else 'no'}">{chk(web.get('tiene_blog'))}</div><div class="ml">Blog / SEO</div></div>

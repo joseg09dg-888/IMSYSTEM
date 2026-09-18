@@ -612,10 +612,18 @@ def search_lastfm_artists(nicho_key, city, country, max_results=20, tags=None):
             if name:
                 candidatos.setdefault(name, None)
 
+    # Paginas de colaboracion ("Fulano & Mengano", "Fulano x Mengano", "feat.")
+    # tienen su propio conteo de oyentes en Last.fm, separado y mucho mas bajo
+    # que la fama real de cada artista involucrado -> se cuelan superestrellas
+    # (ej. "J Balvin & Bad Bunny") como si fueran independientes sin sello.
+    _COLAB_RE = re.compile(r"\s(&|x|vs\.?|feat\.?|featuring)\s", re.IGNORECASE)
+
     leads = []
     for name in candidatos:
         if len(leads) >= max_results:
             break
+        if _COLAB_RE.search(name):
+            continue
         info = _lastfm_get("artist.getinfo", artist=name)
         art = info.get("artist")
         if not art:
