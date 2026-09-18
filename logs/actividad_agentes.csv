@@ -782,3 +782,6 @@ timestamp,agente,tipo,nombre,empresa,email,nicho,ciudad,asunto,palabras,status,i
 2026-09-18T16:36:56.367599,José,PRIMER CONTACTO,Vatocholo,Vatocholo,vatocholomusic@gmail.com,artista_independiente,Madrid,algo que noté en Vatocholo,113,DRY_RUN,
 2026-09-18T16:37:51.301190,José,PRIMER CONTACTO,Vatocholo,Vatocholo,vatocholomusic@gmail.com,artista_independiente,Madrid,vatocholo + tus oyentes fuera de spotify,119,DRY_RUN,
 2026-09-18T16:39:08.983601,José,PRIMER CONTACTO,Vatocholo,Vatocholo,vatocholomusic@gmail.com,artista_independiente,Madrid,algo que noté en Vatocholo,117,DRY_RUN,
+2026-09-18T18:00:51.561410,José,PRIMER CONTACTO,,Witty Management,wmanagementagency@gmail.com,manager_musical,Medellin,algo que noté en Witty Management,107,DRY_RUN,
+2026-09-18T18:01:44.938389,José,PRIMER CONTACTO,,Witty Management,wmanagementagency@gmail.com,manager_musical,Medellin,algo que noté en Witty Management,114,DRY_RUN,
+2026-09-18T18:03:12.251930,José,PRIMER CONTACTO,,Witty Management,wmanagementagency@gmail.com,manager_musical,Medellin,algo que noté en Witty Management,85,ENVIADO,
