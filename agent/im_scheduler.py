@@ -45,15 +45,20 @@ TZ_COL = pytz.timezone("America/Bogota")  # UTC-5, sin cambio de horario
 def ahora_colombia() -> datetime:
     return datetime.now(TZ_COL)
 
-def es_horario_laboral() -> tuple[bool, str]:
+def es_horario_laboral(agente: str = "mateo") -> tuple[bool, str]:
     """
     Retorna (puede_enviar, razon)
     Lógica:
       - Domingo: nunca
       - Sábado: solo 6:00 - 12:00
-      - Lunes-Viernes: 6:00-12:00 y (12:00+pausa_aleatoria)-19:00
+      - Lunes-Viernes: 6:00-12:00 y (12:00+pausa_aleatoria)-hora_corte
       - Pausa del mediodía: varía entre 12:00 y 13:30 cada día
+      - hora_corte: 19:00 para Mateo (negocios, revisan correo en horario
+        de oficina); 22:00 para José (música — a esa hora es más probable
+        que el artista mismo revise su correo, no solo el manager).
     """
+    hora_corte = 22.0 if agente == "jose" else 19.0
+
     now = ahora_colombia()
     dia_semana = now.weekday()  # 0=Lunes, 6=Domingo
     hora = now.hour
@@ -79,9 +84,8 @@ def es_horario_laboral() -> tuple[bool, str]:
         faltan = (6.0 - hora_decimal) * 60
         return False, f"⏰ Muy temprano — empieza a las 6:00am ({faltan:.0f} min)"
 
-    # Después de las 7pm
-    if hora_decimal >= 19.0:
-        horas_hasta = 24 - hora_decimal + 6.0
+    # Después de la hora de corte
+    if hora_decimal >= hora_corte:
         return False, f"🌙 Terminó por hoy — retoma mañana a las 6:00am"
 
     # Franja de pausa del mediodía (varía cada día)
@@ -134,8 +138,9 @@ def cargar_pausa_del_dia(fecha) -> dict:
 
     return pausa
 
-def proxima_ventana() -> str:
+def proxima_ventana(agente: str = "mateo") -> str:
     """Describe cuándo será la próxima ventana de envío"""
+    hora_corte = 22.0 if agente == "jose" else 19.0
     now = ahora_colombia()
     dia = now.weekday()
     hora = now.hour + now.minute / 60
@@ -149,7 +154,7 @@ def proxima_ventana() -> str:
         lunes = now + timedelta(days=2)
         return f"Lunes {lunes.strftime('%d/%m')} a las 6:00am"
 
-    if hora >= 19:  # Noche de semana
+    if hora >= hora_corte:  # Noche de semana
         manana = now + timedelta(days=1 if dia < 4 else (3 if dia == 4 else 2))
         return f"Mañana {manana.strftime('%d/%m')} a las 6:00am"
 
@@ -160,13 +165,14 @@ def proxima_ventana() -> str:
 
     return "Ahora mismo"
 
-def segundos_hasta_proxima_ventana() -> int:
+def segundos_hasta_proxima_ventana(agente: str = "mateo") -> int:
     """Calcula segundos de espera hasta que se pueda enviar"""
+    hora_corte = 22.0 if agente == "jose" else 19.0
     now = ahora_colombia()
     dia = now.weekday()
     hora = now.hour + now.minute / 60
 
-    puede, _ = es_horario_laboral()
+    puede, _ = es_horario_laboral(agente)
     if puede:
         return 0
 
@@ -181,7 +187,7 @@ def segundos_hasta_proxima_ventana() -> int:
         return int((target - now).total_seconds())
 
     # Noche de semana → esperar hasta 6am del siguiente día hábil
-    if hora >= 19:
+    if hora >= hora_corte:
         dias_extra = 1
         if dia == 4:  dias_extra = 3  # Viernes → Lunes
         elif dia == 5: dias_extra = 2
@@ -255,10 +261,11 @@ def ejecutar_tarea(tarea: dict) -> bool:
         log_scheduler(f"Error ejecutando tarea: {e}")
         return False
 
-def mostrar_estado():
+def mostrar_estado(agente: str = "mateo"):
     """Muestra el estado actual del scheduler en terminal"""
+    hora_corte = 22.0 if agente == "jose" else 19.0
     now = ahora_colombia()
-    puede, razon = es_horario_laboral()
+    puede, razon = es_horario_laboral(agente)
     pausa = cargar_pausa_del_dia(now.date())
 
     dias = ["Lunes","Martes","Miércoles","Jueves","Viernes","Sábado","Domingo"]
@@ -286,10 +293,11 @@ def mostrar_estado():
     else:
         print(f"  │  ✅ Mañana:   6:00am → {ini_pausa_h:02d}:{ini_pausa_m:02d}am               │")
         print(f"  │  🍽️  Pausa:   {ini_pausa_h:02d}:{ini_pausa_m:02d} → {fin_pausa_h:02d}:{fin_pausa_m:02d} (varía cada día)   │")
-        print(f"  │  ✅ Tarde:    {fin_pausa_h:02d}:{fin_pausa_m:02d} → 7:00pm               │")
+        corte_str = "10:00pm" if hora_corte == 22.0 else "7:00pm"
+        print(f"  │  ✅ Tarde:    {fin_pausa_h:02d}:{fin_pausa_m:02d} → {corte_str}               │")
 
     print(f"  ├─────────────────────────────────────────────────────┤")
-    print(f"  │  Próxima ventana: {proxima_ventana():<35} │")
+    print(f"  │  Próxima ventana: {proxima_ventana(agente):<35} │")
     print(f"  └─────────────────────────────────────────────────────┘")
 
 def run_scheduler(agente: str, csv_glob: str, tipo: int = 1,
@@ -303,16 +311,16 @@ def run_scheduler(agente: str, csv_glob: str, tipo: int = 1,
 
     log_scheduler(f"Scheduler iniciado — Agente: {agente} | CSV: {csv_glob} | Tipo: {tipo}")
 
-    mostrar_estado()
+    mostrar_estado(agente)
     print()
 
     while _corriendo:
-        puede, razon = es_horario_laboral()
+        puede, razon = es_horario_laboral(agente)
         now = ahora_colombia()
 
         if not puede:
             # ── Fuera de horario — esperar ─────────────────────
-            secs = segundos_hasta_proxima_ventana()
+            secs = segundos_hasta_proxima_ventana(agente)
             secs = max(secs, 30)  # mínimo 30 segundos entre checks
 
             # Log cada 30 minutos para no llenar el archivo
@@ -326,8 +334,8 @@ def run_scheduler(agente: str, csv_glob: str, tipo: int = 1,
             for _ in range(min(secs // 30, 120)):
                 if not _corriendo: break
                 time.sleep(30)
-                secs = segundos_hasta_proxima_ventana()
-                puede2, razon2 = es_horario_laboral()
+                secs = segundos_hasta_proxima_ventana(agente)
+                puede2, razon2 = es_horario_laboral(agente)
                 if puede2: break
                 print(f"\r  ⏸  {razon2} | Próxima ventana en {formatear_tiempo(secs)}    ", end="", flush=True)
 
@@ -358,7 +366,7 @@ def run_scheduler(agente: str, csv_glob: str, tipo: int = 1,
         # ── Pausa entre sesiones de envío ──────────────────────
         # Para de nuevo cuando el scheduler detecte que salió del horario
         # Pero entre lotes, espera un tiempo aleatorio "humano"
-        puede_ahora, _ = es_horario_laboral()
+        puede_ahora, _ = es_horario_laboral(agente)
         if puede_ahora:
             # Espera humanizada entre lotes (15-45 min)
             pausa_lote = random.randint(15 * 60, 45 * 60)
@@ -367,7 +375,7 @@ def run_scheduler(agente: str, csv_glob: str, tipo: int = 1,
             for i in range(pausa_lote // 30):
                 if not _corriendo: break
                 time.sleep(30)
-                puede2, razon2 = es_horario_laboral()
+                puede2, razon2 = es_horario_laboral(agente)
                 if not puede2:
                     log_scheduler(f"Horario terminado durante pausa: {razon2}")
                     break
@@ -499,7 +507,7 @@ HORARIO:
     args = p.parse_args()
 
     if args.estado or (not args.modo and not args.crear_tarea_windows):
-        mostrar_estado()
+        mostrar_estado(args.agente or "mateo")
         # Mostrar también la pausa de hoy
         now = ahora_colombia()
         if now.weekday() < 6:

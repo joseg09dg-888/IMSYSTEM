@@ -69,7 +69,7 @@ AGENTES = {
         "rol":             "Gerente de Marketing",
         "empresa":         "Intelligent Markets",
         "firma":           "Mateo Galvis\nGerente de Marketing — Intelligent Markets",
-        "email":           os.environ.get("IM_EMAIL", "intelligentmarkets@gmail.com"),
+        "email":           os.environ.get("IM_EMAIL", "intelligentsmarkets@gmail.com"),
         "vertical":        "empresas",
         "cal_link":        os.environ.get("CAL_EMPRESAS", "https://cal.com/intelligent-markets-agencia/30min"),
         "brochure":        "brochures/deck_im_empresas.pdf",
