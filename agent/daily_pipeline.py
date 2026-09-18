@@ -89,17 +89,21 @@ LEADS_POR_COMBO = 50
 # Tags de genero para descubrir artistas nuevos en Last.fm cada corrida.
 # Last.fm reporta oyentes GLOBALES por tag (no filtra por pais), asi que esta
 # lista ya cubre artistas de todo el mundo dentro de estos generos.
-# IMPORTANTE: se evitan tags masivos genericos ("pop", "hip hop", "r&b",
+# IMPORTANTE 1: se evitan tags masivos genericos ("pop", "hip hop", "r&b",
 # "electronic") porque sus top-artists son casi todos superestrellas muy por
-# encima del rango de oyentes que califica (8k-120k) — desperdician cientos
-# de llamadas a la API sin producir leads. Se usan tags de genero/subgenero
-# mas especificos, donde el top-chart SI cae en el rango de artistas con
-# traccion real pero sin sello grande.
+# encima del rango de oyentes que califica — desperdician cientos de
+# llamadas a la API sin producir leads.
+# IMPORTANTE 2 (2026-09-18): se quitaron tags de mercados donde IM Music no
+# tiene alcance de negocio real (amapiano = Sudafrica, afrobeats = Nigeria,
+# drill = EEUU/UK, hyperpop = escena US/Europa) — aunque algunos SI eran
+# artistas de nivel independiente por oyentes, no son prospectos viables:
+# IM opera en español, mercado latino, sin conexiones en esas industrias.
+# Solo se usan generos del ecosistema latino/urbano donde IM si puede vender.
 GENEROS_ARTISTAS = [
     "reggaeton", "trap latino", "urbano", "colombian hip hop",
     "latin pop", "musica urbana", "regional mexicano",
-    "corridos tumbados", "afrobeats", "amapiano", "drill",
-    "hyperpop", "dembow", "latin trap", "musica popular mexicana",
+    "corridos tumbados", "dembow", "latin trap",
+    "musica popular mexicana", "rkt", "cumbia 420", "trap argentino",
 ]
 ARTISTAS_POR_GENERO = 30
 
