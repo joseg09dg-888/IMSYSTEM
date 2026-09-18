@@ -35,22 +35,86 @@ MAESTRO_EMPRESAS = DATA_DIR / "MAESTRO_leads_empresas.csv"
 MAESTRO_ARTISTAS = DATA_DIR / "MAESTRO_leads_artistas.csv"
 ROTACION_STATE = LOGS_DIR / "rotacion_pipeline.json"
 
-# ── Rotacion de nicho+ciudad para Mateo — se recorre una combinacion por dia ──
-ROTACION_EMPRESAS = [
-    ("odontologos", "Medellin", "Colombia"),
-    ("dermatologo", "Medellin", "Colombia"),
-    ("psicologo", "Medellin", "Colombia"),
-    ("fisioterapeuta", "Medellin", "Colombia"),
-    ("agencia_viajes", "Medellin", "Colombia"),
-    ("seguros", "Medellin", "Colombia"),
-    ("autos_alta_gama", "Medellin", "Colombia"),
-    ("odontologos", "Bogota", "Colombia"),
-    ("agencia_viajes", "Bogota", "Colombia"),
-    ("odontologos", "Miami", "United States"),
+# ── Rotacion de nicho+ciudad para Mateo — busqueda mundial ──
+# Ciudades en orden intercalado por continente: cada dia el pipeline avanza
+# por esta lista, así que desde el primer dia ya toca Norte, Centro y Sur
+# America, y Europa (no un solo pais).
+CIUDADES_MUNDO = [
+    ("Medellin", "Colombia"),
+    ("Miami", "United States"),
+    ("Ciudad de Mexico", "Mexico"),
+    ("Toronto", "Canada"),
+    ("Buenos Aires", "Argentina"),
+    ("Madrid", "Spain"),
+    ("Bogota", "Colombia"),
+    ("New York", "United States"),
+    ("Guadalajara", "Mexico"),
+    ("Santiago", "Chile"),
+    ("Barcelona", "Spain"),
+    ("Lima", "Peru"),
+    ("Cali", "Colombia"),
+    ("Los Angeles", "United States"),
+    ("Monterrey", "Mexico"),
+    ("Vancouver", "Canada"),
+    ("Quito", "Ecuador"),
+    ("Barranquilla", "Colombia"),
+    ("Houston", "United States"),
+    ("Ciudad de Panama", "Panama"),
+    ("San Jose", "Costa Rica"),
+    ("Chicago", "United States"),
 ]
 
-# Tags de genero para descubrir artistas nuevos en Last.fm cada corrida
-GENEROS_ARTISTAS = ["reggaeton", "trap latino", "urbano", "colombian hip hop"]
+# Nichos que ya existen en NICHOS (lead_finder_v2.py) y sirven para cualquier pais
+NICHOS_ROTACION = [
+    "odontologos", "dermatologo", "psicologo", "fisioterapeuta",
+    "agencia_viajes", "seguros", "autos_alta_gama",
+]
+
+# Producto nicho x ciudad, en orden: primero recorre TODAS las ciudades del
+# mundo con un nicho antes de pasar al siguiente, para maximizar diversidad
+# geografica desde el dia 1.
+ROTACION_EMPRESAS = [
+    (nicho, ciudad, pais)
+    for nicho in NICHOS_ROTACION
+    for ciudad, pais in CIUDADES_MUNDO
+]
+
+# Cuantas combinaciones nicho+ciudad se procesan CADA VEZ que corre el
+# pipeline (antes era 1 -> muy poco volumen). Con 150 llamadas/dia de
+# margen en Google Places y ~2-3 llamadas por combinacion, 10 combinaciones
+# usan ~20-30 llamadas, muy por debajo del limite.
+N_COMBOS_POR_CORRIDA = 10
+LEADS_POR_COMBO = 50
+
+# Tags de genero para descubrir artistas nuevos en Last.fm cada corrida.
+# Last.fm reporta oyentes GLOBALES por tag (no filtra por pais), asi que esta
+# lista ya cubre artistas de todo el mundo dentro de estos generos.
+# IMPORTANTE: se evitan tags masivos genericos ("pop", "hip hop", "r&b",
+# "electronic") porque sus top-artists son casi todos superestrellas muy por
+# encima del rango de oyentes que califica (8k-120k) — desperdician cientos
+# de llamadas a la API sin producir leads. Se usan tags de genero/subgenero
+# mas especificos, donde el top-chart SI cae en el rango de artistas con
+# traccion real pero sin sello grande.
+GENEROS_ARTISTAS = [
+    "reggaeton", "trap latino", "urbano", "colombian hip hop",
+    "latin pop", "musica urbana", "regional mexicano",
+    "corridos tumbados", "afrobeats", "amapiano", "drill",
+    "hyperpop", "dembow", "latin trap", "musica popular mexicana",
+]
+ARTISTAS_POR_GENERO = 30
+
+# Nombres que NUNCA se deben agregar/contactar — ya son clientes, o sellos que
+# no se prospectan. Match por substring, sin distinguir mayus/minus/acentos.
+EXCLUIDOS = [
+    "hidental",       # ya es cliente
+    "vion music",     # sello excluido
+    "kapital music",  # sello excluido
+]
+
+
+def _excluido(nombre: str) -> bool:
+    n = (nombre or "").lower()
+    return any(ex in n for ex in EXCLUIDOS)
 
 
 def _cargar_estado():
@@ -77,7 +141,11 @@ def _append_csv(rows, destino: Path):
             for r in csv.DictReader(f):
                 existentes.add((r.get("empresa", ""), r.get("email", "")))
 
-    nuevas = [r for r in rows if (r.get("empresa", ""), r.get("email", "")) not in existentes]
+    nuevas = [
+        r for r in rows
+        if (r.get("empresa", ""), r.get("email", "")) not in existentes
+        and not _excluido(r.get("empresa", ""))
+    ]
     if not nuevas:
         return 0
 
@@ -91,25 +159,31 @@ def _append_csv(rows, destino: Path):
     return len(nuevas)
 
 
-def paso_buscar_empresas():
-    """Corre la siguiente combinacion de la rotacion (una por dia)."""
+def paso_buscar_empresas(n_combos: int = N_COMBOS_POR_CORRIDA):
+    """Corre varias combinaciones nicho+ciudad de la rotacion mundial en cada
+    llamada (antes era solo 1/dia -> muy poco volumen para la meta de
+    800-1000 contactos/mes)."""
     estado = _cargar_estado()
     hoy = datetime.now().strftime("%Y-%m-%d")
-    if estado.get("fecha") != hoy:
-        estado = {"fecha": hoy, "indice": estado.get("indice", 0)}
 
-    idx = estado["indice"] % len(ROTACION_EMPRESAS)
-    nicho, ciudad, pais = ROTACION_EMPRESAS[idx]
-    print(f"[pipeline] Buscando: {nicho} en {ciudad}, {pais}")
+    total_nuevas = 0
+    for _ in range(n_combos):
+        idx = estado["indice"] % len(ROTACION_EMPRESAS)
+        nicho, ciudad, pais = ROTACION_EMPRESAS[idx]
+        print(f"[pipeline] Buscando: {nicho} en {ciudad}, {pais}")
 
-    leads = find_leads(nicho, ciudad, pais, max_leads=30, verbose=True)
-    nuevas = _append_csv(leads, MAESTRO_EMPRESAS)
-    print(f"[pipeline] {nuevas} leads nuevos agregados al maestro de empresas.")
+        leads = find_leads(nicho, ciudad, pais, max_leads=LEADS_POR_COMBO, verbose=True)
+        nuevas = _append_csv(leads, MAESTRO_EMPRESAS)
+        print(f"[pipeline] {nuevas} leads nuevos agregados al maestro de empresas "
+              f"({nicho}/{ciudad}).")
+        total_nuevas += nuevas
 
-    estado["indice"] = idx + 1
-    estado["fecha"] = hoy
-    _guardar_estado(estado)
-    return nuevas
+        estado["indice"] = idx + 1
+        estado["fecha"] = hoy
+        _guardar_estado(estado)
+
+    print(f"[pipeline] TOTAL leads nuevos en esta corrida: {total_nuevas}")
+    return total_nuevas
 
 
 def paso_buscar_artistas():
@@ -118,7 +192,7 @@ def paso_buscar_artistas():
     vistos = set()
     for genero in GENEROS_ARTISTAS:
         leads = search_lastfm_artists("artista_independiente", "Medellin", "Colombia",
-                                       max_results=15, tags=[genero])
+                                       max_results=ARTISTAS_POR_GENERO, tags=[genero])
         for l in leads:
             key = l.get("empresa", "")
             if key not in vistos:
@@ -130,7 +204,7 @@ def paso_buscar_artistas():
     return nuevos
 
 
-def paso_enviar(agente: str, csv_path: Path, max_por_sesion: int = 15):
+def paso_enviar(agente: str, csv_path: Path, max_por_sesion: int = 40):
     """Manda UNA tanda (no loop infinito) respetando horario, via im_agents.py."""
     if not csv_path.exists():
         print(f"[pipeline] {csv_path.name} no existe todavia, nada que enviar.")
@@ -153,10 +227,12 @@ def main():
     p.add_argument("--linea", choices=["mateo", "jose", "ambas"], default="ambas")
     p.add_argument("--solo-buscar", action="store_true",
                    help="Solo busca leads nuevos, no envia nada (para revisar antes).")
+    p.add_argument("--combos", type=int, default=N_COMBOS_POR_CORRIDA,
+                   help="Cuantas combinaciones nicho+ciudad buscar en esta corrida.")
     args = p.parse_args()
 
     if args.linea in ("mateo", "ambas"):
-        paso_buscar_empresas()
+        paso_buscar_empresas(n_combos=args.combos)
         if not args.solo_buscar:
             paso_enviar("mateo", MAESTRO_EMPRESAS)
 

@@ -1378,7 +1378,9 @@ def procesar_leads(csv_path, agente_key, tipo=1, dry_run=False,
     dominios_enviados: set = set()
 
     enviados = 0
-    for i, lead in enumerate(leads[:max_envios], 1):
+    for i, lead in enumerate(leads, 1):
+        if enviados >= max_envios:
+            break
         email = lead.get("email","").strip()
         if not email or "@" not in email:
             continue
@@ -1405,7 +1407,7 @@ def procesar_leads(csv_path, agente_key, tipo=1, dry_run=False,
         nombre  = lead.get("nombre","") or lead.get("empresa","")
         empresa = lead.get("empresa","")
 
-        print(f"  [{i}/{min(len(leads),max_envios)}] {nombre or email}")
+        print(f"  [{i}/{len(leads)}] ({enviados+1}/{max_envios} a enviar) {nombre or email}")
 
         # INVESTIGACIÓN TÉCNICA (web, ads, redes)
         print(f"    🔍 Investigando...", end="", flush=True)
@@ -1462,7 +1464,7 @@ def procesar_leads(csv_path, agente_key, tipo=1, dry_run=False,
                     nicho = lead.get("nicho", lead.get("sector", ""))
                     if nicho:
                         _mem.registrar_nicho(nicho)
-            if i < min(len(leads), max_envios):
+            if enviados < max_envios:
                 delay = random.uniform(60, 120)
                 print(f"    ⏳ {delay:.0f}s...\n")
                 time.sleep(delay)

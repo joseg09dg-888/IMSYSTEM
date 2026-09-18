@@ -1147,7 +1147,7 @@ def find_leads(nicho_key, city, country, max_leads=50,
 
     # ── FASE EXTRA: Google Maps Places API ──────────────────────
     if GMAPS_KEY:
-        gmaps_leads = search_google_maps(nicho_key, city, country, max_results=30)
+        gmaps_leads = search_google_maps(nicho_key, city, country, max_results=max(max_leads, 30))
         maps_nuevos = []
         for lead in gmaps_leads:
             dedup_key = lead.get("empresa") or lead.get("gmaps_id")
