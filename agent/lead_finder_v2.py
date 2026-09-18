@@ -579,7 +579,14 @@ LASTFM_TAGS_URBANO = [
 ]
 
 LASTFM_QUALIFY_MIN = 8000       # menos que esto = casi seguro sin presupuesto real
-LASTFM_QUALIFY_MAX = 120000     # más que esto = ya tiene sello/equipo grande detrás
+LASTFM_QUALIFY_MAX = 40000      # más que esto = ya tiene sello/equipo grande detrás
+# Bajado de 120,000 a 40,000 el 2026-09-18: se verificó en vivo que
+# "Amenazzy" con 118,617 oyentes en Last.fm es una cuenta VERIFICADA de
+# Instagram con 4.4 millones de seguidores — Last.fm subregistra al público
+# hispanohablante en reggaeton/trap latino, así que el techo viejo dejaba
+# pasar estrellas establecidas como si fueran independientes. Aun con este
+# techo mas bajo, TODO artista debe verificarse en Instagram (seguidores +
+# verificado) antes de escribirle — ver verificar_artista_instagram().
                                  # (bajado de 350k — verificado 2026-09-17: Jowell&Randy con
                                  # 274k ya tenía booking agency profesional y Latin Grammy noms)
 
@@ -658,7 +665,15 @@ def search_lastfm_artists(nicho_key, city, country, max_results=20, tags=None):
             "engagement_por_oyente": engagement,
             "generos":     generos,
             "fecha":       datetime.now().strftime("%Y-%m-%d"),
-            "status":      "pendiente",
+            # NUNCA "pendiente" (listo para contactar) — el numero de oyentes
+            # de Last.fm por si solo NO es confiable para saber si el artista
+            # ya tiene sello/equipo grande (verificado en vivo 2026-09-18:
+            # "Amenazzy" y "Tomasa del Real" pasaron el filtro de oyentes y
+            # resultaron ser cuentas verificadas de Instagram con 100k-4.4M
+            # seguidores). Todo artista debe verificarse a mano en Instagram
+            # (seguidores + verificado) antes de escribirle. Solo despues de
+            # esa verificacion se cambia el status a "pendiente".
+            "status":      "pendiente_verificacion_ig",
         })
 
     leads.sort(key=lambda l: -l["oyentes"])
