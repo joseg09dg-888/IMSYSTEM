@@ -819,3 +819,7 @@ timestamp,agente,tipo,nombre,empresa,email,nicho,ciudad,asunto,palabras,status,i
 2026-09-19T09:40:28.394397,Mateo,PRIMER CONTACTO,,Consultorio Dental en Lima | Cerca de Mi | Dra. Andrea Contreras,od.andreacontrerasvzla@gmail.com,odontologos,Lima,una observación sobre su consultorio dental,121,ENVIADO,C:\Users\JOSÉ\Projects\IMSYSTEM\reports\informe_consultorio_dental_e_20260919_0940.html
 2026-09-19T09:42:28.357462,Mateo,PRIMER CONTACTO,,Centro Odontológico Neodentis,consultas@neodentis.com,odontologos,Lima,algo que noté en Centro Odontológico Neodentis,121,ENVIADO,C:\Users\JOSÉ\Projects\IMSYSTEM\reports\informe_centro_odontológico__20260919_0942.html
 2026-09-19T09:44:18.277323,Mateo,PRIMER CONTACTO,,Solución Dental | Especialistas en Ortodoncia,info@soluciondental.pe,odontologos,Lima,algo que noté en Solución Dental,91,ENVIADO,C:\Users\JOSÉ\Projects\IMSYSTEM\reports\informe_solución_dental___es_20260919_0943.html
+2026-09-19T18:09:38.843858,José,PRIMER CONTACTO,,Merlin Producciones,info@merlinproducciones.co,manager_musical,Medellin,algo que noté en Merlin Producciones,90,ENVIADO,
+2026-09-19T18:11:42.787163,José,PRIMER CONTACTO,,Mercado Artistas®,comercial@mercadoartistas.com,manager_musical,Bogota,algo que noté en Mercado Artistas,102,ENVIADO,
+2026-09-19T18:13:52.566189,José,PRIMER CONTACTO,,4D Musik,info@4dmusik.com,manager_musical,Bogota,algo que noté en 4D Musik,114,ENVIADO,
+2026-09-19T18:15:36.782342,José,PRIMER CONTACTO,,Booking & Eventos,contacto@bookingeventos.net,manager_musical,Bogota,algo que noté en Booking & Eventos,114,ENVIADO,
