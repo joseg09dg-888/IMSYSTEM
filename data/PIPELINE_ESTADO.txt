@@ -1,7 +1,7 @@
-ESTADO DEL EMBUDO - 2026-09-18 16:32
+ESTADO DEL EMBUDO - 2026-09-19 09:57
 
-NUEVO (sin contactar, en base) : 390
-FRIO   (esperando seguimiento) : 71
+NUEVO (sin contactar, en base) : 556
+FRIO   (esperando seguimiento) : 104
 TIBIO  (abrieron el correo)    : 0
 CALIENTE (respondieron)        : 0   <- ver logs/RESPUESTAS.txt
 PERDIDO (3 toques sin respuesta): 0
