@@ -294,10 +294,10 @@ def main():
     if args.linea in ("jose", "ambas"):
         paso_buscar_musica(n_combos=6)
         if not args.solo_buscar:
-            paso_enviar("jose", MAESTRO_MUSICA, max_por_sesion=20)
+            paso_enviar("jose", MAESTRO_MUSICA, max_por_sesion=3)
         paso_buscar_artistas()
         if not args.solo_buscar:
-            paso_enviar_artistas(max_por_sesion=10)
+            paso_enviar_artistas(max_por_sesion=2)
         # Jose no se auto-envia: los artistas nuevos no tienen contacto todavia,
         # necesitan revision de Instagram primero (a proposito, ver notas de sesion).
 

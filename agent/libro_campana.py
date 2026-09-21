@@ -185,6 +185,35 @@ def _candidatos_equipos(incluir_baja):
     return out
 
 
+CUENTA_ENVIO = "jose"
+
+
+def _smtp_desde_mateo(email_to, asunto, cuerpo):
+    """Texto plano desde la cuenta de Mateo (que no esta bloqueada por Gmail);
+    las respuestas llegan a la bandeja de IM Music (Reply-To)."""
+    import smtplib, ssl
+    from email.message import EmailMessage
+    from email.utils import formatdate, make_msgid
+    env = _env()
+    user, pwd = env["IM_EMAIL"], env["IM_EMAIL_PASSWORD"]
+    msg = EmailMessage()
+    msg["From"] = f"José Galvis - IM Music <{user}>"
+    msg["Reply-To"] = env.get("IM_EMAIL_MUSIC", "immusicsello@gmail.com")
+    msg["To"] = email_to
+    msg["Subject"] = asunto
+    msg["Date"] = formatdate(localtime=True)
+    msg["Message-ID"] = make_msgid()
+    msg.set_content(cuerpo)
+    try:
+        with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=ssl.create_default_context()) as s:
+            s.login(user, pwd)
+            s.send_message(msg)
+        return True
+    except Exception as e:
+        print(f"[libro] error SMTP Mateo: {str(e)[:100]}")
+        return False
+
+
 def _enviar(email_to, asunto, cuerpo, dry):
     if dry:
         print(f"--- DRY-RUN a {email_to}\nAsunto: {asunto}\n{cuerpo}\n")
@@ -196,15 +225,18 @@ def _enviar(email_to, asunto, cuerpo, dry):
     if espera:
         print("[libro] " + razon_h + ": retoma en " + str(espera // 60) + " min")
         time.sleep(espera)
-    puede, razon = deliv.puede_enviar_ahora("jose")
+    puede, razon = deliv.puede_enviar_ahora(CUENTA_ENVIO)
     if not puede:
         print(f"[libro] ⛔ {razon}")
         return None
     global _FALLOS
-    ok = im_agents.enviar_email("jose", email_to, asunto, cuerpo, False)
+    if CUENTA_ENVIO == "mateo":
+        ok = _smtp_desde_mateo(email_to, asunto, cuerpo)
+    else:
+        ok = im_agents.enviar_email("jose", email_to, asunto, cuerpo, False)
     if ok:
         _FALLOS = 0
-        deliv.registrar_email_warmup("jose")
+        deliv.registrar_email_warmup(CUENTA_ENVIO)
     else:
         _FALLOS += 1
         if _FALLOS >= 3:
@@ -217,12 +249,16 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--max", type=int, default=10)
     ap.add_argument("--dry-run", action="store_true")
+    ap.add_argument("--cuenta", choices=["jose", "mateo"], default="jose",
+                    help="cuenta de Gmail desde la que se envia (mateo = respaldo si la de José esta bloqueada)")
     ap.add_argument("--equipos", action="store_true",
                     help="enviar al equipo/booking de los artistas definidos en docs/libro")
     ap.add_argument("--incluir-baja", action="store_true", help="incluir contactos de confianza baja")
     ap.add_argument("--a-contactados", action="store_true",
                     help="tambien a quienes ya recibieron otro correo del sistema")
     args = ap.parse_args()
+    global CUENTA_ENVIO
+    CUENTA_ENVIO = args.cuenta
 
     enviados = _leer_enviados()
     hechos = 0

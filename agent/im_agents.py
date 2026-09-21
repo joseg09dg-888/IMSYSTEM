@@ -1275,9 +1275,12 @@ def enviar_email(agente_key, to_email, asunto, cuerpo, adjuntar=False):
         return True
     try:
         # Pixel de tracking — se calcula antes para poder incluirlo en el HTML
-        ngrok_url = os.environ.get("NGROK_URL", "http://localhost:5000")
+        # Solo con un dominio publico https (NGROK_URL real). Con localhost el
+        # pixel oculto no sirve para nada y Gmail lo lee como señal de spam
+        # (2026-09-21: rechazos "Message rejected" en la cuenta de José).
+        ngrok_url = os.environ.get("NGROK_URL", "")
         pixel_url = ""
-        if ngrok_url and to_email:
+        if ngrok_url.startswith("https://") and to_email:
             import base64 as _b64
             token_data = f"{to_email}|{agente.get('nombre_completo','')[:20]}|{asunto[:20]}"
             token = _b64.b64encode(token_data.encode()).decode().rstrip('=')

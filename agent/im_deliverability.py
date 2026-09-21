@@ -526,6 +526,9 @@ def get_max_emails_hoy() -> tuple:
     return restantes, dias, max_dia, enviados_hoy
 
 
+TOPE_DIARIO_CUENTA = {"mateo": 100, "jose": 20}
+
+
 def _cfg_cuenta(cuenta=None):
     """Cada cuenta de Gmail tiene su propio contador (Mateo = archivo original)."""
     nombre = "warmup_config_jose.json" if cuenta == "jose" else "warmup_config.json"
@@ -571,6 +574,14 @@ def puede_enviar_ahora(cuenta=None) -> tuple:
     enviados_hora = config.get("emails_esta_hora", 0)
     if enviados_hora >= MAX_EMAILS_POR_HORA:
         return False, f"Límite horario alcanzado ({MAX_EMAILS_POR_HORA}/hora) — espera la próxima hora"
+
+    # Tope diario propio por cuenta: Gmail limita mas a las cuentas de poco
+    # historial (2026-09-21: la cuenta de José recibio "Daily user sending
+    # limit exceeded" a los ~24 envios). Se sube de a poco conforme pasan dias sin errores.
+    if config.get("fecha_ultimo") == datetime.now().strftime("%Y-%m-%d"):
+        tope = TOPE_DIARIO_CUENTA.get(cuenta or "mateo", 80)
+        if config.get("emails_enviados_hoy", 0) >= tope:
+            return False, f"Tope diario de esta cuenta alcanzado ({tope}/dia) — sigue mañana"
 
     return True, "OK"
 
