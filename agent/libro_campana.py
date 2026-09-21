@@ -1,0 +1,194 @@
+#!/usr/bin/env python3
+"""
+CAMPAÑA PARALELA DEL LIBRO — "Music Business Para Todos Los Humanos" (Hotmart).
+
+Propuesta a sellos, managers y agencias de booking: copia digital gratis y, si lo
+recomiendan con su link de afiliado, 70% de cada venta (~$10,31 USD por copia,
+cifra neta ya corregida en docs/libro/estrategia_email_artistas_afiliados.md).
+Oferta de riesgo cero: es mucho mas facil decir "si" que a un servicio de $1,000+.
+
+Cuenta remitente: IM Music (José). Plantilla = version corta de la estrategia.
+Un solo seguimiento a los 6 dias si no respondio. No repite: data/libro_enviados.csv.
+Nunca escribe a quien ya fue contactado por el sistema (memoria) salvo --a-contactados.
+
+Uso:  python agent/libro_campana.py --max 10
+      python agent/libro_campana.py --dry-run
+"""
+import argparse, csv, email, imaplib, random, re, sys, time
+from datetime import datetime, timedelta
+from email.header import decode_header, make_header
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).parent))
+import im_agents                                  # noqa: E402
+import im_deliverability as deliv                 # noqa: E402
+from session_memory import MemoriaAgentes         # noqa: E402
+
+BASE = Path(__file__).parent.parent
+MUSICA = BASE / "data" / "MAESTRO_leads_musica.csv"
+ENVIADOS = BASE / "data" / "libro_enviados.csv"
+DIAS_SEGUIMIENTO = 6
+EXCLUIR_NOMBRE = ("tienda", "store", "vinyl", "vinilo", "almacén", "almacen", "teatro", "discotienda",
+                  "hidental", "vion music", "kapital music")
+MAL_DOMINIO = ("mysite.com", "example.", "domain.com", "email.com")
+EMAIL_OK = re.compile(r"^[A-Za-z0-9._%+\-]+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,}$")
+
+ASUNTOS = [
+    "Una propuesta sin inversión para {empresa}",
+    "Libro de music business — 70% de comisión para {empresa}",
+    "Para el roster de {empresa}: copia gratis y comisión del 70%",
+]
+
+CUERPO = """Hola equipo de {empresa},
+
+Directo al punto: tenemos un libro sobre negocio musical (derechos, contratos, regalías y marca propia) que le puede servir a los artistas de su roster: muchos son emergentes buscando justo esta información.
+
+La propuesta: les damos una copia digital gratis para que la revisen sin compromiso. Si deciden recomendarla con su link de afiliado de Hotmart, se quedan con el 70% de cada venta (≈ $10,31 USD por copia), sin invertir nada de su parte. Como referencia, 100 ventas por su link serían ≈ $1.031 USD.
+
+¿Les envío la copia digital para que la revisen?
+
+José Galvis
+IM Music — Sello discográfico independiente
+https://www.instagram.com/immusicsello"""
+
+SEGUIMIENTO = """Hola equipo de {empresa},
+
+Subo este correo por si se perdió entre tantos mensajes.
+
+La oferta sigue en pie: copia digital del libro sin costo y sin compromiso, y si deciden recomendarlo con su link de afiliado se quedan con el 70% de cada venta.
+
+Si prefieren que no les vuelva a escribir sobre esto, díganme y no hay problema.
+
+José Galvis
+IM Music — Sello discográfico independiente"""
+
+
+def _env():
+    env = {}
+    for line in open(BASE / ".env", encoding="utf-8"):
+        if "=" in line and not line.strip().startswith("#"):
+            k, v = line.strip().split("=", 1)
+            env[k] = v
+    return env
+
+
+def _leer_enviados():
+    if not ENVIADOS.exists():
+        return []
+    return list(csv.DictReader(open(ENVIADOS, encoding="utf-8")))
+
+
+def _guardar_enviados(rows):
+    with open(ENVIADOS, "w", newline="", encoding="utf-8") as f:
+        w = csv.DictWriter(f, fieldnames=["email", "empresa", "fecha", "seguimiento"])
+        w.writeheader()
+        w.writerows(rows)
+
+
+def _respondieron():
+    env = _env()
+    M = imaplib.IMAP4_SSL("imap.gmail.com", 993)
+    M.login(env["IM_EMAIL_MUSIC"], env["IM_EMAIL_MUSIC_PASSWORD"])
+    M.select("INBOX", readonly=True)
+    desde = (datetime.now() - timedelta(days=30)).strftime("%d-%b-%Y")
+    _, nums = M.search(None, f"SINCE {desde}")
+    quienes = set()
+    for n in nums[0].split():
+        _, d = M.fetch(n, "(BODY.PEEK[HEADER.FIELDS (FROM)])")
+        m = email.message_from_bytes(d[0][1])
+        quienes.add(email.utils.parseaddr(m.get("From", ""))[1].lower())
+    M.logout()
+    return quienes
+
+
+def _candidatos(a_contactados):
+    mem = MemoriaAgentes()
+    ya = {r["email"].lower() for r in _leer_enviados()}
+    out = []
+    for r in csv.DictReader(open(MUSICA, encoding="utf-8")):
+        e = re.sub(r"%20|\s|;", "", r.get("email", "")).lower()
+        nombre = r.get("empresa", "")
+        if not EMAIL_OK.match(e) or any(m in e for m in MAL_DOMINIO):
+            continue
+        if any(x in nombre.lower() for x in EXCLUIR_NOMBRE):
+            continue
+        if e in ya or (not a_contactados and mem.ya_contactado(e)):
+            continue
+        out.append((e, nombre.strip()))
+    vistos, unicos = set(), []
+    for e, n in out:
+        dom = e.split("@")[1]
+        if dom in vistos and dom not in ("gmail.com", "hotmail.com", "outlook.com", "yahoo.com"):
+            continue
+        vistos.add(dom)
+        unicos.append((e, n))
+    return unicos
+
+
+def _enviar(email_to, asunto, cuerpo, dry):
+    if dry:
+        print(f"--- DRY-RUN a {email_to}\nAsunto: {asunto}\n{cuerpo}\n")
+        return True
+    puede, razon = deliv.puede_enviar_ahora()
+    if not puede:
+        print(f"[libro] ⛔ {razon}")
+        return None
+    ok = im_agents.enviar_email("jose", email_to, asunto, cuerpo, False)
+    if ok:
+        deliv.registrar_email_warmup()
+    return ok
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--max", type=int, default=10)
+    ap.add_argument("--dry-run", action="store_true")
+    ap.add_argument("--a-contactados", action="store_true",
+                    help="tambien a quienes ya recibieron otro correo del sistema")
+    args = ap.parse_args()
+
+    enviados = _leer_enviados()
+    hechos = 0
+
+    # 1) seguimiento unico a quien no respondio en DIAS_SEGUIMIENTO dias
+    if enviados and not args.dry_run:
+        resp = _respondieron()
+        limite = datetime.now() - timedelta(days=DIAS_SEGUIMIENTO)
+        for r in enviados:
+            if hechos >= args.max:
+                break
+            if r["seguimiento"] == "si" or r["email"] in resp or datetime.fromisoformat(r["fecha"]) > limite:
+                continue
+            ok = _enviar(r["email"], "Re: " + ASUNTOS[0].format(empresa=r["empresa"]),
+                         SEGUIMIENTO.format(empresa=r["empresa"]), False)
+            if ok is None:
+                break
+            if ok:
+                r["seguimiento"] = "si"
+                hechos += 1
+                print(f"[libro] seguimiento -> {r['email']}")
+                time.sleep(random.uniform(60, 120))
+        _guardar_enviados(enviados)
+
+    # 2) primer correo a los nuevos
+    for e, nombre in _candidatos(args.a_contactados):
+        if hechos >= args.max:
+            break
+        asunto = random.choice(ASUNTOS).format(empresa=nombre)
+        ok = _enviar(e, asunto, CUERPO.format(empresa=nombre), args.dry_run)
+        if ok is None:
+            break
+        if ok and not args.dry_run:
+            enviados.append({"email": e, "empresa": nombre, "fecha": datetime.now().isoformat(), "seguimiento": ""})
+            _guardar_enviados(enviados)
+            MemoriaAgentes().registrar_contacto(e, asunto, "libro afiliados")
+            hechos += 1
+            print(f"[libro] enviado -> {nombre} <{e}>")
+            time.sleep(random.uniform(60, 120))
+        elif ok:
+            hechos += 1
+    print(f"[libro] {hechos} correos en esta corrida")
+
+
+if __name__ == "__main__":
+    main()

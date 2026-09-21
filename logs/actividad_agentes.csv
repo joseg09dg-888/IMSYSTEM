@@ -829,3 +829,4 @@ timestamp,agente,tipo,nombre,empresa,email,nicho,ciudad,asunto,palabras,status,i
 2026-09-19T18:22:52.248909,José,PRIMER CONTACTO,,tuToque,hola@tutoque.co,manager_musical,Bogota,algo que noté en tuToque,111,ENVIADO,
 2026-09-19T18:24:13.548873,José,PRIMER CONTACTO,,Extraordinary,sales@bookextraordinary.com,manager_musical,Miami,sobre la presencia de Extraordinary en Miami,108,ENVIADO,
 2026-09-19T18:25:46.154246,José,PRIMER CONTACTO,,Opulence Entertainment Group,events@opulencemia.com,manager_musical,Miami,algo que noté en Opulence Entertainment Gr,113,ENVIADO,
+2026-09-21T09:44:52.069077,Mateo,PRIMER CONTACTO,,Soho Dental,info@sohodental.ca;,odontologos,Toronto,algo que noté en Soho Dental,126,ERROR,C:\Users\JOSÉ\Projects\IMSYSTEM\reports\informe_soho_dental_20260921_0943.html
