@@ -526,9 +526,15 @@ def get_max_emails_hoy() -> tuple:
     return restantes, dias, max_dia, enviados_hoy
 
 
-def puede_enviar_ahora() -> tuple:
+def _cfg_cuenta(cuenta=None):
+    """Cada cuenta de Gmail tiene su propio contador (Mateo = archivo original)."""
+    nombre = "warmup_config_jose.json" if cuenta == "jose" else "warmup_config.json"
+    return Path(__file__).parent.parent / "logs" / nombre
+
+
+def puede_enviar_ahora(cuenta=None) -> tuple:
     """Verifica límite por hora (máx 20/hora) y pausa por rebotes. Retorna (puede, razón)"""
-    config_file = Path(__file__).parent.parent / "logs" / "warmup_config.json"
+    config_file = _cfg_cuenta(cuenta)
     if not config_file.exists():
         return True, "OK"
 
@@ -623,9 +629,9 @@ def reset_warmup():
     config_file.write_text(json.dumps(config, indent=2))
     return config
 
-def registrar_email_warmup():
+def registrar_email_warmup(cuenta=None):
     """Incrementa el contador de emails del día y horario"""
-    config_file = Path(__file__).parent.parent / "logs" / "warmup_config.json"
+    config_file = _cfg_cuenta(cuenta)
     if not config_file.exists():
         return
     config = json.loads(config_file.read_text())

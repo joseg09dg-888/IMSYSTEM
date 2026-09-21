@@ -125,17 +125,76 @@ def _candidatos(a_contactados):
     return unicos
 
 
+CUERPO_ARTISTA = """Hola equipo de {artista},
+
+Directo al punto: tenemos un libro sobre negocio musical (derechos, contratos, regalías y marca propia) que le puede servir a la audiencia de {artista}: muchos de sus seguidores son artistas emergentes buscando justo esta información.
+
+La propuesta: les damos una copia digital gratis para que la revisen sin compromiso. Si deciden recomendarla con su link de afiliado de Hotmart, se quedan con el 70% de cada venta (≈ $10,31 USD por copia), sin invertir nada de su parte. Como referencia, 500 ventas por su link serían ≈ $5.155 USD.
+
+¿Les envío la copia digital para que la revisen?
+
+José Galvis
+IM Music — Sello discográfico independiente
+https://www.instagram.com/immusicsello"""
+
+ASUNTOS_ARTISTA = [
+    "Una propuesta sin inversión para el equipo de {artista}",
+    "70% de comisión para el equipo de {artista} — 2 minutos",
+    "Para {artista}: libro de music business, copia gratis",
+]
+DOCS_LIBRO = Path("C:/Users/JOSÉ/Projects/immusic-content-engine/docs/libro")
+
+
+def _candidatos_equipos(incluir_baja):
+    """Contactos de booking/management definidos en el proyecto del libro."""
+    ya = {r["email"].lower() for r in _leer_enviados()}
+    out, vistos = [], set()
+    for f in ("contactos_master.csv", "contactos_artistas_afiliados.csv", "contactos_batch_colombia.csv",
+              "contactos_batch_pr_mexico.csv", "contactos_batch_arg_chile_industria.csv"):
+        p = DOCS_LIBRO / f
+        if not p.exists():
+            continue
+        for r in csv.DictReader(open(p, encoding="utf-8")):
+            m = re.search(r"[A-Za-z0-9._%+\-]+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,}", r.get("Correo_o_Contacto", ""))
+            if not m:
+                continue
+            e = m.group(0).lower()
+            if e in ya or e in vistos:
+                continue
+            if r.get("Confianza", "").strip().lower() == "baja" and not incluir_baja:
+                continue
+            vistos.add(e)
+            artista = re.sub(r"\s*\(.*?\)\s*", "", r.get("Artista", "")).strip()
+            out.append((e, artista, "artista"))
+    # contactos nuevos encontrados por los agentes de investigacion
+    for f in ("libro_contactos_nuevos_A.csv", "libro_contactos_nuevos_B.csv"):
+        p2 = BASE / "data" / f
+        if not p2.exists():
+            continue
+        for r in csv.DictReader(open(p2, encoding="utf-8")):
+            e = r.get("Correo", "").strip().lower()
+            if not EMAIL_OK.match(e) or e in ya or e in vistos:
+                continue
+            vistos.add(e)
+            if f.endswith("_B.csv"):
+                ag = re.sub(r"\s*\(.*?\)\s*", "", r.get("Nombre_Agencia_o_Manager", "")).strip()
+                out.append((e, ag, "agencia"))
+            else:
+                out.append((e, re.sub(r"\s*\(.*?\)\s*", "", r.get("Artista", "")).strip(), "artista"))
+    return out
+
+
 def _enviar(email_to, asunto, cuerpo, dry):
     if dry:
         print(f"--- DRY-RUN a {email_to}\nAsunto: {asunto}\n{cuerpo}\n")
         return True
-    puede, razon = deliv.puede_enviar_ahora()
+    puede, razon = deliv.puede_enviar_ahora("jose")
     if not puede:
         print(f"[libro] ⛔ {razon}")
         return None
     ok = im_agents.enviar_email("jose", email_to, asunto, cuerpo, False)
     if ok:
-        deliv.registrar_email_warmup()
+        deliv.registrar_email_warmup("jose")
     return ok
 
 
@@ -143,6 +202,9 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--max", type=int, default=10)
     ap.add_argument("--dry-run", action="store_true")
+    ap.add_argument("--equipos", action="store_true",
+                    help="enviar al equipo/booking de los artistas definidos en docs/libro")
+    ap.add_argument("--incluir-baja", action="store_true", help="incluir contactos de confianza baja")
     ap.add_argument("--a-contactados", action="store_true",
                     help="tambien a quienes ya recibieron otro correo del sistema")
     args = ap.parse_args()
@@ -169,6 +231,32 @@ def main():
                 print(f"[libro] seguimiento -> {r['email']}")
                 time.sleep(random.uniform(60, 120))
         _guardar_enviados(enviados)
+
+    # 2a) equipos de artistas / agencias de booking definidos en docs/libro
+    if args.equipos:
+        for e, artista, tipo_c in _candidatos_equipos(args.incluir_baja):
+            if hechos >= args.max:
+                break
+            if tipo_c == "agencia":
+                asunto = random.choice(ASUNTOS).format(empresa=artista)
+                cuerpo_c = CUERPO.format(empresa=artista)
+            else:
+                asunto = random.choice(ASUNTOS_ARTISTA).format(artista=artista)
+                cuerpo_c = CUERPO_ARTISTA.format(artista=artista)
+            ok = _enviar(e, asunto, cuerpo_c, args.dry_run)
+            if ok is None:
+                break
+            if ok and not args.dry_run:
+                enviados.append({"email": e, "empresa": artista, "fecha": datetime.now().isoformat(), "seguimiento": ""})
+                _guardar_enviados(enviados)
+                MemoriaAgentes().registrar_contacto(e, asunto, "libro afiliados equipo artista")
+                hechos += 1
+                print(f"[libro] equipo de {artista} -> {e}")
+                time.sleep(random.uniform(60, 120))
+            elif ok:
+                hechos += 1
+        print(f"[libro] {hechos} correos en esta corrida")
+        return
 
     # 2) primer correo a los nuevos
     for e, nombre in _candidatos(args.a_contactados):

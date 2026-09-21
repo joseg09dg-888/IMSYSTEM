@@ -1425,7 +1425,7 @@ def procesar_leads(csv_path, agente_key, tipo=1, dry_run=False,
 
         # Rate-limit horario
         if _DELIV_OK and not dry_run:
-            puede, razon = _deliv.puede_enviar_ahora()
+            puede, razon = _deliv.puede_enviar_ahora(agente_key)
             if not puede:
                 print(f"\n  ⛔ {razon} — pausando campaña. Reintenta más tarde.")
                 break
@@ -1502,7 +1502,7 @@ def procesar_leads(csv_path, agente_key, tipo=1, dry_run=False,
             if ok:
                 enviados += 1
                 if _DELIV_OK:
-                    _deliv.registrar_email_warmup()
+                    _deliv.registrar_email_warmup(agente_key)
                 if _MEM_OK:
                     _mem.registrar_contacto(email, asunto, cuerpo[:500])
                     nicho = lead.get("nicho", lead.get("sector", ""))
