@@ -238,6 +238,27 @@ def paso_buscar_musica(n_combos: int = 6):
     return total
 
 
+def paso_enviar_artistas(max_por_sesion: int = 10):
+    """Artistas con correo verificado (encontrado en su propia pagina/red): se
+    les escribe solos con José. Los que no tienen correo no se tocan."""
+    import csv
+    if not MAESTRO_ARTISTAS.exists():
+        return
+    with open(MAESTRO_ARTISTAS, encoding="utf-8") as f:
+        rows = list(csv.DictReader(f))
+    ok = [r for r in rows if r.get("email") and r.get("status") not in
+          ("descartado_establecido", "pequeno_no_paga") and not _excluido(r.get("empresa", ""))]
+    print(f"[pipeline] {len(ok)} artistas con correo verificado listos")
+    if not ok:
+        return
+    destino = DATA_DIR / "artistas_con_correo.csv"
+    with open(destino, "w", newline="", encoding="utf-8") as f:
+        w = csv.DictWriter(f, fieldnames=list(rows[0].keys()))
+        w.writeheader()
+        w.writerows(ok)
+    paso_enviar("jose", destino, max_por_sesion=max_por_sesion)
+
+
 def paso_enviar(agente: str, csv_path: Path, max_por_sesion: int = 40):
     """Manda UNA tanda (no loop infinito) respetando horario, via im_agents.py."""
     if not csv_path.exists():
@@ -275,6 +296,8 @@ def main():
         if not args.solo_buscar:
             paso_enviar("jose", MAESTRO_MUSICA, max_por_sesion=20)
         paso_buscar_artistas()
+        if not args.solo_buscar:
+            paso_enviar_artistas(max_por_sesion=10)
         # Jose no se auto-envia: los artistas nuevos no tienen contacto todavia,
         # necesitan revision de Instagram primero (a proposito, ver notas de sesion).
 

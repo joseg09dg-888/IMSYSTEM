@@ -9,4 +9,3 @@ python agent\daily_pipeline.py --linea ambas
 python agent\followup.py
 echo.
 echo Listo. Revisa logs\actividad_agentes.csv y reports\ para auditar.
-pause
