@@ -27,6 +27,7 @@ from session_memory import MemoriaAgentes         # noqa: E402
 BASE = Path(__file__).parent.parent
 MUSICA = BASE / "data" / "MAESTRO_leads_musica.csv"
 ENVIADOS = BASE / "data" / "libro_enviados.csv"
+_FALLOS = 0
 DIAS_SEGUIMIENTO = 6
 EXCLUIR_NOMBRE = ("tienda", "store", "vinyl", "vinilo", "almacén", "almacen", "teatro", "discotienda",
                   "hidental", "vion music", "kapital music")
@@ -199,9 +200,16 @@ def _enviar(email_to, asunto, cuerpo, dry):
     if not puede:
         print(f"[libro] ⛔ {razon}")
         return None
+    global _FALLOS
     ok = im_agents.enviar_email("jose", email_to, asunto, cuerpo, False)
     if ok:
+        _FALLOS = 0
         deliv.registrar_email_warmup("jose")
+    else:
+        _FALLOS += 1
+        if _FALLOS >= 3:
+            print("[libro] 3 fallos seguidos (posible limite diario de Gmail): se detiene esta corrida")
+            return None
     return ok
 
 

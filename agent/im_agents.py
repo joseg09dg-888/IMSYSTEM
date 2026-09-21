@@ -1416,12 +1416,14 @@ def procesar_leads(csv_path, agente_key, tipo=1, dry_run=False,
     dominios_enviados: set = set()
 
     enviados = 0
+    _fallos_seguidos = 0
     for i, lead in enumerate(leads, 1):
         if enviados >= max_envios:
             break
-        email = lead.get("email","").strip()
-        if not email or "@" not in email:
+        email = re.sub(r"%20|[;,\s​‌‍﻿]", "", lead.get("email","")).strip()
+        if not email or not re.match(r"^[A-Za-z0-9._%+\-]+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,}$", email):
             continue
+        lead["email"] = email
 
         # Horario laboral + pausa de almuerzo
         if _DELIV_OK and not dry_run:
@@ -1508,6 +1510,11 @@ def procesar_leads(csv_path, agente_key, tipo=1, dry_run=False,
             ok = enviar_email(agente_key, email, asunto, cuerpo, adjuntar_este)
             status = "ENVIADO" if ok else "ERROR"
             print(f" {'✅' if ok else '❌'}")
+            _fallos_seguidos = 0 if ok else _fallos_seguidos + 1
+            if _fallos_seguidos >= 3:
+                print("\n  ⛔ 3 fallos seguidos (posible limite diario de Gmail) — se detiene el envio de esta cuenta.")
+                log_actividad(lead, agente["nombre"], tipos_label.get(tipo,""), asunto, cuerpo, status, informe_path)
+                break
             log_actividad(lead, agente["nombre"], tipos_label.get(tipo,""), asunto, cuerpo, status, informe_path)
             if ok:
                 enviados += 1
