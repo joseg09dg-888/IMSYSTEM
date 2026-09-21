@@ -46,6 +46,8 @@ Directo al punto: tenemos un libro sobre negocio musical (derechos, contratos, r
 
 La propuesta: les damos una copia digital gratis para que la revisen sin compromiso. Si deciden recomendarla con su link de afiliado de Hotmart, se quedan con el 70% de cada venta (≈ $10,31 USD por copia), sin invertir nada de su parte. Como referencia, 100 ventas por su link serían ≈ $1.031 USD.
 
+Pueden ver el libro y el programa de afiliados aquí: https://immusicsello.hotmart.host/music
+
 ¿Les envío la copia digital para que la revisen?
 
 José Galvis
@@ -131,6 +133,8 @@ CUERPO_ARTISTA = """Hola equipo de {artista},
 Directo al punto: tenemos un libro sobre negocio musical (derechos, contratos, regalías y marca propia) que le puede servir a la audiencia de {artista}: muchos de sus seguidores son artistas emergentes buscando justo esta información.
 
 La propuesta: les damos una copia digital gratis para que la revisen sin compromiso. Si deciden recomendarla con su link de afiliado de Hotmart, se quedan con el 70% de cada venta (≈ $10,31 USD por copia), sin invertir nada de su parte. Como referencia, 500 ventas por su link serían ≈ $5.155 USD.
+
+Pueden ver el libro y el programa de afiliados aquí: https://immusicsello.hotmart.host/music
 
 ¿Les envío la copia digital para que la revisen?
 
@@ -239,8 +243,8 @@ def _enviar(email_to, asunto, cuerpo, dry):
         deliv.registrar_email_warmup(CUENTA_ENVIO)
     else:
         _FALLOS += 1
-        if _FALLOS >= 3:
-            print("[libro] 3 fallos seguidos (posible limite diario de Gmail): se detiene esta corrida")
+        if _FALLOS >= 2:
+            print("[libro] 2 fallos seguidos (posible limite de Gmail): se detiene esta corrida")
             return None
     return ok
 

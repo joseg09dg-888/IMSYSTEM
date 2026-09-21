@@ -750,6 +750,18 @@ def generar_copy(agente_key: str, lead: dict, informe: dict, tipo: int,
     nicho   = lead.get("nicho", "")
     vertical = agente.get("vertical", "empresas")
 
+    # Idioma segun el pais del lead: EE.UU./Canada = ingles, resto = español
+    _pais = (lead.get("pais", "") or "").strip().lower()
+    _en_ingles = _pais in ("united states", "usa", "us", "eeuu", "estados unidos", "canada", "canadá")
+    regla_idioma = (
+        "IDIOMA OBLIGATORIO: escribe el asunto y TODO el cuerpo del correo en INGLÉS nativo de negocios "
+        "(el prospecto está en Estados Unidos/Canadá y no lee español). Nada de español en el correo, "
+        "ni siquiera el saludo o la despedida. El JSON puede tener las llaves en español, pero los valores "
+        "de 'asunto' y 'cuerpo' van en inglés."
+        if _en_ingles else
+        "IDIOMA: español natural de Latinoamérica/España."
+    )
+
     ctx_reunion = informe.get("contexto_reunion", {})
     argumento   = ctx_reunion.get("argumento_apertura", "")
     dolor       = ctx_reunion.get("dolor_principal", "")
@@ -835,6 +847,8 @@ TIPO 3+: propón reunión: {cal_link} y menciona que adjuntas el brochure de IM"
 
     prompt = f"""
 {agente["personalidad"]}
+
+{regla_idioma}
 
 REGLAS ESTRICTAS: NO inventes resultados, porcentajes, cifras, casos de éxito ni clientes. NO digas que ya lograste algo para otros ("logramos", "hemos ayudado a", "con otro artista/oficina conseguimos"): habla solo de lo que puedes hacer por ellos. NO digas que adjuntas ningún archivo. NO inventes enlaces: el único link permitido es {agente["cal_link"]}.
 

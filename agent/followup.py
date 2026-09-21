@@ -66,10 +66,20 @@ def detectar_respuestas():
     _, nums = M.search(None, f"SINCE {desde}")
     respuestas = []
     for n in nums[0].split():
-        _, d = M.fetch(n, "(BODY.PEEK[HEADER.FIELDS (FROM SUBJECT DATE)])")
+        _, d = M.fetch(n, "(BODY.PEEK[HEADER.FIELDS (FROM SUBJECT DATE AUTO-SUBMITTED X-AUTOREPLY PRECEDENCE)])")
         m = email.message_from_bytes(d[0][1])
         remitente = email.utils.parseaddr(m.get("From", ""))[1].lower()
-        if remitente in contactados:
+        asunto_l = str(make_header(decode_header(m.get("Subject", "")))).lower()
+        # Respuestas automaticas (fuera de oficina, "recibimos tu mensaje"): no son leads calientes
+        es_auto = (
+            (m.get("Auto-Submitted", "no").lower() != "no")
+            or m.get("X-Autoreply", "").lower() == "yes"
+            or m.get("Precedence", "").lower() in ("bulk", "auto_reply", "junk")
+            or any(k in asunto_l for k in ("automatic", "auto-reply", "autoreply", "out of office",
+                                           "message received", "acknowledg", "respuesta automática",
+                                           "fuera de la oficina", "delivery status"))
+        )
+        if remitente in contactados and not es_auto:
             asunto = str(make_header(decode_header(m.get("Subject", ""))))
             respuestas.append((m.get("Date", ""), remitente, asunto))
             mem.marcar_respuesta(remitente)
