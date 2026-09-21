@@ -532,6 +532,23 @@ def _cfg_cuenta(cuenta=None):
     return Path(__file__).parent.parent / "logs" / nombre
 
 
+def verificar_horario():
+    """Horario laboral Colombia: Lun-Vie 6:00-19:00 (pausa de almuerzo 12:00-13:30),
+    Sab 6:00-12:00, Dom no. Retorna (puede, segundos_espera, razon)."""
+    ahora = datetime.now()
+    wd = ahora.weekday()
+    h = ahora.hour + ahora.minute / 60
+    if wd == 6:
+        return False, 0, "domingo — sin envios"
+    fin = 12.0 if wd == 5 else 19.0
+    if h < 6.0 or h >= fin:
+        return False, 0, "fuera del horario laboral"
+    if wd < 5 and 12.0 <= h < 13.5:
+        fin_almuerzo = ahora.replace(hour=13, minute=30, second=0, microsecond=0)
+        return True, max(1, int((fin_almuerzo - ahora).total_seconds())), "pausa de almuerzo"
+    return True, 0, ""
+
+
 def puede_enviar_ahora(cuenta=None) -> tuple:
     """Verifica límite por hora (máx 20/hora) y pausa por rebotes. Retorna (puede, razón)"""
     config_file = _cfg_cuenta(cuenta)

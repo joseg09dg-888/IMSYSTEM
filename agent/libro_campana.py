@@ -188,6 +188,13 @@ def _enviar(email_to, asunto, cuerpo, dry):
     if dry:
         print(f"--- DRY-RUN a {email_to}\nAsunto: {asunto}\n{cuerpo}\n")
         return True
+    ok_h, espera, razon_h = deliv.verificar_horario()
+    if not ok_h:
+        print("[libro] " + razon_h)
+        return None
+    if espera:
+        print("[libro] " + razon_h + ": retoma en " + str(espera // 60) + " min")
+        time.sleep(espera)
     puede, razon = deliv.puede_enviar_ahora("jose")
     if not puede:
         print(f"[libro] ⛔ {razon}")

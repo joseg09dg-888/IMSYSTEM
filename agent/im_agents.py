@@ -1423,6 +1423,16 @@ def procesar_leads(csv_path, agente_key, tipo=1, dry_run=False,
         if not email or "@" not in email:
             continue
 
+        # Horario laboral + pausa de almuerzo
+        if _DELIV_OK and not dry_run:
+            _ok_h, _espera, _razon_h = _deliv.verificar_horario()
+            if not _ok_h:
+                print(f"  ⏹ {_razon_h} — se detiene el envio, retoma en el proximo horario laboral.")
+                break
+            if _espera:
+                print(f"  🍽 {_razon_h} — retoma en {_espera//60} min...")
+                time.sleep(_espera)
+
         # Rate-limit horario
         if _DELIV_OK and not dry_run:
             puede, razon = _deliv.puede_enviar_ahora(agente_key)
