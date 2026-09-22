@@ -526,7 +526,7 @@ def get_max_emails_hoy() -> tuple:
     return restantes, dias, max_dia, enviados_hoy
 
 
-TOPE_DIARIO_CUENTA = {"mateo": 100, "jose": 20}
+TOPE_DIARIO_CUENTA = {"mateo": 100, "jose": 12}  # bajado 2026-09-22: Gmail bloquea immusicsello ~25/dia (cuenta nueva, reputacion baja)
 
 
 def _cfg_cuenta(cuenta=None):
@@ -575,13 +575,21 @@ def puede_enviar_ahora(cuenta=None) -> tuple:
     if enviados_hora >= MAX_EMAILS_POR_HORA:
         return False, f"Límite horario alcanzado ({MAX_EMAILS_POR_HORA}/hora) — espera la próxima hora"
 
+    # Reset contador diario si cambió el dia (bug 2026-09-22: antes esto nunca
+    # se actualizaba aqui, asi que el tope diario quedaba sin aplicar en cuanto
+    # pasaba la medianoche, hasta que otra funcion tocara fecha_ultimo).
+    hoy = datetime.now().strftime("%Y-%m-%d")
+    if config.get("fecha_ultimo") != hoy:
+        config["emails_enviados_hoy"] = 0
+        config["fecha_ultimo"] = hoy
+        config_file.write_text(json.dumps(config, indent=2))
+
     # Tope diario propio por cuenta: Gmail limita mas a las cuentas de poco
     # historial (2026-09-21: la cuenta de José recibio "Daily user sending
     # limit exceeded" a los ~24 envios). Se sube de a poco conforme pasan dias sin errores.
-    if config.get("fecha_ultimo") == datetime.now().strftime("%Y-%m-%d"):
-        tope = TOPE_DIARIO_CUENTA.get(cuenta or "mateo", 80)
-        if config.get("emails_enviados_hoy", 0) >= tope:
-            return False, f"Tope diario de esta cuenta alcanzado ({tope}/dia) — sigue mañana"
+    tope = TOPE_DIARIO_CUENTA.get(cuenta or "mateo", 80)
+    if config.get("emails_enviados_hoy", 0) >= tope:
+        return False, f"Tope diario de esta cuenta alcanzado ({tope}/dia) — sigue mañana"
 
     return True, "OK"
 
@@ -663,6 +671,10 @@ def registrar_email_warmup(cuenta=None):
     if not config_file.exists():
         return
     config = json.loads(config_file.read_text())
+    hoy = datetime.now().strftime("%Y-%m-%d")
+    if config.get("fecha_ultimo") != hoy:
+        config["emails_enviados_hoy"] = 0
+        config["fecha_ultimo"] = hoy
     config["emails_enviados_hoy"] = config.get("emails_enviados_hoy", 0) + 1
     # También incrementa contador horario
     hora_actual = datetime.now().strftime("%Y-%m-%d %H")
