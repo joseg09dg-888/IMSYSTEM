@@ -1,8 +1,8 @@
 {
   "inicio_warmup": "2026-09-04T09:00:00",
-  "emails_enviados_hoy": 5,
+  "emails_enviados_hoy": 12,
   "fecha_ultimo": "2026-09-25",
-  "emails_esta_hora": 5,
-  "hora_actual": "2026-09-25 11",
+  "emails_esta_hora": 1,
+  "hora_actual": "2026-09-25 12",
   "pausado_por_rebotes": false
 }
