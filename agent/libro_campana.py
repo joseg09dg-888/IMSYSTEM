@@ -42,7 +42,7 @@ ASUNTOS = [
 
 CUERPO = """Hola equipo de {empresa},
 
-Directo al punto: tenemos un libro sobre negocio musical (derechos, contratos, regalías y marca propia) que le puede servir a los artistas de su roster: muchos son emergentes buscando justo esta información.
+Directo al punto: armamos una guía de iniciación al negocio musical, pensada para artistas emergentes — no es solo el típico manual de derechos y contratos. Trae además cómo construir marca propia y hacer marketing sin agencia, y un capítulo sobre inteligencia artificial en la industria musical: qué está pasando, los riesgos legales que ya se están viendo (demandas a plataformas de IA) y cómo usarla a favor sin quedar expuesto.
 
 La propuesta: les damos una copia digital gratis para que la revisen sin compromiso. Si deciden recomendarla con su link de afiliado de Hotmart, se quedan con el 70% de cada venta (≈ $10,31 USD por copia), sin invertir nada de su parte. Como referencia, 100 ventas por su link serían ≈ $1.031 USD.
 
