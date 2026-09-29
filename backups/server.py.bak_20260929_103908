@@ -227,18 +227,6 @@ def init_db():
             enviados INTEGER DEFAULT 0, abiertos INTEGER DEFAULT 0,
             respondidos INTEGER DEFAULT 0, estado TEXT DEFAULT 'activa',
             creada_at TEXT);
-        CREATE TABLE IF NOT EXISTS respuestas_recibidas (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            de_email TEXT, de_nombre TEXT, empresa TEXT,
-            asunto TEXT, cuerpo TEXT, agente_asignado TEXT,
-            fecha_recibido TEXT DEFAULT (datetime('now')),
-            procesado INTEGER DEFAULT 0,
-            UNIQUE(de_email, asunto));
-        CREATE TABLE IF NOT EXISTS email_tracking (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            to_email TEXT, agente TEXT, empresa TEXT,
-            evento TEXT, ip TEXT, user_agent TEXT,
-            fecha TEXT DEFAULT (datetime('now')));
     """)
     # Migraciones seguras
     migrations = [

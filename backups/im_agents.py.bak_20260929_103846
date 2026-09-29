@@ -1725,23 +1725,8 @@ def leer_respuestas_imap(agente_key="mateo", max_emails=20):
                     "INSERT OR IGNORE INTO respuestas_recibidas (de_email, de_nombre, asunto, cuerpo, agente_asignado) VALUES (?,?,?,?,?)",
                     (de[1], de[0], asunto, cuerpo[:2000], agente_key)
                 )
-                # Marcar respondido_at en emails_log para esta persona (el primer envio sin respuesta aun)
-                conn.execute(
-                    "UPDATE emails_log SET respondido_at=datetime('now') "
-                    "WHERE LOWER(to_email)=LOWER(?) AND respondido_at IS NULL",
-                    (de[1],)
-                )
                 conn.commit()
                 conn.close()
-            except Exception:
-                pass
-
-            # Marcar respuesta en la memoria de leads (para conteos y para no
-            # insistirle mas a alguien que ya contesto)
-            try:
-                import sys as _s; _s.path.insert(0, str(Path(__file__).parent))
-                from session_memory import MemoriaAgentes
-                MemoriaAgentes().marcar_respuesta(de[1])
             except Exception:
                 pass
 
