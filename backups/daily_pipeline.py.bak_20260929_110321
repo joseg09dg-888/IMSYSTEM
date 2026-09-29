@@ -140,12 +140,9 @@ def _append_csv(rows, destino: Path):
         return 0
     existe = destino.exists()
     existentes = set()
-    fieldnames_existente = None
     if existe:
         with open(destino, encoding="utf-8") as f:
-            reader = csv.DictReader(f)
-            fieldnames_existente = reader.fieldnames
-            for r in reader:
+            for r in csv.DictReader(f):
                 existentes.add((r.get("empresa", ""), r.get("email", "")))
 
     nuevas = [
@@ -156,18 +153,10 @@ def _append_csv(rows, destino: Path):
     if not nuevas:
         return 0
 
-    # IMPORTANTE: si el archivo ya existe, escribir SIEMPRE en el orden de
-    # columnas del header ya existente — nunca en el orden de las filas
-    # nuevas. Un CSV no lleva el nombre de columna por celda, solo posicion;
-    # si las filas nuevas traen un set/orden de columnas distinto (por
-    # ejemplo de una corrida directa de lead_finder_v2.py sin direccion/
-    # gmaps_id), escribir con su propio orden desalinea todas las columnas
-    # que van despues de la primera que difiere (bug real detectado
-    # 2026-09-29: fecha/status terminaban en las columnas direccion/gmaps_id).
-    fieldnames = fieldnames_existente if fieldnames_existente else list(rows[0].keys())
+    fieldnames = list(rows[0].keys())
     modo = "a" if existe else "w"
     with open(destino, modo, newline="", encoding="utf-8") as f:
-        w = csv.DictWriter(f, fieldnames=fieldnames, extrasaction="ignore", restval="")
+        w = csv.DictWriter(f, fieldnames=fieldnames, extrasaction="ignore")
         if not existe:
             w.writeheader()
         w.writerows(nuevas)
