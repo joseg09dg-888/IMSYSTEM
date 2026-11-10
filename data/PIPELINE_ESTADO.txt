@@ -1,9 +1,9 @@
-ESTADO DEL EMBUDO - 2026-11-09 11:19
+ESTADO DEL EMBUDO - 2026-11-10 09:53
 
-NUEVO (sin contactar, en base) : 1088
-FRIO   (esperando seguimiento) : 262
+NUEVO (sin contactar, en base) : 1242
+FRIO   (esperando seguimiento) : 300
 TIBIO  (abrieron el correo)    : 0
-CALIENTE (respondieron)        : 0   <- ver logs/RESPUESTAS.txt
+CALIENTE (respondieron)        : 1   <- ver logs/RESPUESTAS.txt
 PERDIDO (3 toques sin respuesta): 49
 
-Seguimientos que tocan hoy: tipo2=224, tipo3(tibios)=0
+Seguimientos que tocan hoy: tipo2=205, tipo3(tibios)=0
