@@ -30,6 +30,18 @@ def _ya_enviados_paises():
     return {r["email"].lower() for r in csv.DictReader(open(ENVIADOS_PAISES, encoding="utf-8"))}
 
 
+def _paises_ya_hoy():
+    """Países que ya recibieron un envío HOY (sin importar a qué empresa) —
+    evita duplicar cobertura del mismo país el mismo día (bug 2026-11-24:
+    antes solo evitaba repetir el mismo correo exacto, no el país)."""
+    if not ENVIADOS_PAISES.exists():
+        return set()
+    from datetime import date
+    hoy = date.today().isoformat()
+    return {r["pais"] for r in csv.DictReader(open(ENVIADOS_PAISES, encoding="utf-8"))
+            if r.get("fecha", "").startswith(hoy)}
+
+
 def _guardar_pais(email_to, empresa, pais):
     nuevo = not ENVIADOS_PAISES.exists()
     with open(ENVIADOS_PAISES, "a", newline="", encoding="utf-8") as f:
@@ -43,10 +55,11 @@ def _guardar_pais(email_to, empresa, pais):
 def candidatos_por_pais(excluir_paises):
     ya_libro = {r["email"].lower() for r in lc._leer_enviados()}
     ya_pais = _ya_enviados_paises()
+    ya_hoy = _paises_ya_hoy()
     por_pais = {}
     for r in csv.DictReader(open(MUSICA, encoding="utf-8")):
         pais = r.get("pais", "").strip()
-        if not pais or "http" in pais.lower() or pais in excluir_paises:
+        if not pais or "http" in pais.lower() or pais in excluir_paises or pais in ya_hoy:
             continue
         if r.get("status", "").strip().lower() != "pendiente":
             continue
